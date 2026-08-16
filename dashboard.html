@@ -592,8 +592,8 @@ window.logout = function() {
     window.location.replace("/");
 }
 
-/* ---------------- Backend API Connector ---------------- */
-const API_URL = 'https://gbkids.netlify.app/.netlify/functions/db';
+/* ---------------- Google Apps Script API Connector ---------------- */
+const API_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
 async function apiGet(sheetName) {
   try {
@@ -608,19 +608,12 @@ async function apiGet(sheetName) {
 
 async function apiAdd(sheetName, rowData) {
   try {
-    const res = await fetch(API_URL, {
+    await fetch(API_URL, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ sheetName, action: 'ADD', rowData })
     });
-    
-    const data = await res.json();
-    if (!res.ok) {
-        console.error(`❌ [Cloud DB Error on ${sheetName}]:`, data);
-        alert(`DATABASE REJECTED IT!\nSheet: ${sheetName}\nError: ${data.details || data.error}`);
-    }
   } catch(e) {
-    console.error(`[Cloud DB] Failed to reach Netlify for ${sheetName}:`, e);
+    console.error(`[Cloud DB] Failed to save row to ${sheetName}:`, e);
   }
 }
 
@@ -628,7 +621,6 @@ async function apiDelete(sheetName, rowId) {
   try {
     await fetch(API_URL, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ sheetName, action: 'DELETE', rowId: String(rowId) })
     });
   } catch(e) {
