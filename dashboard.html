@@ -2,629 +2,1294 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Prayas — Study Desk</title>
+<title>Prayas — CA Space Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root{
-    --bg-deep:#141F1A;
-    --bg-panel:#1B2822;
-    --bg-panel-raised:#22322A;
-    --bg-sidebar:#101A16;
-    --border:#2C3F35;
-    --border-soft:#243529;
-    --accent-brass:#C9A227;
-    --accent-brass-dim:#8A6F1F;
-    --accent-coral:#E1614A;
-    --accent-sage:#6FA98A;
-    --text-primary:#EDE8DD;
-    --text-secondary:#B9C2BA;
-    --text-muted:#7C8B81;
-    --stamp-bg:#EDE3C8;
-    --stamp-ink:#3A2E1F;
-    --radius:10px;
+    /* Naked Glassmorphism Theme */
+    --bg-deep: #000000;
+    --bg-panel: rgba(255, 255, 255, 0.03); 
+    --bg-panel-raised: rgba(255, 255, 255, 0.06);
+    --bg-sidebar: rgba(0, 0, 0, 0.2);
+    --border: rgba(255, 255, 255, 0.12);
+    --border-soft: rgba(255, 255, 255, 0.06);
+    
+    --accent-brass: #ffffff; 
+    --accent-brass-dim: #a1a1aa;
+    --accent-coral: #ef4444;
+    --accent-sage: #d4d4d8;
+    
+    /* Doctor Strange Magic Colors */
+    --magic-core: #ffeb3b;
+    --magic-glow: #f97316;
+
+    --text-primary: #ffffff;
+    --text-secondary: #e4e4e7;
+    --text-muted: #a1a1aa;
+    --radius: 12px;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
     font-family:'IBM Plex Sans',sans-serif;
-    background:var(--bg-deep);
+    background: transparent; 
     color:var(--text-primary);
     overflow:hidden;
+    /* Ensure text is readable over the bright stars and aurora */
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
   }
-  .app{
-    display:grid;
-    grid-template-columns:236px 1fr;
-    grid-template-rows:76px 1fr;
-    height:100vh;
+  
+  /* ---------- ENHANCED COSMOS ENGINE ---------- */
+  
+  /* 1. Deep Space & Aurora Layer */
+  #cosmos-background {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -3; pointer-events: none; overflow: hidden;
+    background: #02000a; /* Darkest night */
   }
 
-  /* ---------- SIDEBAR ---------- */
+  /* Celestial Bodies */
+  .celestial-sun {
+    position: absolute; bottom: -15vh; left: 10vw;
+    width: 45vh; height: 45vh; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,235,59,0.9) 0%, rgba(249,115,22,0.6) 35%, transparent 70%);
+    filter: blur(15px);
+    box-shadow: 0 0 100px 40px rgba(249,115,22,0.4);
+    animation: sun-pulse 8s infinite alternate;
+  }
+  .celestial-moon {
+    position: absolute; top: 12vh; right: 18vw;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e4e4e7 20%, #a1a1aa 80%, transparent 100%);
+    box-shadow: 0 0 60px 10px rgba(255, 255, 255, 0.4), inset -15px -15px 30px rgba(0,0,0,0.7);
+    filter: blur(0.5px);
+  }
+  @keyframes sun-pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.1); opacity: 1; filter: blur(20px); }
+  }
+
+  /* Northern Lights / Aurora Flames */
+  .aurora-flame {
+    position: absolute; bottom: 0; width: 150vw; left: -25vw;
+    filter: blur(60px); mix-blend-mode: screen; border-radius: 50% 50% 0 0;
+    opacity: 0.6;
+  }
+  .aurora-flame.low {
+    height: 45vh;
+    background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.5) 0%, transparent 70%);
+    animation: flame-wave 18s ease-in-out infinite alternate;
+  }
+  .aurora-flame.medium {
+    height: 70vh;
+    background: radial-gradient(ellipse at center, rgba(52, 211, 153, 0.35) 0%, rgba(139, 92, 246, 0.25) 50%, transparent 70%);
+    animation: flame-wave-rev 14s ease-in-out infinite alternate;
+  }
+  .aurora-flame.high {
+    height: 95vh;
+    background: radial-gradient(ellipse at center, rgba(167, 139, 250, 0.35) 0%, rgba(16, 185, 129, 0.15) 50%, transparent 70%);
+    animation: flame-wave 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes flame-wave {
+    0% { transform: translateY(5vh) scaleX(1) rotate(-3deg); opacity: 0.4; }
+    50% { transform: translateY(-5vh) scaleX(1.05) rotate(2deg); opacity: 0.7; }
+    100% { transform: translateY(0vh) scaleX(0.95) rotate(-1deg); opacity: 0.5; }
+  }
+  @keyframes flame-wave-rev {
+    0% { transform: translateY(-5vh) scaleX(0.95) rotate(3deg); opacity: 0.6; }
+    50% { transform: translateY(5vh) scaleX(1.1) rotate(-2deg); opacity: 0.4; }
+    100% { transform: translateY(-2vh) scaleX(1) rotate(1deg); opacity: 0.7; }
+  }
+
+  /* 2. Starfield Layer (Meteors & Supernovas) */
+  #star-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none; overflow: hidden;
+    background: transparent;
+  }
+  .ambient-star {
+    position: absolute; background: white; border-radius: 50%;
+    animation: drift linear infinite forwards;
+  }
+  .shooting-star {
+    position: absolute; width: 2px; height: 2px;
+    background: #ffffff; border-radius: 50%;
+    box-shadow: 0 0 8px var(--magic-glow), 0 0 16px var(--magic-core);
+    animation: shoot linear forwards;
+  }
+  .shooting-star::after {
+    content: ''; position: absolute; top: 50%; left: 0; transform: translateY(-50%);
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,1), rgba(249,115,22,0.8), transparent);
+  }
+  .supernova {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, var(--magic-core) 30%, transparent 70%);
+    box-shadow: 0 0 60px 30px var(--magic-glow), 0 0 120px 60px var(--magic-core);
+    animation: explode ease-out forwards;
+    pointer-events: none; mix-blend-mode: screen;
+  }
+
+  @keyframes drift {
+    from { transform: translateY(0px); }
+    to { transform: translateY(110vh); }
+  }
+  @keyframes shoot {
+    0% { transform: translate(0, 0) rotate(-45deg) scale(0); opacity: 0; }
+    10% { transform: translate(-5vw, 5vh) rotate(-45deg) scale(1.2); opacity: 1; }
+    100% { transform: translate(-100vw, 100vh) rotate(-45deg) scale(0.2); opacity: 0; }
+  }
+  @keyframes explode {
+    0% { transform: scale(0); opacity: 1; }
+    40% { transform: scale(2.5); opacity: 0.9; }
+    100% { transform: scale(5); opacity: 0; }
+  }
+
+  /* ---------- BASE LAYOUT ---------- */
+  .app{
+    display:grid; grid-template-columns:236px 1fr; grid-template-rows:76px 1fr;
+    height:100vh; transition:grid-template-columns .3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .app.collapsed{ grid-template-columns:68px 1fr; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+  /* ---------- NAKED SIDEBAR ---------- */
   .sidebar{
-    grid-row:1 / span 2;
-    background:var(--bg-sidebar);
-    border-right:1px solid var(--border);
-    display:flex;
-    flex-direction:column;
-    padding:22px 16px;
+    grid-row:1 / span 2; background:var(--bg-sidebar); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:0 12px 16px 12px; overflow:hidden;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   }
-  .brand{
-    display:flex;
-    align-items:baseline;
-    gap:8px;
-    padding:0 8px 22px 8px;
-    border-bottom:1px solid var(--border-soft);
-    margin-bottom:18px;
+  .sidebar-top{
+    height: 76px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 4px; border-bottom:1px solid var(--border-soft); margin-bottom:14px;
   }
+  .brand{ display:flex; align-items:center; gap:9px; min-width:0; }
+  .brand-logo{
+    width:26px;height:26px;border-radius:7px; background:var(--accent-brass); color:#000;
+    display:flex;align-items:center;justify-content:center; font-weight:700;font-size:14px;
+    flex-shrink:0; transition: transform 0.3s ease; text-shadow: none;
+  }
+  .brand-logo:hover { transform: rotate(90deg); }
   .brand-mark{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:22px;
-    letter-spacing:0.3px;
-    color:var(--accent-brass);
+    font-weight:700; font-size:16.5px; letter-spacing:0.2px; white-space:nowrap;
+    overflow:hidden; transition:opacity .2s ease, max-width .2s ease;
   }
-  .brand-sub{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    color:var(--text-muted);
-    letter-spacing:1.5px;
-    text-transform:uppercase;
+  .collapse-btn{
+    width:26px;height:26px; display:flex;align-items:center;justify-content:center;
+    border-radius:6px; color:var(--text-secondary); cursor:pointer; flex-shrink:0; transition: 0.2s;
   }
-  .nav{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-    flex:1;
-    overflow-y:auto;
-  }
+  .collapse-btn:hover{background:var(--bg-panel-raised);color:var(--text-primary);}
+  .app.collapsed .sidebar-top{ flex-direction:column; justify-content: center; gap:10px; }
+  .app.collapsed .brand-mark{opacity:0;max-width:0;}
+
+  .nav{ display:flex; flex-direction:column; gap:4px; flex:1; overflow-y:auto; overflow-x:hidden; }
   .nav-item{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:10px 12px;
-    border-radius:8px;
-    font-size:13.5px;
-    color:var(--text-secondary);
-    cursor:pointer;
-    transition:background .15s ease, color .15s ease;
+    display:flex; align-items:center; gap:11px; padding:9px 10px; border-radius:8px;
+    font-size:13px; font-weight: 500; color:var(--text-secondary); cursor:pointer; white-space:nowrap;
+    transition: background .2s ease, color .2s ease, transform .1s ease;
   }
+  .nav-item:active { transform: scale(0.97); }
   .nav-item:hover{background:var(--bg-panel-raised);color:var(--text-primary);}
-  .nav-item.active{background:var(--bg-panel-raised);color:var(--text-primary);border-left:2px solid var(--accent-brass);padding-left:10px;}
-  .nav-dot{
-    width:7px;height:7px;border-radius:50%;
-    background:var(--border);
-    flex-shrink:0;
-  }
-  .nav-item.active .nav-dot{background:var(--accent-brass);}
+  .nav-item.active{background:rgba(255,255,255,0.15);color:var(--text-primary); border: 1px solid rgba(255,255,255,0.1);}
+  .nav-icon{ width:18px;height:18px; flex-shrink:0; display:flex;align-items:center;justify-content:center; color:inherit; transition: color 0.2s;}
+  .nav-icon svg{width:18px;height:18px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));}
+  .nav-label{ overflow:hidden; text-overflow:ellipsis; transition:opacity .2s ease; max-width:160px; }
+  .app.collapsed .nav-item{justify-content:center;padding:9px 0;}
+  .app.collapsed .nav-label{opacity:0;max-width:0;}
+
   .sidebar-foot{
-    border-top:1px solid var(--border-soft);
-    padding-top:14px;
-    margin-top:10px;
-    font-size:11px;
-    color:var(--text-muted);
-    font-family:'IBM Plex Mono',monospace;
-    line-height:1.6;
+    border-top:1px solid var(--border-soft); padding-top:12px; margin-top:8px;
+    font-size:11px; color:var(--text-muted); font-family:'IBM Plex Mono',monospace;
+    line-height:1.6; white-space:nowrap; overflow:hidden;
   }
+  .app.collapsed .sidebar-foot{opacity:0;height:0;padding:0;margin:0;border:none;}
 
   /* ---------- TOP BAR ---------- */
   .topbar{
-    grid-column:2;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 28px;
-    border-bottom:1px solid var(--border);
-    background:var(--bg-panel);
+    grid-column:2; display:flex; align-items:center; justify-content:space-between;
+    padding:0 28px; border-bottom:1px solid var(--border-soft); 
+    background:rgba(0, 0, 0, 0.2); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   }
-  .quote-strip{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    max-width:56%;
-  }
-  .quote-mark{
-    font-family:'Fraunces',serif;
-    font-size:26px;
-    color:var(--accent-brass-dim);
-    line-height:1;
-  }
-  .quote-text{
-    font-family:'Fraunces',serif;
-    font-style:italic;
-    font-size:14.5px;
-    color:var(--text-secondary);
-    line-height:1.4;
-  }
-  .quote-author{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
-    color:var(--text-muted);
-    margin-left:6px;
-  }
-  .profile-block{
-    display:flex;
-    align-items:center;
-    gap:16px;
+  .quote-strip{ display:flex; align-items:center; gap:10px; max-width:56%; }
+  .quote-mark{ font-family:'Fraunces',serif; font-size:26px; color:var(--magic-core); line-height:1; }
+  .quote-text{ font-family:'IBM Plex Mono',monospace; font-style:italic; font-size:13px; color:var(--text-primary); line-height:1.4; }
+  .quote-author{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-secondary); margin-left:6px; }
+  
+  .profile-block{ display:flex; align-items:center; gap:14px; }
+  .top-study-badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;
+      color: #000; background: var(--text-primary); padding: 6px 12px; border-radius: 20px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.4); text-shadow: none;
   }
   .streak-pill{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    background:rgba(201,162,39,0.12);
-    border:1px solid rgba(201,162,39,0.35);
-    color:var(--accent-brass);
-    padding:6px 12px;
-    border-radius:20px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    font-weight:500;
+    display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.1); border:1px solid var(--border);
+    color:var(--magic-core); padding:6px 12px; border-radius:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
   }
-  .profile-meta{
-    text-align:right;
-    line-height:1.35;
-  }
-  .profile-name{font-size:13.5px;font-weight:500;color:var(--text-primary);}
-  .profile-login{font-size:10.5px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;}
+  .profile-meta{ text-align:right; line-height:1.35; }
+  .profile-name{font-weight:600;font-size:13.5px;color:var(--text-primary);}
+  .profile-login{font-size:10.5px;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace;}
   .avatar{
-    width:38px;height:38px;border-radius:50%;
-    background:linear-gradient(155deg,#3B5445,#22322A);
-    border:1px solid var(--border);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Fraunces',serif;font-weight:600;font-size:14px;
-    color:var(--accent-brass);
+    width:38px;height:38px;border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center; font-weight:700;font-size:14px; color:var(--text-primary);
   }
 
-  /* ---------- MAIN ---------- */
-  .main{
-    grid-column:2;
-    overflow-y:auto;
-    padding:22px 28px 40px 28px;
-  }
-  .board{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:22px;
-    align-items:start;
-  }
+  /* ---------- MAIN & ANIMATIONS ---------- */
+  .main{ grid-column:2; overflow-y:auto; padding:22px 28px 40px 28px; }
+  .board{ display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
   .col{display:flex;flex-direction:column;gap:22px;}
 
-  .panel{
-    background:var(--bg-panel);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    overflow:hidden;
+  /* Panel Slide-up Animation */
+  @keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .panel-head{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    padding:14px 18px 12px 18px;
-    border-bottom:1px solid var(--border-soft);
+  .view.active .col:nth-child(1) .panel:nth-child(1) { animation: slideUpFade 0.5s cubic-bezier(0.2,0.8,0.2,1) forwards; animation-delay: 0.05s; opacity:0; }
+  .view.active .col:nth-child(1) .panel:nth-child(2) { animation: slideUpFade 0.5s cubic-bezier(0.2,0.8,0.2,1) forwards; animation-delay: 0.15s; opacity:0; }
+  .view.active .col:nth-child(2) .panel:nth-child(1) { animation: slideUpFade 0.5s cubic-bezier(0.2,0.8,0.2,1) forwards; animation-delay: 0.10s; opacity:0; }
+  .view.active .col:nth-child(2) .panel:nth-child(2) { animation: slideUpFade 0.5s cubic-bezier(0.2,0.8,0.2,1) forwards; animation-delay: 0.20s; opacity:0; }
+  .view.active .panel { animation: slideUpFade 0.5s cubic-bezier(0.2,0.8,0.2,1) forwards; }
+
+  /* NAKED PANELS */
+  .panel{ 
+      background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; 
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.02), 0 8px 32px rgba(0,0,0,0.5);
   }
-  .panel-title{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:16.5px;
-    letter-spacing:0.2px;
-  }
-  .panel-count{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
-    color:var(--text-muted);
-  }
+  .panel-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px 12px 18px; border-bottom:1px solid var(--border-soft); background: rgba(0,0,0,0.2);}
+  .panel-title{ font-weight:600; font-size:15px; letter-spacing:0.2px; text-transform: uppercase; }
   .panel-body{padding:14px 18px 18px 18px;}
 
-  /* Today's tasks */
+  /* Subheads */
   .subhead{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
-    letter-spacing:1.5px;
-    color:var(--text-muted);
-    text-transform:uppercase;
-    margin:14px 0 8px 0;
+    display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:1.5px; color:var(--text-primary); text-transform:uppercase; margin:14px 0 8px 0;
   }
   .subhead:first-child{margin-top:0;}
-  .subhead-tag{
-    padding:2px 7px;
-    border-radius:4px;
-    font-size:9.5px;
-  }
-  .tag-gs{background:rgba(63,138,221,0.16);color:#7FB4E8;}
-  .tag-op{background:rgba(99,153,34,0.18);color:#9ECB63;}
-  .tag-ca{background:rgba(214,90,48,0.18);color:#E88C63;}
+  .subhead-tag{ padding:3px 8px; border-radius:4px; font-size:9.5px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: var(--text-primary); }
 
-  .task-row{
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:9px 10px;
-    border-radius:7px;
-    margin-bottom:3px;
-    cursor:default;
-    transition:background .12s ease;
+  /* Interactive Rows & Slide In Animation */
+  @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(-15px); }
+      to { opacity: 1; transform: translateX(0); }
   }
-  .task-row:hover{background:var(--bg-panel-raised);}
-  .task-left{display:flex;align-items:center;gap:9px;min-width:0;}
+  .animate-row { animation: slideInRight 0.4s cubic-bezier(0.2,0.8,0.2,1) forwards; }
+
+  .task-row, .rev-row, .list-row {
+    position:relative; display:flex; align-items:center; justify-content:space-between;
+    padding:12px; border-radius:8px; margin-bottom:6px; transition:background .2s ease, border .2s ease, transform .2s ease;
+    border: 1px solid rgba(255,255,255,0.05); background: var(--bg-panel-raised);
+  }
+  .task-row:hover, .rev-row:hover, .list-row:hover { border: 1px solid rgba(255,255,255,0.2); transform: translateX(4px); background: rgba(255,255,255,0.1);}
+  .task-left {display:flex;align-items:center;gap:12px;font-size:13.5px;min-width:0;}
+  
   .task-check{
-    width:14px;height:14px;border-radius:4px;
-    border:1.5px solid var(--border);
-    flex-shrink:0;
+    width:18px;height:18px;border-radius:5px; border:2px solid rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.3); flex-shrink:0;cursor:pointer; display:flex;align-items:center;justify-content:center;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .task-name{font-size:13px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .task-check:hover{border-color:var(--text-primary); transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.4);}
+  .task-check svg{width:12px;height:12px;opacity:0;stroke:#000000; stroke-width:3;}
+  .task-check.checked{background:var(--accent-brass);border-color:var(--accent-brass); transform: scale(1.15); box-shadow: 0 0 15px rgba(255,255,255,0.8);}
+  .task-check.checked svg{opacity:1;}
+  
+  .task-name{font-size:14px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; transition: color 0.2s;}
+  .task-name.done{color:var(--text-muted);text-decoration:line-through;}
+  
   .task-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-  .task-due{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-muted);}
+  .task-due{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-secondary);}
+  .list-actions {display:flex;gap:4px;flex-shrink:0;}
   .icon-btn{
-    width:22px;height:22px;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:5px;
-    color:var(--text-muted);
-    cursor:pointer;
-    transition:background .12s ease,color .12s ease;
+    width:30px;height:30px; display:flex;align-items:center;justify-content:center;
+    border-radius:6px; color:var(--text-primary); cursor:pointer; border: none; background: rgba(255,255,255,0.05);
+    transition: 0.2s;
   }
-  .icon-btn:hover{background:var(--bg-deep);color:var(--accent-brass);}
-  .icon-btn.danger:hover{color:var(--accent-coral);}
+  .icon-btn:hover{color:#000; background: var(--text-primary); box-shadow: 0 0 10px rgba(255,255,255,0.5);}
+  .icon-btn:active{transform: scale(0.9);}
+  .icon-btn.danger:hover{color:#fff; background: var(--accent-coral); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);}
 
-  /* Revision */
-  .rev-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:9px 10px;
-    border-radius:7px;
-    margin-bottom:3px;
-    border-left:2px solid transparent;
-  }
-  .rev-row.overdue{border-left-color:var(--accent-coral);background:rgba(225,97,74,0.06);}
-  .rev-left{display:flex;flex-direction:column;gap:2px;min-width:0;}
-  .rev-name{font-size:13px;color:var(--text-primary);}
-  .rev-source{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-muted);}
-  .pending-badge{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    color:var(--accent-coral);
-    background:rgba(225,97,74,0.12);
-    padding:3px 8px;
-    border-radius:5px;
-    white-space:nowrap;
-    flex-shrink:0;
-  }
+  .rev-source, .list-meta {font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-secondary);}
   .due-badge{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    color:var(--text-muted);
-    white-space:nowrap;
-    flex-shrink:0;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#000;
+    background:var(--accent-brass); padding:4px 10px; border-radius:6px; white-space:nowrap; font-weight:700;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3); text-shadow: none;
+  }
+  .danger-text { color: var(--accent-coral) !important; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-coral); text-shadow: none;}
+
+  /* CA MAP - Doctor Strange Aesthetics */
+  @keyframes pulseMagic {
+      0% { filter: drop-shadow(0 0 6px var(--magic-core)); }
+      50% { filter: drop-shadow(0 0 15px var(--magic-glow)) brightness(1.3); }
+      100% { filter: drop-shadow(0 0 6px var(--magic-core)); }
   }
 
-  /* Classes / CA log rows (shared style) */
-  .list-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:10px 10px;
-    border-radius:7px;
-    margin-bottom:3px;
-    transition:background .12s ease;
+  .map-svg-wrap{background:transparent; border:1px solid var(--border); border-radius:12px; padding:6px; position:relative; overflow:hidden;}
+  .map-edge{
+      stroke:var(--magic-glow); stroke-width:1.5; opacity:0.5; fill:none;
+      transition:stroke .3s ease, opacity .3s ease, stroke-width .3s ease;
+      filter: drop-shadow(0 0 6px var(--magic-glow));
   }
-  .list-row:hover{background:var(--bg-panel-raised);}
-  .list-left{display:flex;flex-direction:column;gap:3px;min-width:0;}
-  .list-name{font-size:13px;color:var(--text-primary);}
-  .list-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);}
-  .list-actions{display:flex;gap:4px;flex-shrink:0;}
+  .map-edge.active{stroke:var(--magic-core); opacity:1; stroke-width:3; animation: pulseMagic 1.5s infinite;}
+  
+  .theme-node circle{fill:rgba(0,0,0,0.8);stroke:var(--magic-glow);stroke-width:2; filter: drop-shadow(0 0 8px var(--magic-glow)); transition:opacity .2s ease;}
+  .theme-node text{fill:var(--text-primary);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700; text-shadow: 0 0 4px #000;}
+  .theme-node.dim circle,.theme-node.dim text{opacity:0.2;}
+  
+  .topic-node{cursor:pointer;}
+  .topic-node circle{fill:rgba(255,255,255,0.1);stroke:var(--text-primary);stroke-width:1.5; transition:opacity .2s ease,stroke .2s ease; backdrop-filter: blur(2px);}
+  .topic-node text{fill:var(--text-primary);font-size:10.5px;font-family:'IBM Plex Sans',sans-serif;font-weight:600;}
+  .topic-node.dim circle,.topic-node.dim text{opacity:0.2;}
+  .topic-node.active circle{stroke:var(--magic-core); animation: pulseMagic 1.5s infinite;}
 
-  .sync-note{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin-top:10px;
-    padding-top:10px;
-    border-top:1px dashed var(--border-soft);
-    font-size:10.5px;
-    color:var(--text-muted);
-    font-family:'IBM Plex Mono',monospace;
+  /* Form Elements */
+  .form-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:140px;}
+  .field.narrow{min-width:80px;}
+  .field label{ font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;color:var(--text-secondary); letter-spacing:0.5px; font-weight:600;}
+  select,input[type=date],input[type=number],input[type=time],input[type=text]{
+    background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.2); border-radius:6px; color:var(--text-primary);
+    font-family:'IBM Plex Sans',sans-serif; font-size:13px; padding:10px 12px; outline:none; color-scheme: dark;
+    transition: 0.2s; text-shadow: none; backdrop-filter: blur(4px);
   }
-  .sync-dot{width:5px;height:5px;border-radius:50%;background:var(--accent-sage);}
+  select:focus,input:focus{border-color:var(--text-primary); box-shadow: 0 0 10px rgba(255,255,255,0.2); background: rgba(0,0,0,0.6);}
+  
+  .btn{
+    background:var(--text-primary);color:#000;border:none;border-radius:6px;
+    padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer; transition: 0.2s; height: 39px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2); text-shadow: none;
+  }
+  .btn:hover{background:#e4e4e7; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,255,255,0.4);}
+  .btn:active{transform: scale(0.95);}
+  
+  /* Data Tables */
+  .table-wrap{overflow-x:auto;margin-top:14px;border:1px solid var(--border);border-radius:10px; background: rgba(0,0,0,0.3);}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .data-table th{
+    text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10.5px; text-transform:uppercase;color:var(--text-secondary);
+    padding:12px 14px; border-bottom:1px solid var(--border);background:rgba(255,255,255,0.05); white-space:nowrap;
+  }
+  .data-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--text-primary);white-space:nowrap;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .empty-row td{color:var(--text-muted);font-style:italic;text-align:center;padding:24px;}
 
-  /* Tooltip stamp */
-  .stamp-tip{
-    position:fixed;
-    z-index:50;
-    background:var(--stamp-bg);
-    color:var(--stamp-ink);
-    border:1px solid #B9A66E;
-    border-radius:3px;
-    padding:8px 12px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    line-height:1.5;
-    box-shadow:0 6px 18px rgba(0,0,0,0.35);
-    pointer-events:none;
-    opacity:0;
-    transform:translateY(4px) rotate(-1.2deg);
-    transition:opacity .1s ease, transform .1s ease;
-    max-width:220px;
+  /* Stats/Charts */
+  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
+  .chart-card{
+      background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;padding:16px; 
+      transition: transform 0.3s ease, box-shadow 0.3s ease; backdrop-filter: blur(8px);
   }
-  .stamp-tip.show{opacity:1;transform:translateY(0) rotate(-1.2deg);}
-  .stamp-tip .stamp-label{
-    text-transform:uppercase;
-    letter-spacing:1px;
-    font-size:9px;
-    color:#7A6A3E;
-    display:block;
-    margin-bottom:3px;
-    border-bottom:1px solid #C9BB8A;
-    padding-bottom:3px;
+  .chart-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .chart-card h4{ font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-transform:uppercase; color:var(--text-secondary);margin-bottom:12px; font-weight:600;}
+  .chart-box{position:relative;height:220px;}
+
+  /* STAT CARDS */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+  .stat-card{
+      background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;
+      padding:24px; text-align: center; transition: transform 0.3s, box-shadow 0.3s;
+      backdrop-filter: blur(8px);
   }
-  .stamp-tip .stamp-date{font-weight:500;font-size:13px;}
+  .stat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3); }
+  .stat-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;letter-spacing:0.5px; font-weight:600;}
+  .stat-value{font-family:'IBM Plex Sans',sans-serif;font-weight:700;font-size:32px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
+  .stat-value.brass{color:var(--accent-brass);}
+  .stat-value.coral{color:var(--text-muted);}
+  .stat-value.sage{color:var(--accent-sage);}
+  .stat-sub{font-size:11px;color:var(--text-secondary);margin-top:6px;}
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+  }
+  .modal-card {
+    background: rgba(15, 15, 20, 0.85); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
+    padding: 28px; width: 640px; max-width: 90vw; animation: slideUpFade 0.4s cubic-bezier(0.2,0.8,0.2,1) forwards;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+  }
+  .theme-checkbox-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 24px 0;
+    max-height: 45vh; overflow-y: auto; padding-right: 8px;
+  }
+  .theme-option {
+    display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .theme-option:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); transform: translateY(-1px);}
+  .theme-option input { accent-color: var(--accent-brass); width: 16px; height: 16px; cursor: pointer;}
+
+  .view{display:none;}
+  .view.active{display:block;}
+  
+  .page-head{margin-bottom:20px;}
+  .page-title{font-weight:700;font-size:24px;margin-bottom:6px; letter-spacing: -0.5px;}
+  .page-sub{font-size:13.5px;color:var(--text-secondary); line-height: 1.5;}
+
+  /* Dense Flower Shower */
+  .flower { 
+      position: fixed; top: -50px; z-index: 9999; user-select: none; pointer-events: none; 
+      animation: fall linear forwards; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  }
+  @keyframes fall { 
+      0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 1; } 
+      10% { transform: translateY(10vh) rotate(30deg) scale(1.2); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg) scale(1); opacity: 0; } 
+  }
 </style>
 </head>
 <body>
+
+<!-- Animated Cosmos Background -->
+<div id="cosmos-background">
+  <div class="celestial-sun"></div>
+  <div class="celestial-moon"></div>
+  <div class="aurora-flame low"></div>
+  <div class="aurora-flame medium"></div>
+  <div class="aurora-flame high"></div>
+</div>
+<div id="star-container"></div>
+
 <div class="app">
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="brand">
-      <span class="brand-mark">Prayas</span>
-      <span class="brand-sub">desk</span>
+    <div class="sidebar-top">
+      <div class="brand">
+        <span class="brand-logo">P</span>
+        <span class="brand-mark">Prayas</span>
+      </div>
+      <span class="collapse-btn" id="collapseBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </span>
     </div>
     <div class="nav" id="nav"></div>
-    <div class="sidebar-foot">v0.4 &middot; build in progress<br>more panels coming soon</div>
   </div>
 
+  <!-- TOP BAR -->
   <div class="topbar">
     <div class="quote-strip">
       <span class="quote-mark">&ldquo;</span>
-      <span class="quote-text" id="quoteText"></span>
-      <span class="quote-author" id="quoteAuthor"></span>
+      <span class="quote-text" id="quoteText">Loading...</span>
     </div>
     <div class="profile-block">
-      <div class="streak-pill" id="streakPill">21 day streak</div>
+      <span class="top-study-badge" id="top-study-time">📚 Study: 0.0 hrs</span>
+      <div class="streak-pill">🔥 21 day streak</div>
       <div class="profile-meta">
         <div class="profile-name">Aditi Kumar</div>
-        <div class="profile-login" id="loginTime"></div>
+        <div class="profile-login">Last login: Today</div>
       </div>
       <div class="avatar">AK</div>
     </div>
   </div>
 
-  <div class="main">
-    <div class="board">
-
-      <!-- LEFT COLUMN -->
-      <div class="col">
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-title">Revision</span>
-            <span class="panel-count">6 due &middot; spaced repetition</span>
+  <!-- MAIN AREA -->
+  <div class="main" id="main">
+    
+    <!-- HOME (VIEW 1) -->
+    <div class="view active" id="view-1" data-view="1">
+      <div class="board">
+        <div class="col">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Revision Window</span>
+              <button class="icon-btn" onclick="openLogModal('revisionList', 'Log Revision Task')" title="Add Revision">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+            </div>
+            <div class="panel-body" id="revisionList"></div>
           </div>
-          <div class="panel-body" id="revisionList"></div>
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Classes Scheduled</span>
+              <button class="icon-btn" onclick="openLogModal('classesList', 'Log Scheduled Class')" title="Add Class">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+            </div>
+            <div class="panel-body" id="classesList"></div>
+          </div>
         </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-title">Classes pending</span>
-            <span class="panel-count">5 scheduled</span>
+        <div class="col">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Today's Targets</span>
+              <button class="icon-btn" onclick="addQuickTask('tasksList')" title="Add Target">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+            </div>
+            <div class="panel-body">
+                <div id="tasksLoader">
+                   <div class="skeleton-row">
+                     <div class="skeleton" style="width:30%; height:14px;"></div>
+                     <div class="skeleton" style="width:100%; height:36px;"></div>
+                   </div>
+                </div>
+                <div id="tasksList"></div>
+            </div>
           </div>
-          <div class="panel-body" id="classesList"></div>
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Read in CA today</span>
+              <button class="icon-btn" onclick="openLogModal('caList', 'Log CA Node')" title="Log CA Node">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+            </div>
+            <div class="panel-body" id="caList"></div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- RIGHT COLUMN -->
-      <div class="col">
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-title">Today's tasks</span>
-            <span class="panel-count" id="taskCount"></span>
+    <!-- EMT 2: ADD TASK FOR AHEAD -->
+    <div class="view" id="view-2" data-view="2">
+      <div class="page-head"><div class="page-title">Add Target For Ahead</div></div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Subject</label>
+              <select id="atSubject">
+                  <option value="GS">General Studies</option>
+                  <option value="OP">Optional (Anthropology)</option>
+                  <option value="CA">Current Affairs</option>
+              </select>
+            </div>
+            <div class="field" style="flex: 2;">
+              <label>Topic / Theme Entry</label>
+              <input type="text" id="atTopic" placeholder="Enter custom topic or syllabus theme..." style="width:100%;">
+            </div>
+            <div class="field narrow">
+              <label>Start date</label>
+              <input type="date" id="atDate">
+            </div>
+            <button class="btn" id="atAddBtn">Schedule</button>
           </div>
-          <div class="panel-body" id="tasksList"></div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-title">Read in CA today</span>
-            <span class="panel-count" id="caCount"></span>
-          </div>
-          <div class="panel-body">
-            <div id="caList"></div>
-            <div class="sync-note"><span class="sync-dot"></span>Every entry here queues itself into Revision on its spaced-repetition date</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Custom Task</th><th>Subject</th><th>Due date</th><th>Actions</th></tr></thead>
+              <tbody id="atTableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- EMT 3: KNOWLEDGE MAP -->
+    <div class="view" id="view-3" data-view="3">
+      <div class="page-head">
+        <div class="page-title">CA Map</div>
+        <div class="page-sub">Tracing sparks of connection across the 20 Core Themes.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="map-svg-wrap">
+            <svg id="caMapSvg" viewBox="0 0 720 560" style="width:100%;height:560px;">
+              <!-- Magic Glow Defs applied via JS -->
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMT 4: TIME USAGE -->
+    <div class="view" id="view-4" data-view="4">
+      <div class="page-head"><div class="page-title">Temporal Accounting</div></div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field" style="flex:2;">
+              <label>Activity Log</label>
+              <select id="tuActivity"></select>
+            </div>
+            <div class="field narrow"><label>From</label><input type="time" id="tuFrom" value="08:00"></div>
+            <div class="field narrow"><label>To</label><input type="time" id="tuTo" value="10:30"></div>
+            <button class="btn" id="tuAddBtn">Commit Time</button>
+          </div>
+          <div id="tuLogList" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMT 5: MAINS SCORE -->
+    <div class="view" id="view-5" data-view="5">
+      <div class="page-head"><div class="page-title">Mains Analytics</div></div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field">
+              <label>Test Type</label>
+              <select id="msTest">
+                  <option>GS 1 FLT</option><option>GS 2 FLT</option><option>GS 3 FLT</option><option>GS 4 FLT</option>
+                  <option>Essay Full Length</option><option>Geography Sectional</option><option>Polity Sectional</option>
+                  <option>Optional Paper 1</option><option>Optional Paper 2</option>
+              </select>
+            </div>
+            <div class="field narrow"><label>Date</label><input type="date" id="msDate"></div>
+            <div class="field narrow"><label>Score (%)</label><input type="number" id="msScore" min="0" max="100" placeholder="e.g. 45"></div>
+            <div class="field" style="flex:2;">
+              <label>Weak Theme (Manual Entry)</label>
+              <input type="text" id="msTheme" placeholder="Type weak concept...">
+            </div>
+            <button class="btn" id="msAddBtn">Log Analytics</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Test Engine</th><th>Date</th><th>Score %</th><th>Identified Weakness</th><th>Actions</th></tr></thead>
+              <tbody id="msTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMT 6: PRELIMS SCORE (Advanced Engine) -->
+    <div class="view" id="view-6" data-view="6">
+      <div class="page-head"><div class="page-title">Prelims Tactical Engine</div></div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field" style="flex:1;"><label>Simulation ID / Name</label><input type="text" id="psName" placeholder="e.g. Vision FLT 1"></div>
+            <div class="field"><label>Test Format</label>
+                <select id="psFormat"><option value="FLT">FLT (200m)</option><option value="HLT">HLT (100m)</option><option value="Sectional">Sectional (100m)</option></select>
+            </div>
+            <div class="field"><label>Primary Subject</label>
+                <select id="psSubject"><option>ALL Integrated</option><option>Polity</option><option>Geography</option><option>Economy</option><option>History</option><option>Environment</option><option>Sci & Tech</option></select>
+            </div>
+            <div class="field narrow"><label>Date</label><input type="date" id="psDate"></div>
+          </div>
+          
+          <div class="subhead" style="margin-top:20px; color: var(--accent-brass);">1. Overall Performance (Count)</div>
+          <div class="form-row">
+            <div class="field"><label>Total Correct</label><input type="number" id="psCorrect" placeholder="e.g. 55" min="0" max="100"></div>
+            <div class="field"><label>Total Incorrect</label><input type="number" id="psIncorrect" placeholder="e.g. 25" min="0" max="100"></div>
+          </div>
+
+          <div class="subhead" style="margin-top:20px; color: var(--accent-brass);">2. Subject Micro-Accuracies (%)</div>
+          <div class="form-row" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+            <div class="field"><label>Polity %</label><input type="number" class="sub-acc" id="psPol" placeholder="%"></div>
+            <div class="field"><label>Geography %</label><input type="number" class="sub-acc" id="psGeo" placeholder="%"></div>
+            <div class="field"><label>History %</label><input type="number" class="sub-acc" id="psHis" placeholder="%"></div>
+            <div class="field"><label>Economy %</label><input type="number" class="sub-acc" id="psEco" placeholder="%"></div>
+            <div class="field"><label>Environment %</label><input type="number" class="sub-acc" id="psEnv" placeholder="%"></div>
+            <div class="field"><label>Sci & Tech %</label><input type="number" class="sub-acc" id="psSci" placeholder="%"></div>
+            <div class="field"><label>Current Aff %</label><input type="number" class="sub-acc" id="psCa" placeholder="%"></div>
+          </div>
+          
+          <div style="margin-top: 20px; text-align: right;">
+              <button class="btn" id="psAddAdvBtn">Process & Calculate Log</button>
+          </div>
+
+          <div class="table-wrap" style="margin-top: 25px;">
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>Simulation ID</th><th>Format</th><th>Sub</th><th>Correct</th><th>Incorrect</th><th>Final Marks</th><th>Danger Zone (<40%)</th><th>Del</th></tr></thead>
+              <tbody id="psAdvTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMT 7: STATISTICS -->
+    <div class="view" id="view-7" data-view="7">
+      <div class="page-head"><div class="page-title">Statistics Vault</div></div>
+      <div class="panel">
+        <div class="panel-body placeholder-view">
+            <strong>System Awaiting Data Volume</strong>
+            <span>Complex heatmaps and trend models require 14 days of sustained logs to generate accurate models. Keep grinding.</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="stamp-tip" id="stampTip">
-  <span class="stamp-label">Next revision</span>
-  <span class="stamp-date" id="stampDate">—</span>
+<!-- UNIFIED LOG MODAL -->
+<div class="modal-overlay" id="logModalOverlay">
+  <div class="modal-card">
+    <div class="modal-title">
+      <span id="logModalTitle">Log Entry</span>
+      <button class="icon-btn" onclick="closeLogModal()">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:18px;">
+      <label style="font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--text-secondary); text-transform:uppercase;">Topic / Target Name</label>
+      <input type="text" id="logModalTopicInput" placeholder="e.g. Fundamental Rights Mapping" style="width:100%;">
+    </div>
+    <label style="font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--text-secondary); text-transform:uppercase;">Map to 20 Core Syllabus Themes</label>
+    <div class="theme-checkbox-grid" id="themeCheckboxGrid"></div>
+    <div style="display:flex; justify-content:flex-end; gap:12px;">
+      <button class="btn-ghost" onclick="closeLogModal()">Cancel</button>
+      <button class="btn" onclick="submitLogModal()">Log & Plot Task</button>
+    </div>
+  </div>
 </div>
 
 <script>
+/* ---------------- Cosmos Engine (Stars, Meteors, Supernovas) ---------------- */
+function initCosmos() {
+    const container = document.getElementById('star-container');
+    
+    // 1. Ambient Dense Starfield (400 stars)
+    for(let i=0; i<400; i++) {
+        let star = document.createElement('div');
+        star.className = 'ambient-star';
+        let size = Math.random() * 2.5 + 0.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = (Math.random() * 120) - 20 + 'vh'; 
+        star.style.animationDuration = (Math.random() * 80 + 30) + 's';
+        star.style.opacity = Math.random() * 0.8 + 0.1;
+        
+        // Add faint twinkle to some stars
+        if(Math.random() > 0.8) {
+            star.style.boxShadow = `0 0 ${Math.random()*4+2}px rgba(255,255,255,0.8)`;
+        }
+        container.appendChild(star);
+    }
+    
+    // 2. Heavy Meteor Shower (Every 400ms)
+    setInterval(() => {
+        let shoot = document.createElement('div');
+        shoot.className = 'shooting-star';
+        
+        // Randomize Origin (Top Edge or Right Edge)
+        if (Math.random() > 0.5) {
+            shoot.style.left = (Math.random() * 150) + 'vw';
+            shoot.style.top = '-10vh';
+        } else {
+            shoot.style.left = '110vw';
+            shoot.style.top = (Math.random() * 80) + 'vh';
+        }
+        
+        shoot.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+        container.appendChild(shoot);
+        setTimeout(() => shoot.remove(), 2000);
+    }, 400);
+
+    // 3. Supernova Explosions (Every 6 seconds)
+    setInterval(() => {
+        let nova = document.createElement('div');
+        nova.className = 'supernova';
+        nova.style.left = (Math.random() * 80 + 10) + 'vw';
+        nova.style.top = (Math.random() * 80 + 10) + 'vh';
+        container.appendChild(nova);
+        setTimeout(() => nova.remove(), 4000);
+    }, 6000);
+}
+initCosmos();
+
 const ICONS = {
-  edit:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
-  trash:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
+  trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+  calendar: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>'
 };
 
-function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
-function fmt(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
-function fmtFull(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
-
 const today = new Date();
+const todayStr = today.toISOString().slice(0,10);
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
 
-/* simplified SM-2 style interval ladder */
-const SM2_STAGES = [1,3,7,14,30,90];
-function nextReview(addedDaysAgo, stage){
-  const addedDate = addDays(today, -addedDaysAgo);
-  return addDays(addedDate, SM2_STAGES[stage]);
-}
-
-/* ---------------- sidebar ---------------- */
+/* Sidebar Nav Setup */
+const NAV_ICONS = [
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>'
+];
+const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault'];
 const nav = document.getElementById('nav');
-for(let i=1;i<=10;i++){
+NAV_ITEMS.forEach((label,idx)=>{
   const el = document.createElement('div');
-  el.className = 'nav-item' + (i===1?' active':'');
-  el.innerHTML = `<span class="nav-dot"></span><span>Emt ${i}</span>`;
+  el.className = 'nav-item' + (idx===0?' active':'');
+  el.dataset.view = idx+1;
+  el.innerHTML = `<span class="nav-icon">${NAV_ICONS[idx]}</span><span class="nav-label">${label}</span>`;
   nav.appendChild(el);
-}
+});
 
-/* ---------------- top bar ---------------- */
-const QUOTES = [
-  ["Discipline is choosing between what you want now and what you want most.","Anon"],
-  ["The exam does not test what you know. It tests what you can recall under pressure.","Study notes"],
-  ["Small revisions daily beat one large revision monthly.","Study notes"],
-  ["Consistency is a syllabus of its own.","Anon"],
-  ["You don't rise to the level of your goals, you fall to the level of your systems.","James Clear"],
-  ["Read less, revise more.","Toppers' wisdom"],
-  ["Every page you revise today is a mark you don't lose tomorrow.","Anon"]
-];
-const dayIndex = Math.floor(today.getTime()/86400000) % QUOTES.length;
-document.getElementById('quoteText').textContent = QUOTES[dayIndex][0];
-document.getElementById('quoteAuthor').textContent = '— ' + QUOTES[dayIndex][1];
-
-document.getElementById('loginTime').textContent = 'Last login: Today, 7:42 AM';
-
-/* ---------------- tooltip ---------------- */
-const tip = document.getElementById('stampTip');
-const tipDate = document.getElementById('stampDate');
-function showTip(e,dateObj){
-  tipDate.textContent = fmtFull(dateObj);
-  tip.classList.add('show');
-  moveTip(e);
-}
-function moveTip(e){
-  tip.style.left = (e.clientX + 16) + 'px';
-  tip.style.top = (e.clientY + 16) + 'px';
-}
-function hideTip(){ tip.classList.remove('show'); }
-
-function attachTooltip(el, dateObj){
-  el.addEventListener('mouseenter', (e)=>showTip(e,dateObj));
-  el.addEventListener('mousemove', moveTip);
-  el.addEventListener('mouseleave', hideTip);
-}
-
-/* ---------------- today's tasks ---------------- */
-const TASK_GROUPS = [
-  {key:'gs', label:'General studies', tagClass:'tag-gs', items:[
-    {name:'Modern history — ch.5 notes', due:0, addedDaysAgo:5, stage:2},
-    {name:'Polity — fundamental rights MCQs', due:1, addedDaysAgo:2, stage:1},
-    {name:'Geography — monsoon mechanism', due:2, addedDaysAgo:0, stage:0}
-  ]},
-  {key:'op', label:'Optional — public administration', tagClass:'tag-op', items:[
-    {name:'Classical theory — essay draft', due:0, addedDaysAgo:4, stage:1},
-    {name:'Case study — good governance', due:1, addedDaysAgo:1, stage:0},
-    {name:'Previous year Qs — unit 3', due:2, addedDaysAgo:6, stage:2}
-  ]},
-  {key:'ca', label:'Current affairs', tagClass:'tag-ca', items:[
-    {name:'Editorial — RBI monetary policy', due:0, addedDaysAgo:0, stage:0},
-    {name:'Daily current affairs quiz', due:1, addedDaysAgo:0, stage:0},
-    {name:'PIB summary — Aug 15', due:2, addedDaysAgo:1, stage:0}
-  ]}
-];
-const tasksList = document.getElementById('tasksList');
-let totalTasks = 0;
-TASK_GROUPS.forEach(group=>{
-  const h = document.createElement('div');
-  h.className = 'subhead';
-  h.innerHTML = `<span class="subhead-tag ${group.tagClass}">${group.key.toUpperCase()}</span><span>${group.label}</span>`;
-  tasksList.appendChild(h);
-  group.items.forEach(item=>{
-    totalTasks++;
-    const row = document.createElement('div');
-    row.className = 'task-row';
-    const dueDate = addDays(today, item.due);
-    const dueLabel = item.due===0 ? 'Today' : item.due===1 ? 'Tomorrow' : fmt(dueDate);
-    row.innerHTML = `
-      <div class="task-left">
-        <span class="task-check"></span>
-        <span class="task-name">${item.name}</span>
-      </div>
-      <div class="task-right">
-        <span class="task-due">${dueLabel}</span>
-        <span class="icon-btn" title="Edit task">${ICONS.edit}</span>
-      </div>`;
-    tasksList.appendChild(row);
-    attachTooltip(row, nextReview(item.addedDaysAgo, item.stage));
+nav.addEventListener('click',(e)=>{
+  const item = e.target.closest('.nav-item');
+  if(!item) return;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  item.classList.add('active');
+  const target = item.dataset.view;
+  document.querySelectorAll('.view').forEach(v=>{
+      v.classList.remove('active');
+      if(v.dataset.view === target) {
+          v.classList.add('active');
+          const panels = v.querySelectorAll('.panel');
+          panels.forEach(p => { p.style.animation = 'none'; p.offsetHeight; p.style.animation = null; });
+      }
   });
+  document.getElementById('main').scrollTop = 0;
+  if(target==='3') renderCAMap();
 });
-document.getElementById('taskCount').textContent = totalTasks + ' today';
+document.getElementById('collapseBtn').addEventListener('click', ()=>document.querySelector('.app').classList.toggle('collapsed'));
 
-/* ---------------- revision panel ---------------- */
-const REVISION = [
-  {name:'Modern history — revolt of 1857', source:'from GS log', pendingDays:3},
-  {name:'Ecology — biodiversity hotspots', source:'from GS log', pendingDays:3},
-  {name:'Chandrayaan mission update', source:'from CA log · Aug 10', pendingDays:3},
-  {name:'Polity — DPSP', source:'from GS log', due:0},
-  {name:'Geography — ocean currents', source:'from GS log', due:2},
-  {name:'Public admin — new public management', source:'from OP log', due:4}
-];
-const revisionList = document.getElementById('revisionList');
-REVISION.forEach(item=>{
-  const row = document.createElement('div');
-  row.className = 'rev-row' + (item.pendingDays ? ' overdue' : '');
-  const right = item.pendingDays
-    ? `<span class="pending-badge">Pending ${item.pendingDays} days</span>`
-    : `<span class="due-badge">${item.due===0?'Due today':'Due ' + fmt(addDays(today,item.due))}</span>`;
-  row.innerHTML = `
-    <div class="rev-left">
-      <span class="rev-name">${item.name}</span>
-      <span class="rev-source">${item.source}</span>
-    </div>
-    ${right}`;
-  revisionList.appendChild(row);
-});
+/* Quotes */
+document.getElementById('quoteText').textContent = "Clear thinking becomes clear writing; one can't exist without the other.";
 
-/* ---------------- classes pending ---------------- */
-const CLASSES = [
-  {name:'GS mentorship — mains answer writing', due:'Tomorrow, 5:00 PM'},
-  {name:'Optional class — public admin paper 2', due:'Aug 19, 6:30 PM'},
-  {name:'CA weekly discussion', due:'Aug 20, 8:00 PM'},
-  {name:'Essay writing workshop', due:'Aug 22, 4:00 PM'},
-  {name:'Interview guidance session', due:'Aug 24, 11:00 AM'}
+/* Unified Row Interactions with Dense Flowers */
+function bindInteractions(row) {
+    const checkEl = row.querySelector('.task-check');
+    if(checkEl) {
+        checkEl.addEventListener('click', ()=>{
+            const isChecked = checkEl.classList.toggle('checked');
+            row.querySelector('.task-name').classList.toggle('done');
+            if(isChecked) {
+                const flowers = ['🌸', '🌼', '🌺', '🌻', '🌷', '💮']; 
+                for(let i=0; i<80; i++) { // Massive Flower Burst
+                    setTimeout(() => {
+                        const f = document.createElement('div'); f.className = 'flower';
+                        f.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+                        f.style.left = Math.random() * 100 + 'vw';
+                        f.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                        f.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                        document.body.appendChild(f);
+                        setTimeout(() => f.remove(), 4000);
+                    }, i * 20); // Faster spawn rate
+                }
+            }
+        });
+    }
+    const delBtn = row.querySelector('.icon-btn.danger');
+    if (delBtn) delBtn.addEventListener('click', () => { row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300); });
+    
+    const reschedBtn = row.querySelector('.icon-btn[title="Reschedule"]');
+    if (reschedBtn) {
+        reschedBtn.style.position = 'relative'; reschedBtn.style.overflow = 'hidden';
+        const dateInput = document.createElement('input');
+        dateInput.type = 'date'; dateInput.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;color-scheme:dark;';
+        dateInput.addEventListener('change', (e) => { if(e.target.value) { row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300); } });
+        reschedBtn.appendChild(dateInput);
+    }
+}
+
+/* ================= 20 CUSTOM CA THEMES ================= */
+const THEMES = [
+  'History & Culture', 'Society & Social Change', 'Geography & Resources', 'Environment & Ecology',
+  'Climate Change & Sustainability', 'Agriculture & Rural Development', 'Economy & Inclusive Growth',
+  'Infrastructure & Industrialisation', 'Science, Technology & Innovation', 'Constitution & Polity',
+  'Governance & Administration', 'Social Justice & Welfare', 'Ethics, Integrity & Values',
+  'Internal Security', 'Disaster Management & Resilience', 'International Relations & Global Order',
+  'Human Development & Demography', 'Democracy, Rights & Justice', 'Development & Transformation', 'Philosophy, Ideas & Essay Themes'
 ];
-const classesList = document.getElementById('classesList');
-CLASSES.forEach(c=>{
+
+let CA_TOPICS = []; 
+
+/* Unified Modal Logic */
+let currentActiveListId = '';
+function setupThemeGrid() {
+  const grid = document.getElementById('themeCheckboxGrid');
+  THEMES.forEach((theme, index) => {
+    grid.innerHTML += `<label class="theme-option"><input type="checkbox" value="${index}"><span>${theme}</span></label>`;
+  });
+}
+setupThemeGrid();
+
+window.openLogModal = function(listId, title) {
+  currentActiveListId = listId;
+  document.getElementById('logModalTitle').innerText = title;
+  document.getElementById('logModalTopicInput').value = '';
+  document.querySelectorAll('#themeCheckboxGrid input').forEach(cb => cb.checked = false);
+  document.getElementById('logModalOverlay').style.display = 'flex';
+}
+window.closeLogModal = () => document.getElementById('logModalOverlay').style.display = 'none';
+
+window.submitLogModal = function() {
+  const topicName = document.getElementById('logModalTopicInput').value.trim();
+  if(!topicName) return;
+
+  const selectedThemes = Array.from(document.querySelectorAll('#themeCheckboxGrid input:checked')).map(cb => Number(cb.value));
+
+  if(selectedThemes.length > 0) {
+    CA_TOPICS.push({ name: topicName, themes: selectedThemes });
+    renderCAMap();
+  }
+
+  const list = document.getElementById(currentActiveListId);
   const row = document.createElement('div');
-  row.className = 'list-row';
+  row.className = currentActiveListId === 'tasksList' ? 'task-row animate-row' : 'list-row animate-row';
+  
+  let meta = "Due today";
+  if(currentActiveListId === 'classesList') meta = "Scheduled";
+  if(currentActiveListId === 'caList') meta = "Read just now";
+  if(selectedThemes.length > 0 && currentActiveListId !== 'tasksList') meta += ` · Mapped to ${selectedThemes.length} Theme(s)`;
+
   row.innerHTML = `
-    <div class="list-left">
-      <span class="list-name">${c.name}</span>
-      <span class="list-meta">${c.due}</span>
+    <div class="task-left">
+      <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <span class="task-name">${topicName}</span>
+        ${currentActiveListId !== 'tasksList' ? `<span class="list-meta">${meta}</span>` : ''}
+      </div>
     </div>
-    <div class="list-actions">
-      <span class="icon-btn" title="Edit class">${ICONS.edit}</span>
-      <span class="icon-btn danger" title="Delete class">${ICONS.trash}</span>
+    <div class="task-right">
+      ${currentActiveListId === 'tasksList' ? '<span class="task-due">Today</span>' : ''}
+      <button class="icon-btn" title="Reschedule">${ICONS.calendar}</button>
+      <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
     </div>`;
-  classesList.appendChild(row);
+  list.appendChild(row);
+  bindInteractions(row);
+  closeLogModal();
+}
+
+/* ================= EMT 2 — SHARED MEMORY PLANNED TASKS ================= */
+let plannedTasks = [
+  { id: 101, subject: 'GS', topic: 'Modern history — ch.5 notes', date: todayStr },
+  { id: 102, subject: 'GS', topic: 'Polity — fundamental rights MCQs', date: todayStr },
+  { id: 103, subject: 'OP', topic: 'Classical theory — essay draft', date: todayStr }
+];
+let atIdSeq = 200;
+const atTableBody = document.getElementById('atTableBody');
+document.getElementById('atDate').value = todayStr;
+
+function renderPlannedTasks(){
+  atTableBody.innerHTML = '';
+  if(plannedTasks.length===0){ atTableBody.innerHTML = `<tr class="empty-row"><td colspan="4">No future tasks scheduled.</td></tr>`; return; }
+  plannedTasks.sort((a,b)=> a.date.localeCompare(b.date));
+  plannedTasks.forEach(t=>{
+    const tr = document.createElement('tr');
+    tr.className = 'animate-row';
+    tr.innerHTML = `<td>${t.topic}</td><td><span class="subhead-tag">${t.subject}</span></td>
+      <td><input type="date" value="${t.date}" data-id="${t.id}" class="at-date-edit" style="height:30px;font-size:12px;"></td>
+      <td class="actions-cell"><button class="icon-btn danger at-del" data-id="${t.id}">${ICONS.trash}</button></td>`;
+    atTableBody.appendChild(tr);
+  });
+}
+
+document.getElementById('atAddBtn').addEventListener('click', ()=>{
+  const topic = document.getElementById('atTopic').value.trim();
+  const date = document.getElementById('atDate').value;
+  if(!topic || !date) return;
+  plannedTasks.push({ id: atIdSeq++, subject: document.getElementById('atSubject').value, topic, date });
+  renderPlannedTasks(); 
+  renderTodayTasksList(); 
+  document.getElementById('atTopic').value = '';
 });
 
-/* ---------------- CA read today ---------------- */
-const CA_LOG = [
-  {name:'The Hindu editorial — India-EU trade', time:'Read 8:10 AM', stage:0},
-  {name:'PIB — new education policy update', time:'Read 9:45 AM', stage:0},
-  {name:'Down to earth — climate report', time:'Read 11:20 AM', stage:0},
-  {name:'Indian Express — economic survey excerpt', time:'Read 1:15 PM', stage:0}
-];
-const caList = document.getElementById('caList');
-CA_LOG.forEach(c=>{
-  const row = document.createElement('div');
-  row.className = 'list-row';
-  row.innerHTML = `
-    <div class="list-left">
-      <span class="list-name">${c.name}</span>
-      <span class="list-meta">${c.time}</span>
-    </div>
-    <div class="list-actions">
-      <span class="icon-btn" title="Edit entry">${ICONS.edit}</span>
-      <span class="icon-btn danger" title="Delete entry">${ICONS.trash}</span>
-    </div>`;
-  caList.appendChild(row);
-  attachTooltip(row, nextReview(0, c.stage));
+atTableBody.addEventListener('click',(e)=>{
+  const del = e.target.closest('.at-del');
+  if(del){ 
+      plannedTasks = plannedTasks.filter(t => t.id !== Number(del.dataset.id)); 
+      renderPlannedTasks(); 
+      renderTodayTasksList(); 
+  }
 });
-document.getElementById('caCount').textContent = CA_LOG.length + ' entries';
+atTableBody.addEventListener('change',(e)=>{
+  if(e.target.classList.contains('at-date-edit')){
+    const id = Number(e.target.dataset.id);
+    const t = plannedTasks.find(x=>x.id===id);
+    if(t) t.date = e.target.value;
+    renderPlannedTasks();
+    renderTodayTasksList(); 
+  }
+});
+renderPlannedTasks();
+
+/* ---------------- Home: Today's Tasks Engine ---------------- */
+function renderTodayTasksList() {
+    const list = document.getElementById('tasksList');
+    if(!list) return;
+    
+    const todaysTasks = plannedTasks.filter(t => t.date === todayStr);
+    const groups = { GS: [], OP: [], CA: [] };
+    todaysTasks.forEach(t => { if(groups[t.subject]) groups[t.subject].push(t); });
+    
+    let html = '';
+    const labels = { GS: 'General Studies', OP: 'Optional', CA: 'Current Affairs' };
+    const tags = { GS: 'tag-gs', OP: 'tag-op', CA: 'tag-ca' };
+    
+    ['GS', 'OP', 'CA'].forEach(key => {
+        if(groups[key].length > 0) {
+            html += `<div class="subhead animate-row"><span class="subhead-tag ${tags[key]}">${key}</span><span>${labels[key]}</span></div>`;
+            groups[key].forEach(item => {
+                html += `
+                  <div class="task-row animate-row" data-id="${item.id}">
+                    <div class="task-left">
+                      <span class="task-check" title="Mark complete"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                      <span class="task-name">${item.topic}</span>
+                    </div>
+                    <div class="task-right">
+                      <span class="task-due">Today</span>
+                      <button class="icon-btn" title="Reschedule">${ICONS.calendar}</button>
+                      <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
+                    </div>
+                  </div>`;
+            });
+        }
+    });
+    
+    if(todaysTasks.length === 0) {
+        html = `<div class="animate-row" style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No targets mapped for today.</div>`;
+    }
+    list.innerHTML = html;
+    
+    list.querySelectorAll('.task-row').forEach(row => {
+       bindInteractions(row);
+       const delBtn = row.querySelector('.icon-btn.danger');
+       if(delBtn) {
+           delBtn.addEventListener('click', () => {
+               const id = Number(row.dataset.id);
+               plannedTasks = plannedTasks.filter(t => t.id !== id);
+               renderPlannedTasks(); 
+           });
+       }
+    });
+}
+
+function renderTasksWithDelay() {
+    const loader = document.getElementById('tasksLoader');
+    setTimeout(() => {
+        if(loader) loader.style.display = 'none';
+        renderTodayTasksList();
+    }, 1200); 
+}
+renderTasksWithDelay();
+
+window.addQuickTask = function(listId) {
+    const taskName = prompt("Enter new target name:");
+    if (!taskName || taskName.trim() === "") return;
+
+    if (listId === 'tasksList') {
+        plannedTasks.push({ id: atIdSeq++, subject: 'GS', topic: taskName, date: todayStr });
+        const loader = document.getElementById('tasksLoader');
+        if(loader) loader.style.display = 'none';
+        renderPlannedTasks(); 
+        renderTodayTasksList(); 
+    } 
+};
+
+/* ================= CA MAP (Dr. Strange) ================= */
+function polar(cx,cy,r,angle){ return [cx + r*Math.cos(angle), cy + r*Math.sin(angle)]; }
+function renderCAMap() {
+  const mapSvg = document.getElementById('caMapSvg');
+  if(!mapSvg) return;
+  const CX = 360, CY = 280, THEME_R = 220, TOPIC_R = 100;
+
+  const themePos = THEMES.map((t,i)=>{
+    const angle = (Math.PI*2 * i / THEMES.length) - Math.PI/2;
+    const [x,y] = polar(CX,CY,THEME_R,angle);
+    return {x,y,label:t};
+  });
+  const topicPos = CA_TOPICS.map((t,i)=>{
+    const angle = (Math.PI*2 * i / CA_TOPICS.length) - Math.PI/2 + 0.3;
+    const [x,y] = polar(CX,CY,TOPIC_R,angle);
+    return {x,y,name:t.name,themes:t.themes};
+  });
+
+  let svgMarkup = `<defs>
+    <filter id="magicGlowMap" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>`;
+
+  topicPos.forEach((tp,ti)=>{
+    tp.themes.forEach(themeIdx=>{
+      const th = themePos[themeIdx];
+      svgMarkup += `<line class="map-edge" data-topic="${ti}" data-theme="${themeIdx}" x1="${tp.x}" y1="${tp.y}" x2="${th.x}" y2="${th.y}" filter="url(#magicGlowMap)"/>`;
+    });
+  });
+  themePos.forEach((th,i)=>{
+    const formattedLabel = th.label.replace(' & ', '|').replace(', ', '|');
+    svgMarkup += `<g class="theme-node" data-theme="${i}">
+      <circle cx="${th.x}" cy="${th.y}" r="22"/>
+      <text x="${th.x}" y="${th.y}" text-anchor="middle" dominant-baseline="middle">${formattedLabel}</text>
+    </g>`;
+  });
+  topicPos.forEach((tp,i)=>{
+    const words = tp.name.split(' ');
+    svgMarkup += `<g class="topic-node" data-topic="${i}">
+      <circle cx="${tp.x}" cy="${tp.y}" r="20"/>
+      <text x="${tp.x}" y="${tp.y}" text-anchor="middle" dominant-baseline="middle">${words.length>2 ? words.slice(0,2).join(' ')+'…' : tp.name}</text>
+    </g>`;
+  });
+  mapSvg.innerHTML = svgMarkup;
+
+  mapSvg.querySelectorAll('.theme-node text').forEach(t=>{
+    const parts = t.textContent.split('|'); t.textContent = '';
+    parts.forEach((p,i)=>{
+      const tspan = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+      tspan.setAttribute('x', t.getAttribute('x'));
+      const offset = parts.length === 1 ? 0 : (i === 0 ? -(parts.length-1)*5 : 10);
+      tspan.setAttribute('dy', offset); tspan.textContent = p; t.appendChild(tspan);
+    });
+  });
+
+  mapSvg.querySelectorAll('.topic-node').forEach(node=>{
+    const idx = Number(node.dataset.topic);
+    node.addEventListener('mouseenter', ()=>{
+      const relatedThemes = new Set(topicPos[idx].themes);
+      mapSvg.querySelectorAll('.topic-node').forEach(n=> n.classList.toggle('dim', Number(n.dataset.topic)!==idx));
+      mapSvg.querySelectorAll('.theme-node').forEach(n=> n.classList.toggle('dim', !relatedThemes.has(Number(n.dataset.theme))));
+      mapSvg.querySelectorAll('.map-edge').forEach(e=> e.classList.toggle('active', Number(e.dataset.topic)===idx));
+    });
+    node.addEventListener('mouseleave', ()=>{
+      mapSvg.querySelectorAll('.topic-node, .theme-node').forEach(n=>n.classList.remove('dim'));
+      mapSvg.querySelectorAll('.map-edge').forEach(e=>e.classList.remove('active'));
+    });
+  });
+}
+renderCAMap();
+
+/* ================= EMT 4 — TIME USAGE ================= */
+const tuLogList = document.getElementById('tuLogList');
+const ACTIVITIES = [
+  'GS study','Optional study','CA reading','Revision','Mock test','Class / lecture',
+  'Morning Routine / Bath','Meals (Breakfast/Lunch/Dinner)','Exercise / Yoga',
+  'Commute / Travel','Social / Friends','Leisure / Entertainment','Sleep'
+];
+const tuActivity = document.getElementById('tuActivity');
+ACTIVITIES.forEach(a=>{ tuActivity.innerHTML += `<option value="${a}">${a}</option>`; });
+
+let timeLog = [];
+let tuIdSeq = 1;
+
+function updateTopStudyTime() {
+    const studyActivities = ['GS study','Optional study','CA reading','Revision','Mock test','Class / lecture'];
+    let totalStudy = 0;
+    timeLog.forEach(log => { if(studyActivities.includes(log.activity)) totalStudy += log.hours; });
+    document.getElementById('top-study-time').innerText = `📚 Study: ${totalStudy.toFixed(1)} hrs`;
+}
+
+function renderTimeLog() {
+    tuLogList.innerHTML = '';
+    timeLog.forEach(log => {
+        const row = document.createElement('div');
+        row.className = 'list-row animate-row';
+        row.innerHTML = `
+            <div class="task-left">
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <span class="task-name">${log.activity}</span>
+                    <span class="list-meta">${log.hours.toFixed(1)} hrs logged</span>
+                </div>
+            </div>
+            <button class="icon-btn danger" onclick="deleteTimeLog(${log.id})">${ICONS.trash}</button>
+        `;
+        tuLogList.appendChild(row);
+    });
+    updateTopStudyTime();
+}
+
+window.deleteTimeLog = function(id) {
+    timeLog = timeLog.filter(l => l.id !== id);
+    renderTimeLog();
+}
+
+document.getElementById('tuAddBtn').addEventListener('click', ()=>{
+  const from = document.getElementById('tuFrom').value;
+  const to = document.getElementById('tuTo').value;
+  if(!from || !to) return;
+  const [fh,fm] = from.split(':').map(Number);
+  const [th,tm] = to.split(':').map(Number);
+  let hrs = (th + tm/60) - (fh + fm/60);
+  if(hrs <= 0) hrs += 24;
+  timeLog.push({id: tuIdSeq++, activity: tuActivity.value, hours: hrs});
+  renderTimeLog();
+});
+
+/* ================= EMT 5 — MAINS SCORE ================= */
+let mainsScores = []; let msIdSeq = 1;
+const msTableBody = document.getElementById('msTableBody');
+document.getElementById('msDate').value = today.toISOString().slice(0,10);
+
+function renderMainsTable(){
+  msTableBody.innerHTML='';
+  if(mainsScores.length===0){ msTableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No analytics logged yet.</td></tr>`; return; }
+  mainsScores.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.className = 'animate-row';
+    tr.innerHTML = `<td>${s.test}</td><td>${s.date}</td>
+      <td><span class="due-badge">${s.score}%</span></td>
+      <td>${s.theme}</td>
+      <td class="actions-cell"><button class="icon-btn danger ms-del" data-id="${s.id}">${ICONS.trash}</button></td>`;
+    msTableBody.appendChild(tr);
+  });
+}
+renderMainsTable();
+msTableBody.addEventListener('click',(e)=>{
+  const del = e.target.closest('.ms-del');
+  if(del){ mainsScores = mainsScores.filter(s=>s.id!==Number(del.dataset.id)); renderMainsTable(); }
+});
+
+document.getElementById('msAddBtn').addEventListener('click', ()=>{
+  const score = document.getElementById('msScore').value;
+  const theme = document.getElementById('msTheme').value.trim();
+  if(!score || !theme) return;
+  mainsScores.push({ 
+      id: msIdSeq++, test: document.getElementById('msTest').value, 
+      date: document.getElementById('msDate').value, score: score, theme: theme 
+  });
+  renderMainsTable();
+});
+
+/* ================= EMT 6 — PRELIMS TACTICAL ENGINE ================= */
+let prelimsLogs = []; let psIdSeq = 1;
+const psAdvTableBody = document.getElementById('psAdvTableBody');
+document.getElementById('psDate').value = today.toISOString().slice(0,10);
+
+function renderPrelimsAdvTable(){
+  psAdvTableBody.innerHTML='';
+  if(prelimsLogs.length===0){ psAdvTableBody.innerHTML = `<tr class="empty-row"><td colspan="9">No simulations logged.</td></tr>`; return; }
+  prelimsLogs.forEach(s=>{
+    const dangerHTML = s.weak.map(w => `<span class="due-badge danger-text">${w}</span>`).join(' ');
+    const tr = document.createElement('tr');
+    tr.className = 'animate-row';
+    tr.innerHTML = `<td>${s.date}</td><td>${s.name}</td><td>${s.format}</td><td>${s.sub}</td>
+      <td>${s.correct}</td><td>${s.incorrect}</td><td style="color:var(--magic-glow); font-weight:700;">${s.marks}</td>
+      <td>${dangerHTML || '<span class="list-meta">Clear</span>'}</td>
+      <td class="actions-cell"><button class="icon-btn danger ps-del" data-id="${s.id}">${ICONS.trash}</button></td>`;
+    psAdvTableBody.appendChild(tr);
+  });
+}
+renderPrelimsAdvTable();
+psAdvTableBody.addEventListener('click',(e)=>{
+  const del = e.target.closest('.ps-del');
+  if(del){ prelimsLogs = prelimsLogs.filter(s=>s.id!==Number(del.dataset.id)); renderPrelimsAdvTable(); }
+});
+
+document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('psName').value.trim() || 'Unnamed Test';
+  const format = document.getElementById('psFormat').value; 
+  
+  const correct = Number(document.getElementById('psCorrect').value) || 0;
+  const incorrect = Number(document.getElementById('psIncorrect').value) || 0;
+  
+  // Strict Formula: (Correct * 2) - (Incorrect * 0.6666)
+  let marks = (correct * 2) - (incorrect * 0.6666);
+  marks = Number(marks.toFixed(2));
+
+  const subjects = {
+      Polity: Number(document.getElementById('psPol').value) || 100,
+      Geography: Number(document.getElementById('psGeo').value) || 100,
+      History: Number(document.getElementById('psHis').value) || 100,
+      Economy: Number(document.getElementById('psEco').value) || 100,
+      Environment: Number(document.getElementById('psEnv').value) || 100,
+      SciTech: Number(document.getElementById('psSci').value) || 100,
+      CA: Number(document.getElementById('psCa').value) || 100
+  };
+  const weakSubjects = [];
+  for (const [subj, val] of Object.entries(subjects)) {
+      if(val < 40 && val !== 100) weakSubjects.push(subj); 
+  }
+
+  prelimsLogs.push({ 
+      id: psIdSeq++, date: document.getElementById('psDate').value, name, format,
+      sub: document.getElementById('psSubject').value, correct, incorrect, marks, weak: weakSubjects
+  });
+  
+  document.querySelectorAll('.sub-acc').forEach(el => el.value = '');
+  document.getElementById('psCorrect').value = ''; document.getElementById('psIncorrect').value = '';
+  
+  renderPrelimsAdvTable();
+});
+
 </script>
 </body>
 </html>
