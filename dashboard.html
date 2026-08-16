@@ -930,7 +930,11 @@ const THEMES = [
 let CA_TOPICS = []; 
 
 /* Unified Modal Logic */
+/* ================= REVISION, CLASSES & CA UNIFIED LOGIC ================= */
 let currentActiveListId = '';
+let revisionTasks = [];
+let classTasks = [];
+
 function setupThemeGrid() {
   const grid = document.getElementById('themeCheckboxGrid');
   THEMES.forEach((theme, index) => {
@@ -943,7 +947,19 @@ window.openLogModal = function(listId, title) {
   currentActiveListId = listId;
   document.getElementById('logModalTitle').innerText = title;
   document.getElementById('logModalTopicInput').value = '';
-  document.querySelectorAll('#themeCheckboxGrid input').forEach(cb => cb.checked = false);
+  
+  // Only show the 20 Core Themes mapping if logging a Current Affairs node
+  const themeSection = document.getElementById('themeCheckboxGrid').previousElementSibling;
+  const themeGrid = document.getElementById('themeCheckboxGrid');
+  if(listId === 'caList') {
+      themeSection.style.display = 'block';
+      themeGrid.style.display = 'grid';
+      document.querySelectorAll('#themeCheckboxGrid input').forEach(cb => cb.checked = false);
+  } else {
+      themeSection.style.display = 'none';
+      themeGrid.style.display = 'none';
+  }
+  
   document.getElementById('logModalOverlay').style.display = 'flex';
 }
 window.closeLogModal = () => document.getElementById('logModalOverlay').style.display = 'none';
@@ -952,55 +968,112 @@ window.submitLogModal = function() {
   const topicName = document.getElementById('logModalTopicInput').value.trim();
   if(!topicName) return;
 
-  const selectedThemes = Array.from(document.querySelectorAll('#themeCheckboxGrid input:checked')).map(cb => Number(cb.value));
-
   const newId = Date.now();
-  if(selectedThemes.length > 0) {
-    CA_TOPICS.push({ id: newId, name: topicName, themes: selectedThemes });
-    renderCAMap();
-    apiAdd('CALogs', { ID: newId, Name: topicName, Themes: JSON.stringify(selectedThemes), Timestamp: todayStr });
-  }
 
-  const list = document.getElementById(currentActiveListId);
-  const row = document.createElement('div');
-  row.className = currentActiveListId === 'tasksList' ? 'task-row animate-row' : 'list-row animate-row';
-  row.dataset.id = newId;
-  
-  let meta = "Due today";
-  if(currentActiveListId === 'classesList') meta = "Scheduled";
-  if(currentActiveListId === 'caList') meta = "Read just now";
-  if(selectedThemes.length > 0 && currentActiveListId !== 'tasksList') meta += ` · Mapped to ${selectedThemes.length} Theme(s)`;
-
-  row.innerHTML = `
-    <div class="task-left">
-      <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-      <div style="display:flex; flex-direction:column; gap:2px;">
-        <span class="task-name">${topicName}</span>
-        ${currentActiveListId !== 'tasksList' ? `<span class="list-meta">${meta}</span>` : ''}
-      </div>
-    </div>
-    <div class="task-right">
-      ${currentActiveListId === 'tasksList' ? '<span class="task-due">Today</span>' : ''}
-      <button class="icon-btn" title="Reschedule">${ICONS.calendar}</button>
-      <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
-    </div>`;
-  list.appendChild(row);
-  bindInteractions(row);
-  
-  const delBtn = row.querySelector('.icon-btn.danger');
-  if(delBtn) {
-      delBtn.addEventListener('click', () => {
-          row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300);
-          apiDelete('CALogs', newId);
-      });
+  // ROUTE 1: CA MAP
+  if (currentActiveListId === 'caList') {
+      const selectedThemes = Array.from(document.querySelectorAll('#themeCheckboxGrid input:checked')).map(cb => Number(cb.value));
+      if(selectedThemes.length > 0) {
+        CA_TOPICS.push({ id: newId, name: topicName, themes: selectedThemes });
+        renderCAMap();
+        renderCAList();
+        apiAdd('CALogs', { ID: newId, Name: topicName, Themes: JSON.stringify(selectedThemes), Timestamp: todayStr });
+      }
+  } 
+  // ROUTE 2: REVISIONS
+  else if (currentActiveListId === 'revisionList') {
+      revisionTasks.push({ id: newId, topic: topicName, date: todayStr });
+      renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
+      apiAdd('RevisionLogs', { ID: newId, Topic: topicName, Date: todayStr });
+  } 
+  // ROUTE 3: CLASSES
+  else if (currentActiveListId === 'classesList') {
+      classTasks.push({ id: newId, topic: topicName, date: todayStr });
+      renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
+      apiAdd('ClassLogs', { ID: newId, Topic: topicName, Date: todayStr });
   }
 
   closeLogModal();
 }
 
+/* Rendering Engines for the Mini Lists */
+function renderMiniList(listId, dataArray, sheetName, metaText) {
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+  
+  if (dataArray.length === 0) {
+      list.innerHTML = `<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:12px; font-style:italic;">No tasks logged.</div>`;
+      return;
+  }
+
+  dataArray.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'list-row animate-row';
+    row.dataset.id = item.id;
+    row.innerHTML = `
+      <div class="task-left">
+        <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <span class="task-name">${item.topic}</span>
+          <span class="list-meta">${metaText}</span>
+        </div>
+      </div>
+      <div class="task-right">
+        <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
+      </div>`;
+    list.appendChild(row);
+    
+    bindInteractions(row);
+    const delBtn = row.querySelector('.icon-btn.danger');
+    if(delBtn) {
+        delBtn.addEventListener('click', () => {
+            row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300);
+            if (sheetName === 'RevisionLogs') revisionTasks = revisionTasks.filter(x => x.id !== item.id);
+            if (sheetName === 'ClassLogs') classTasks = classTasks.filter(x => x.id !== item.id);
+            apiDelete(sheetName, item.id);
+        });
+    }
+  });
+}
+
+function renderCAList() {
+    const caList = document.getElementById('caList');
+    caList.innerHTML = '';
+    if (CA_TOPICS.length === 0) {
+        caList.innerHTML = `<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:12px; font-style:italic;">No CA mapped today.</div>`;
+        return;
+    }
+    CA_TOPICS.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'list-row animate-row';
+        row.dataset.id = t.id;
+        row.innerHTML = `
+          <div class="task-left">
+            <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span class="task-name">${t.name}</span>
+              <span class="list-meta">Mapped to ${t.themes.length} Theme(s)</span>
+            </div>
+          </div>
+          <div class="task-right">
+            <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
+          </div>`;
+        caList.appendChild(row);
+        bindInteractions(row);
+        const delBtn = row.querySelector('.icon-btn.danger');
+        if(delBtn) {
+          delBtn.addEventListener('click', () => {
+            row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300);
+            CA_TOPICS = CA_TOPICS.filter(x => x.id !== t.id);
+            renderCAMap();
+            apiDelete('CALogs', t.id);
+          });
+        }
+    });
+}
+
 /* ================= EMT 2 — SHARED MEMORY PLANNED TASKS ================= */
 let plannedTasks = [];
-let atIdSeq = 200;
 const atTableBody = document.getElementById('atTableBody');
 document.getElementById('atDate').value = todayStr;
 
@@ -1079,7 +1152,6 @@ function renderTodayTasksList() {
                     </div>
                     <div class="task-right">
                       <span class="task-due">Today</span>
-                      <button class="icon-btn" title="Reschedule">${ICONS.calendar}</button>
                       <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
                     </div>
                   </div>`;
@@ -1103,25 +1175,6 @@ function renderTodayTasksList() {
                renderTodayTasksList();
                apiDelete('PlannedTasks', id);
            });
-       }
-       const reschedBtn = row.querySelector('.icon-btn[title="Reschedule"]');
-       if (reschedBtn) {
-           reschedBtn.style.position = 'relative'; reschedBtn.style.overflow = 'hidden';
-           const dateInput = document.createElement('input');
-           dateInput.type = 'date'; dateInput.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;color-scheme:dark;';
-           dateInput.addEventListener('change', (e) => { 
-               if(e.target.value) { 
-                   const id = Number(row.dataset.id);
-                   const t = plannedTasks.find(x => x.id === id);
-                   if (t) {
-                       t.date = e.target.value;
-                       renderPlannedTasks();
-                       renderTodayTasksList();
-                       apiAdd('PlannedTasks', { ID: t.id, Subject: t.subject, Topic: t.topic, Date: t.date });
-                   }
-               } 
-           });
-           reschedBtn.appendChild(dateInput);
        }
     });
 }
@@ -1365,7 +1418,6 @@ document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
   const correct = Number(document.getElementById('psCorrect').value) || 0;
   const incorrect = Number(document.getElementById('psIncorrect').value) || 0;
   
-  // Strict Formula: (Correct * 2) - (Incorrect * 0.6666)
   let marks = (correct * 2) - (incorrect * 0.6666);
   marks = Number(marks.toFixed(2));
 
@@ -1429,39 +1481,32 @@ async function loadAllDataFromCloud() {
                 themes: typeof r.Themes === 'string' ? JSON.parse(r.Themes || '[]') : (r.Themes || [])
             }));
             renderCAMap();
-            
-            // Populate CA UI List
-            const caList = document.getElementById('caList');
-            caList.innerHTML = '';
-            CA_TOPICS.forEach(t => {
-                const row = document.createElement('div');
-                row.className = 'list-row animate-row';
-                row.dataset.id = t.id;
-                row.innerHTML = `
-                  <div class="task-left">
-                    <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-                    <div style="display:flex; flex-direction:column; gap:2px;">
-                      <span class="task-name">${t.name}</span>
-                      <span class="list-meta">Mapped to ${t.themes.length} Theme(s)</span>
-                    </div>
-                  </div>
-                  <div class="task-right">
-                    <button class="icon-btn" title="Reschedule">${ICONS.calendar}</button>
-                    <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
-                  </div>`;
-                caList.appendChild(row);
-                bindInteractions(row);
-                const delBtn = row.querySelector('.icon-btn.danger');
-                if(delBtn) {
-                  delBtn.addEventListener('click', () => {
-                    row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300);
-                    apiDelete('CALogs', t.id);
-                  });
-                }
-            });
+            renderCAList();
         }
 
-        // 3. Fetch TimeLog
+        // 3. Fetch RevisionLogs
+        const cloudRevisions = await apiGet('RevisionLogs');
+        if(cloudRevisions && cloudRevisions.length > 0) {
+            revisionTasks = cloudRevisions.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                topic: r.Topic || '',
+                date: r.Date || todayStr
+            }));
+        }
+        renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
+
+        // 4. Fetch ClassLogs
+        const cloudClasses = await apiGet('ClassLogs');
+        if(cloudClasses && cloudClasses.length > 0) {
+            classTasks = cloudClasses.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                topic: r.Topic || '',
+                date: r.Date || todayStr
+            }));
+        }
+        renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
+
+        // 5. Fetch TimeLog
         const cloudTime = await apiGet('TimeLog');
         if(cloudTime && cloudTime.length > 0) {
             timeLog = cloudTime.map(r => ({
@@ -1473,7 +1518,7 @@ async function loadAllDataFromCloud() {
             renderTimeLog();
         }
 
-        // 4. Fetch MainsScores
+        // 6. Fetch MainsScores
         const cloudMains = await apiGet('MainsScores');
         if(cloudMains && cloudMains.length > 0) {
             mainsScores = cloudMains.map(r => ({
@@ -1486,7 +1531,7 @@ async function loadAllDataFromCloud() {
             renderMainsTable();
         }
 
-        // 5. Fetch PrelimsTactics
+        // 7. Fetch PrelimsTactics
         const cloudPrelims = await apiGet('PrelimsTactics');
         if(cloudPrelims && cloudPrelims.length > 0) {
             prelimsLogs = cloudPrelims.map(r => ({
