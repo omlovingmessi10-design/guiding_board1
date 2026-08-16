@@ -1,65 +1,48 @@
-const { GoogleSpreadsheet } = require('google-spreadsheet');
-const { JWT } = require('google-auth-library');
+exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
 
-exports.handler = async (event) => {
-    if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+  // Preflight request for CORS
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
 
-    try {
-        const data = JSON.parse(event.body);
-        const inputSeat = data.seat;
-        const inputPin = data.pin;
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method Not Allowed" }) };
+  }
 
-        const serviceAccountAuth = new JWT({
-            email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-            key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-        });
+  try {
+    const body = JSON.parse(event.body);
+    const { seat, pin } = body;
 
-        const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, serviceAccountAuth);
-        await doc.loadInfo(); 
+    // Pull the secret credentials from Netlify Environment Variables
+    // (Defaults to UPSC2026 and 1234 if you haven't set them yet)
+    const validSeat = process.env.STUDENT_SEAT || 'UPSC2026';
+    const validPin = process.env.STUDENT_PIN || '1234';
 
-        const sheet = doc.sheetsByTitle['Users']; 
-        if (!sheet) throw new Error("Could not find 'Users' tab");
-
-        const rows = await sheet.getRows();
-        
-        // X-RAY LOGIC: Record what the server actually sees in the sheet
-        let serverSeenData = [];
-
-        const user = rows.find(row => {
-            const rowSeat = row.get('Seat');
-            const rowPin = row.get('PIN');
-            
-            // Add what we found to our X-Ray report
-            if (rowSeat !== undefined) {
-                serverSeenData.push(`[Sheet Seat: '${rowSeat}', Sheet PIN: '${rowPin}']`);
-            }
-
-            if (!rowSeat || !rowPin) return false;
-
-            return String(rowSeat).trim() === String(inputSeat).trim() && 
-                   String(rowPin).trim() === String(inputPin).trim();
-        });
-
-        if (user) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ success: true, studentName: user.get('Student_Name') })
-            };
-        } else {
-            // Send the X-Ray report back to the frontend
-            return {
-                statusCode: 401,
-                body: JSON.stringify({ 
-                    success: false, 
-                    message: `X-RAY DATA:\nYou typed Seat: '${inputSeat}', PIN: '${inputPin}'.\nServer found: ${serverSeenData.join(' ')}` 
-                })
-            };
-        }
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ success: false, error: error.message })
-        };
+    if (seat === validSeat && pin === validPin) {
+      return { 
+          statusCode: 200, 
+          headers, 
+          body: JSON.stringify({ success: true, studentName: "Admin" }) 
+      };
+    } else {
+      return { 
+          statusCode: 401, 
+          headers, 
+          body: JSON.stringify({ success: false, message: "Invalid Seat Number or PIN. Access Denied." }) 
+      };
     }
+
+  } catch (error) {
+    console.error("Auth Error:", error);
+    return { 
+        statusCode: 500, 
+        headers, 
+        body: JSON.stringify({ success: false, message: "Internal Server Error" }) 
+    };
+  }
 };
