@@ -1,0 +1,8 @@
+{
+  "name": "study-tracker",
+  "version": "1.0.0",
+  "dependencies": {
+    "google-auth-library": "^9.6.3",
+    "google-spreadsheet": "^4.1.1"
+  }
+}
