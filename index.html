@@ -10,6 +10,7 @@
         input { display: block; width: 90%; margin: 15px auto; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
         button { background: #2c3e50; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 95%; font-weight: bold; margin-top: 10px; }
         button:hover { background: #1a252f; }
+        #error-message { color: red; display: none; margin-top: 15px; font-size: 12px; text-align: left; background: #ffe6e6; padding: 10px; border-radius: 5px;}
     </style>
 </head>
 <body>
@@ -18,7 +19,7 @@
         <input type="text" id="seat" placeholder="Seat Number" required>
         <input type="password" id="pin" placeholder="4-Digit PIN" maxlength="4" required>
         <button onclick="login()">Enter Arena</button>
-        <p id="error-message" style="color: red; display: none; margin-top: 15px;">Invalid Seat or PIN</p>
+        <div id="error-message"></div>
     </div>
 
     <script>
@@ -26,8 +27,10 @@
             const seat = document.getElementById('seat').value;
             const pin = document.getElementById('pin').value;
             const btn = document.querySelector('button');
+            const errorDiv = document.getElementById('error-message');
             
             btn.innerText = "Verifying..."; 
+            errorDiv.style.display = 'none';
 
             try {
                 const response = await fetch('/.netlify/functions/auth', {
@@ -41,12 +44,14 @@
                     localStorage.setItem('currentUser', data.studentName);
                     window.location.href = '/dashboard.html';
                 } else {
-                    document.getElementById('error-message').style.display = 'block';
+                    // Display the exact X-Ray message from the server
+                    errorDiv.innerText = data.message;
+                    errorDiv.style.display = 'block';
                     btn.innerText = "Enter Arena";
                 }
             } catch (error) {
-                document.getElementById('error-message').innerText = "Server error. Try again.";
-                document.getElementById('error-message').style.display = 'block';
+                errorDiv.innerText = "Server error. Check Netlify logs.";
+                errorDiv.style.display = 'block';
                 btn.innerText = "Enter Arena";
             }
         }
