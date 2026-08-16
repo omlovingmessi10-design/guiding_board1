@@ -5,49 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UPSC Tracker - Login</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            background-color: #f4f4f9; 
-            margin: 0;
-        }
-        #login-box { 
-            background: white; 
-            padding: 2rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            text-align: center; 
-            width: 300px;
-        }
-        input { 
-            display: block; 
-            width: 90%; 
-            margin: 15px auto; 
-            padding: 10px; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-        }
-        button { 
-            background: #2c3e50; 
-            color: white; 
-            border: none; 
-            padding: 12px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            width: 95%; 
-            font-weight: bold;
-            margin-top: 10px;
-        }
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        #login-box { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 300px; }
+        input { display: block; width: 90%; margin: 15px auto; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #2c3e50; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 95%; font-weight: bold; margin-top: 10px; }
         button:hover { background: #1a252f; }
     </style>
 </head>
 <body>
     <div id="login-box">
-        <h2>Welcome to the Sprint</h2>
-        <input type="tel" id="seat" placeholder="Seat" required>
+        <h2>Welcome to the 100-Day Sprint</h2>
+        <input type="text" id="seat" placeholder="Seat Number" required>
         <input type="password" id="pin" placeholder="4-Digit PIN" maxlength="4" required>
         <button onclick="login()">Enter Arena</button>
         <p id="error-message" style="color: red; display: none; margin-top: 15px;">Invalid Seat or PIN</p>
@@ -55,26 +23,29 @@
 
     <script>
         async function login() {
-            const Seat = document.getElementById('seat').value;
+            const seat = document.getElementById('seat').value;
             const pin = document.getElementById('pin').value;
             const btn = document.querySelector('button');
             
-            // Change button text so you know it is working
             btn.innerText = "Verifying..."; 
 
-            const response = await fetch('/.netlify/functions/auth', {
-                method: 'POST',
-                body: JSON.stringify({ seat, pin })
-            });
+            try {
+                const response = await fetch('/.netlify/functions/auth', {
+                    method: 'POST',
+                    body: JSON.stringify({ seat, pin })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (data.success) {
-                // Save name and send to dashboard
-                localStorage.setItem('currentUser', data.studentName);
-                window.location.href = '/dashboard.html';
-            } else {
-                // Show error and reset button
+                if (data.success) {
+                    localStorage.setItem('currentUser', data.studentName);
+                    window.location.href = '/dashboard.html';
+                } else {
+                    document.getElementById('error-message').style.display = 'block';
+                    btn.innerText = "Enter Arena";
+                }
+            } catch (error) {
+                document.getElementById('error-message').innerText = "Server error. Try again.";
                 document.getElementById('error-message').style.display = 'block';
                 btn.innerText = "Enter Arena";
             }
