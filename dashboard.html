@@ -114,46 +114,36 @@
     </div>
 
     <script>
-        // Security check: Verify the user is actually logged in
+        // 1. Security check: Verify user is logged in
         const currentUser = localStorage.getItem('currentUser');
-        
         if (!currentUser) {
-            // If they didn't log in, kick them back to the login page immediately
-            window.location.href = '/'; 
+            window.location.href = '/';
         } else {
-            // Display the exact name pulled from the Google Sheet
             document.getElementById('welcome-message').innerText = `Arena: ${currentUser}`;
         }
 
+        // 2. Checkbox sync logic with Google Sheets
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', async (e) => {
+                const taskName = e.target.parentElement.innerText.trim();
+                const status = e.target.checked ? "Done" : "Pending";
+                
+                try {
+                    await fetch('/.netlify/functions/updateTask', {
+                        method: 'POST',
+                        body: JSON.stringify({ studentName: currentUser, task: taskName, status: status })
+                    });
+                } catch (err) {
+                    console.error("Failed to sync task", err);
+                }
+            });
+        });
+
+        // 3. Logout function
         function logout() {
-            // Clear the memory and send back to login
             localStorage.removeItem('currentUser');
             window.location.href = '/';
         }
     </script>
 </body>
 </html>
-<script>
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) window.location.href = '/';
-        document.getElementById('welcome-message').innerText = `Arena: ${currentUser}`;
-
-        // Add event listeners to all checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', async (e) => {
-                const taskName = e.target.parentElement.innerText.trim();
-                const status = e.target.checked ? "Done" : "Pending";
-                
-                // Send the update to the server
-                await fetch('/.netlify/functions/updateTask', {
-                    method: 'POST',
-                    body: JSON.stringify({ studentName: currentUser, task: taskName, status: status })
-                });
-            });
-        });
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = '/';
-        }
-    </script>
