@@ -3,239 +3,567 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPSC Tracker - Arena</title>
+    <title>UPSC Arena - Comprehensive Dashboard</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f7f6; 
-            margin: 0; 
-            padding: 20px; 
-            color: #333;
+        :root {
+            --primary: #1e293b;
+            --accent: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
         }
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: #2c3e50; 
-            color: white; 
-            padding: 15px 30px; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 20px; 
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 240px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            z-index: 10;
         }
-        .zone { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            border-top: 4px solid #3498db;
-        }
-        .zone:nth-child(2) { border-top-color: #e67e22; }
-        .zone:nth-child(3) { border-top-color: #e74c3c; }
-        h2 { 
-            margin-top: 0; 
-            color: #2c3e50; 
-            border-bottom: 2px solid #f0f0f0; 
-            padding-bottom: 10px; 
+        .sidebar-brand {
             font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 0.5px;
+            color: #60a5fa;
         }
-        .task-list { 
-            list-style-type: none; 
-            padding: 0; 
-            margin: 0 0 15px 0;
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            overflow-y: auto;
+            flex: 1;
         }
-        .task-list li { 
-            padding: 10px 0; 
-            border-bottom: 1px solid #f4f4f4; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
+        .sidebar-menu li {
+            padding: 12px 24px;
             font-size: 0.95rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
         }
-        .task-left {
+        .sidebar-menu li:hover, .sidebar-menu li.active {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border-left-color: var(--accent);
+        }
+        .sidebar-footer {
+            padding: 15px 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover { background: var(--danger); color: white; }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px 30px;
+        }
+
+        /* --- TOP BAR --- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+        .quote-box {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+        }
+        .quote-box span { font-weight: 600; color: var(--text-main); display: block; font-style: normal; margin-bottom: 2px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); }
+        
+        .profile-box {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
-        .task-list li:last-child { border-bottom: none; }
-        input[type="checkbox"] { 
-            transform: scale(1.2); 
-            cursor: pointer; 
-        }
-        .add-task-box {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .add-task-box input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-        .add-btn {
-            background: #2c3e50;
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
             color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
-        .add-btn:hover { background: #1a252f; }
-        .delete-btn {
+        .profile-info h4 { font-size: 0.95rem; color: var(--text-main); }
+        .profile-info p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+        .streak-badge {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- DASHBOARD GRID LAYOUT --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            padding-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--bg-main);
+            padding-bottom: 10px;
+        }
+
+        /* Subheadings for Tasks */
+        .subheading {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 12px 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Task & Item Elements */
+        .item-list { list-style: none; }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            background: var(--bg-main);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .item-row:hover { background: #f1f5f9; }
+        
+        .item-left { display: flex; align-items: center; gap: 10px; }
+        .item-meta { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); }
+        
+        .badge-pending {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .due-date {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        /* Action Buttons */
+        .action-btns { display: flex; gap: 6px; }
+        .btn-icon {
             background: none;
             border: none;
-            color: #e74c3c;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.85rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            transition: all 0.2s;
         }
-        .delete-btn:hover { color: #c0392b; }
-        .logout-btn { 
-            background: #e74c3c; 
-            color: white; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold;
-            transition: background 0.3s;
+        .btn-icon.edit:hover { background: #e2e8f0; color: var(--accent); }
+        .btn-icon.delete:hover { background: #fee2e2; color: var(--danger); }
+
+        /* Input Adder */
+        .add-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
         }
-        .logout-btn:hover { background: #c0392b; }
+        .add-box input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .add-box input:focus { border-color: var(--accent); }
+        .add-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .add-btn:hover { background: #2563eb; }
+
+        /* Anki Tooltip indicator */
+        .anki-tooltip {
+            position: relative;
+            cursor: help;
+        }
+        .anki-tooltip:hover::after {
+            content: attr(data-anki);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1 id="welcome-message" style="margin: 0; font-size: 1.5rem;">Entering Arena...</h1>
-        <button class="logout-btn" onclick="logout()">Exit Arena</button>
-    </header>
 
-    <div class="grid-container">
-        <!-- Zone 1: Tasks -->
-        <div class="zone" id="zone-tasks">
-            <h2>🎯 Daily Targets</h2>
-            <ul class="task-list" id="list-tasks">
-                <li>
-                    <div class="task-left"><input type="checkbox"> Current Affairs (Newspaper/Notes)</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-                <li>
-                    <div class="task-left"><input type="checkbox"> Core Subject Block 1</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-                <li>
-                    <div class="task-left"><input type="checkbox"> CSAT / Optional Subject</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-            </ul>
-            <div class="add-task-box">
-                <input type="text" id="input-tasks" placeholder="Add new target...">
-                <button class="add-btn" onclick="addTask('tasks')">Add</button>
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-brand">🎯 UPSC Arena 2026</div>
+        <ul class="sidebar-menu">
+            <li class="active">emt 1</li>
+            <li>emt 2</li>
+            <li>emt 3</li>
+            <li>emt 4</li>
+            <li>emt 5</li>
+            <li>emt 6</li>
+            <li>emt 7</li>
+            <li>emt 8</li>
+            <li>emt 9</li>
+            <li>emt 10</li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">Exit Arena</button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="main-container">
+
+        <!-- TOP BAR (Quote + Profile Info) -->
+        <div class="top-bar">
+            <div class="quote-box">
+                <span>Daily Motivation</span>
+                <p id="quote-text">"Discipline is choosing between what you want now and what you want most."</p>
+            </div>
+            <div class="profile-box">
+                <div class="profile-avatar" id="avatar-initials">US</div>
+                <div class="profile-info">
+                    <h4 id="profile-name">Aspirant</h4>
+                    <p id="login-meta">Last Login: Today, 08:30 AM</p>
+                </div>
+                <div class="streak-badge">🔥 14 Days Streak</div>
             </div>
         </div>
 
-        <!-- Zone 2: Revisions -->
-        <div class="zone" id="zone-revisions">
-            <h2>🔄 Active Revision</h2>
-            <ul class="task-list" id="list-revisions">
-                <li>
-                    <div class="task-left"><input type="checkbox"> Read & Write: Draw connecting arrows</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-                <li>
-                    <div class="task-left"><input type="checkbox"> Formulate two-line crux summaries</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-                <li>
-                    <div class="task-left"><input type="checkbox"> Spaced Repetition Block</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-            </ul>
-            <div class="add-task-box">
-                <input type="text" id="input-revisions" placeholder="Add new revision...">
-                <button class="add-btn" onclick="addTask('revisions')">Add</button>
-            </div>
-        </div>
+        <!-- DASHBOARD GRID -->
+        <div class="dashboard-grid">
 
-        <!-- Zone 3: Tests -->
-        <div class="zone" id="zone-tests">
-            <h2>📊 Testing & Mocks</h2>
-            <ul class="task-list" id="list-tests">
-                <li>
-                    <div class="task-left"><input type="checkbox"> Daily Quiz / PYQs</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-                <li>
-                    <div class="task-left"><input type="checkbox"> Sectional Mock Test</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-                <li>
-                    <div class="task-left"><input type="checkbox"> Review incorrect logical deductions</div>
-                    <button class="delete-btn" onclick="removeTask(this)">×</button>
-                </li>
-            </ul>
-            <div class="add-task-box">
-                <input type="text" id="input-tests" placeholder="Add new test...">
-                <button class="add-btn" onclick="addTask('tests')">Add</button>
+            <!-- LEFT SIDE: REVISION (Parallel to Todays Tasks) -->
+            <div class="card">
+                <div class="card-title">
+                    <span>🔄 Active Revision</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Anki Spaced Queue</span>
+                </div>
+                <ul class="item-list" id="revision-list">
+                    <!-- Top 3 demo tasks with pending badge -->
+                    <li class="item-row">
+                        <div class="item-left"><span>1. Indian Polity: Fundamental Rights & DPSP</span></div>
+                        <div class="item-meta"><span class="badge-pending">Pending: 3 days</span></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>2. Modern History: 1857 Revolt & Causes</span></div>
+                        <div class="item-meta"><span class="badge-pending">Pending: 3 days</span></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>3. Climatology: Pressure Belts & Winds</span></div>
+                        <div class="item-meta"><span class="badge-pending">Pending: 3 days</span></div>
+                    </li>
+                    <!-- 3 additional demo items -->
+                    <li class="item-row">
+                        <div class="item-left"><span>4. Economy: Inflation & Monetary Policy</span></div>
+                        <div class="item-meta"><span class="due-date">Due: Tomorrow</span></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>5. Environment: Biodiversity Conventions</span></div>
+                        <div class="item-meta"><span class="due-date">Due: In 3 days</span></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>6. Ethics: Moral Thinkers & Philosophers</span></div>
+                        <div class="item-meta"><span class="due-date">Due: In 5 days</span></div>
+                    </li>
+                </ul>
             </div>
+
+            <!-- RIGHT SIDE: TODAY'S TASKS (GS, OP, CA) -->
+            <div class="card anki-tooltip" data-anki="Revision will be due on this date based on Anki Spaced Repetition algorithm">
+                <div class="card-title">
+                    <span>🎯 Today's Tasks</span>
+                    <span style="font-size: 0.75rem; color: var(--accent);">💡 Hover for Anki Schedule</span>
+                </div>
+
+                <!-- GS Category -->
+                <div class="subheading">General Studies (GS)</div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> Complete Laxmikanth Chapter 12</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> Economy Budget Analysis Notes</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> Geography Map Marking: Rivers</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                </ul>
+
+                <!-- OP Category -->
+                <div class="subheading">Optional Subject (OP)</div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> Anthropology: Kinship Theories</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> PYQ Answer Writing (2 Questions)</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> Tribal Demographics Case Study</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                </ul>
+
+                <!-- CA Category -->
+                <div class="subheading">Current Affairs (CA)</div>
+                <ul class="item-list">
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> The Hindu Editorial Notes</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> PIB Summary Compilation</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><input type="checkbox"> Monthly Magazine: IR Section</div>
+                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- LEFT SIDE: CLASSES PENDING (Below Revision) -->
+            <div class="card">
+                <div class="card-title">
+                    <span>📚 Classes Pending</span>
+                </div>
+                <ul class="item-list" id="classes-list">
+                    <li class="item-row">
+                        <div class="item-left"><span>Polity Lecture 45: Judiciary Review</span></div>
+                        <div class="item-meta"><span class="due-date">Due: Tomorrow</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>Economy Lecture 12: Banking Sector</span></div>
+                        <div class="item-meta"><span class="due-date">Due: 2 Days</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>Ethics Case Studies Session 4</span></div>
+                        <div class="item-meta"><span class="due-date">Due: 3 Days</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>Geography Mapping Masterclass</span></div>
+                        <div class="item-meta"><span class="due-date">Due: 4 Days</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>Environment Prelims Booster 8</span></div>
+                        <div class="item-meta"><span class="due-date">Due: 5 Days</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- RIGHT SIDE: WHAT YOU HAVE READ IN CA TODAY (Parallel to Classes Pending) -->
+            <div class="card anki-tooltip" data-anki="Anki Spaced Repetition: Automatically queues items for revision (+1, +3, +7 days)">
+                <div class="card-title">
+                    <span>📰 What you have read in CA today</span>
+                </div>
+                <ul class="item-list" id="ca-list">
+                    <li class="item-row">
+                        <div class="item-left"><span>SEMICON 4.0 Semiconductor Policy Draft</span></div>
+                        <div class="item-meta"><span class="due-date">Anki Due: Tomorrow</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                    <li class="item-row">
+                        <div class="item-left"><span>Deep Sea Mining Regulations & ISA Verdict</span></div>
+                        <div class="item-meta"><span class="due-date">Anki Due: In 3 Days</span>
+                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="add-box">
+                    <input type="text" id="ca-input" placeholder="Add CA topic read today...">
+                    <button class="add-btn" onclick="addCATopic()">Log & Sync</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            window.location.href = '/';
-        } else {
-            document.getElementById('welcome-message').innerText = `Arena: ${currentUser}`;
-        }
+        // Security & Profile Initialization
+        const currentUser = localStorage.getItem('currentUser') || 'Aspirant';
+        document.getElementById('profile-name').innerText = currentUser;
+        
+        // Generate Initials
+        const initials = currentUser.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        document.getElementById('avatar-initials').innerText = initials || 'AS';
 
-        // Handle adding custom tasks
-        function addTask(zoneId) {
-            const input = document.getElementById(`input-${zoneId}`);
-            const taskText = input.value.trim();
-            if (!taskText) return;
+        // Dynamic Daily Motivational Quotes Array
+        const quotes = [
+            "Discipline is choosing between what you want now and what you want most.",
+            "The secret of getting ahead is getting started.",
+            "Success is the sum of small efforts, repeated day in and day out.",
+            "Hard work beats talent when talent doesn't work hard.",
+            "Your future is created by what you do today, not tomorrow."
+        ];
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+        document.getElementById('quote-text').innerText = `"${quotes[dayOfYear % quotes.length]}"`;
 
-            const list = document.getElementById(`list-${zoneId}`);
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="task-left"><input type="checkbox" onchange="syncTask(this)"> ${taskText}</div>
-                <button class="delete-btn" onclick="removeTask(this)">×</button>
-            `;
-            list.appendChild(li);
-            input.value = '';
-        }
+        // Last Login Timestamp Generator
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('login-meta').innerText = `Last Login: Today, ${timeString}`;
 
-        // Handle deleting tasks
-        function removeTask(btn) {
-            btn.parentElement.remove();
-        }
-
-        // Sync checkbox changes to Google Sheets
-        async function syncTask(checkbox) {
-            const taskName = checkbox.parentElement.innerText.trim();
-            const status = checkbox.checked ? "Done" : "Pending";
-            
-            try {
-                await fetch('/.netlify/functions/updateTask', {
-                    method: 'POST',
-                    body: JSON.stringify({ studentName: currentUser, task: taskName, status: status })
-                });
-            } catch (err) {
-                console.error("Failed to sync task", err);
+        // Generic Edit & Delete handlers for interactive rows
+        function editItem(btn) {
+            const row = btn.closest('.item-row');
+            const span = row.querySelector('.item-left span');
+            const newText = prompt("Edit item text:", span.innerText);
+            if (newText !== null && newText.trim() !== "") {
+                span.innerText = newText.trim();
             }
         }
 
-        // Attach listeners to default checkboxes on load
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', (e) => syncTask(e.target));
-        });
+        function deleteItem(btn) {
+            const row = btn.closest('.item-row');
+            row.style.opacity = '0';
+            setTimeout(() => row.remove(), 200);
+        }
+
+        // CA Logger with Automatic Anki Spaced Repetition Sync to Revision Window
+        function addCATopic() {
+            const input = document.getElementById('ca-input');
+            const topicText = input.value.trim();
+            if (!topicText) return;
+
+            // 1. Add to CA list right side
+            const caList = document.getElementById('ca-list');
+            const caLi = document.createElement('li');
+            caLi.className = 'item-row';
+            caLi.innerHTML = `
+                <div class="item-left"><span>${topicText}</span></div>
+                <div class="item-meta"><span class="due-date">Anki Due: Tomorrow</span>
+                    <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
+                </div>
+            `;
+            caList.appendChild(caLi);
+
+            // 2. Automatically reflect/sync to Revision Window (Left Side)
+            const revList = document.getElementById('revision-list');
+            const revLi = document.createElement('li');
+            revLi.className = 'item-row';
+            revLi.innerHTML = `
+                <div class="item-left"><span>[CA Synced] ${topicText}</span></div>
+                <div class="item-meta"><span class="due-date">Anki Due: Tomorrow</span></div>
+            `;
+            revList.appendChild(revLi);
+
+            input.value = '';
+        }
 
         function logout() {
             localStorage.removeItem('currentUser');
