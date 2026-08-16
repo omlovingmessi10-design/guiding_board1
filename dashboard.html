@@ -729,6 +729,53 @@
 </div>
 
 <script>
+/* ---------------- Backend API Connector ---------------- */
+const API_URL = 'https://gbkids.netlify.app/.netlify/functions/db';
+
+async function apiGet(sheetName) {
+  try {
+    const res = await fetch(`${API_URL}?sheet=${sheetName}`);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch(e) {
+    console.warn(`[Cloud DB] Could not read ${sheetName}:`, e);
+    return [];
+  }
+}
+
+async function apiAdd(sheetName, rowData) {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ sheetName, action: 'ADD', rowData })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+        console.error(`❌ [Cloud DB Error on ${sheetName}]:`, data);
+        alert(`DATABASE REJECTED IT!\nSheet: ${sheetName}\nError: ${data.details || data.error}`);
+    } else {
+        console.log(`✅ [Cloud DB Success]: Saved to ${sheetName}`);
+    }
+  } catch(e) {
+    console.error(`[Cloud DB] Failed to reach Netlify for ${sheetName}:`, e);
+    alert(`NETWORK ERROR!\nCould not reach backend for ${sheetName}. Check internet connection or Netlify status.`);
+  }
+}
+
+async function apiDelete(sheetName, rowId) {
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ sheetName, action: 'DELETE', rowId: String(rowId) })
+    });
+  } catch(e) {
+    console.error(`[Cloud DB] Failed to delete ID ${rowId} from ${sheetName}:`, e);
+  }
+}
+
 /* ---------------- Cosmos Engine (Stars, Meteors, Supernovas) ---------------- */
 function initCosmos() {
     const container = document.getElementById('star-container');
@@ -907,14 +954,17 @@ window.submitLogModal = function() {
 
   const selectedThemes = Array.from(document.querySelectorAll('#themeCheckboxGrid input:checked')).map(cb => Number(cb.value));
 
+  const newId = Date.now();
   if(selectedThemes.length > 0) {
-    CA_TOPICS.push({ name: topicName, themes: selectedThemes });
+    CA_TOPICS.push({ id: newId, name: topicName, themes: selectedThemes });
     renderCAMap();
+    apiAdd('CALogs', { ID: newId, Name: topicName, Themes: JSON.stringify(selectedThemes), Timestamp: todayStr });
   }
 
   const list = document.getElementById(currentActiveListId);
   const row = document.createElement('div');
   row.className = currentActiveListId === 'tasksList' ? 'task-row animate-row' : 'list-row animate-row';
+  row.dataset.id = newId;
   
   let meta = "Due today";
   if(currentActiveListId === 'classesList') meta = "Scheduled";
@@ -936,15 +986,20 @@ window.submitLogModal = function() {
     </div>`;
   list.appendChild(row);
   bindInteractions(row);
+  
+  const delBtn = row.querySelector('.icon-btn.danger');
+  if(delBtn) {
+      delBtn.addEventListener('click', () => {
+          row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300);
+          apiDelete('CALogs', newId);
+      });
+  }
+
   closeLogModal();
 }
 
 /* ================= EMT 2 — SHARED MEMORY PLANNED TASKS ================= */
-let plannedTasks = [
-  { id: 101, subject: 'GS', topic: 'Modern history — ch.5 notes', date: todayStr },
-  { id: 102, subject: 'GS', topic: 'Polity — fundamental rights MCQs', date: todayStr },
-  { id: 103, subject: 'OP', topic: 'Classical theory — essay draft', date: todayStr }
-];
+let plannedTasks = [];
 let atIdSeq = 200;
 const atTableBody = document.getElementById('atTableBody');
 document.getElementById('atDate').value = todayStr;
@@ -967,30 +1022,37 @@ document.getElementById('atAddBtn').addEventListener('click', ()=>{
   const topic = document.getElementById('atTopic').value.trim();
   const date = document.getElementById('atDate').value;
   if(!topic || !date) return;
-  plannedTasks.push({ id: atIdSeq++, subject: document.getElementById('atSubject').value, topic, date });
+  const newId = Date.now();
+  const newTask = { id: newId, subject: document.getElementById('atSubject').value, topic, date };
+  plannedTasks.push(newTask);
   renderPlannedTasks(); 
   renderTodayTasksList(); 
+  apiAdd('PlannedTasks', { ID: newId, Subject: newTask.subject, Topic: topic, Date: date });
   document.getElementById('atTopic').value = '';
 });
 
 atTableBody.addEventListener('click',(e)=>{
   const del = e.target.closest('.at-del');
   if(del){ 
-      plannedTasks = plannedTasks.filter(t => t.id !== Number(del.dataset.id)); 
+      const id = Number(del.dataset.id);
+      plannedTasks = plannedTasks.filter(t => t.id !== id); 
       renderPlannedTasks(); 
       renderTodayTasksList(); 
+      apiDelete('PlannedTasks', id);
   }
 });
 atTableBody.addEventListener('change',(e)=>{
   if(e.target.classList.contains('at-date-edit')){
     const id = Number(e.target.dataset.id);
     const t = plannedTasks.find(x=>x.id===id);
-    if(t) t.date = e.target.value;
-    renderPlannedTasks();
-    renderTodayTasksList(); 
+    if(t) {
+        t.date = e.target.value;
+        renderPlannedTasks();
+        renderTodayTasksList(); 
+        apiAdd('PlannedTasks', { ID: t.id, Subject: t.subject, Topic: t.topic, Date: t.date });
+    }
   }
 });
-renderPlannedTasks();
 
 /* ---------------- Home: Today's Tasks Engine ---------------- */
 function renderTodayTasksList() {
@@ -1038,7 +1100,28 @@ function renderTodayTasksList() {
                const id = Number(row.dataset.id);
                plannedTasks = plannedTasks.filter(t => t.id !== id);
                renderPlannedTasks(); 
+               renderTodayTasksList();
+               apiDelete('PlannedTasks', id);
            });
+       }
+       const reschedBtn = row.querySelector('.icon-btn[title="Reschedule"]');
+       if (reschedBtn) {
+           reschedBtn.style.position = 'relative'; reschedBtn.style.overflow = 'hidden';
+           const dateInput = document.createElement('input');
+           dateInput.type = 'date'; dateInput.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;color-scheme:dark;';
+           dateInput.addEventListener('change', (e) => { 
+               if(e.target.value) { 
+                   const id = Number(row.dataset.id);
+                   const t = plannedTasks.find(x => x.id === id);
+                   if (t) {
+                       t.date = e.target.value;
+                       renderPlannedTasks();
+                       renderTodayTasksList();
+                       apiAdd('PlannedTasks', { ID: t.id, Subject: t.subject, Topic: t.topic, Date: t.date });
+                   }
+               } 
+           });
+           reschedBtn.appendChild(dateInput);
        }
     });
 }
@@ -1057,11 +1140,14 @@ window.addQuickTask = function(listId) {
     if (!taskName || taskName.trim() === "") return;
 
     if (listId === 'tasksList') {
-        plannedTasks.push({ id: atIdSeq++, subject: 'GS', topic: taskName, date: todayStr });
+        const newId = Date.now();
+        const newTask = { id: newId, subject: 'GS', topic: taskName, date: todayStr };
+        plannedTasks.push(newTask);
         const loader = document.getElementById('tasksLoader');
         if(loader) loader.style.display = 'none';
         renderPlannedTasks(); 
         renderTodayTasksList(); 
+        apiAdd('PlannedTasks', { ID: newId, Subject: 'GS', Topic: taskName, Date: todayStr });
     } 
 };
 
@@ -1078,7 +1164,7 @@ function renderCAMap() {
     return {x,y,label:t};
   });
   const topicPos = CA_TOPICS.map((t,i)=>{
-    const angle = (Math.PI*2 * i / CA_TOPICS.length) - Math.PI/2 + 0.3;
+    const angle = (Math.PI*2 * i / (CA_TOPICS.length || 1)) - Math.PI/2 + 0.3;
     const [x,y] = polar(CX,CY,TOPIC_R,angle);
     return {x,y,name:t.name,themes:t.themes};
   });
@@ -1091,9 +1177,11 @@ function renderCAMap() {
   </defs>`;
 
   topicPos.forEach((tp,ti)=>{
-    tp.themes.forEach(themeIdx=>{
+    (tp.themes || []).forEach(themeIdx=>{
       const th = themePos[themeIdx];
-      svgMarkup += `<line class="map-edge" data-topic="${ti}" data-theme="${themeIdx}" x1="${tp.x}" y1="${tp.y}" x2="${th.x}" y2="${th.y}" filter="url(#magicGlowMap)"/>`;
+      if (th) {
+          svgMarkup += `<line class="map-edge" data-topic="${ti}" data-theme="${themeIdx}" x1="${tp.x}" y1="${tp.y}" x2="${th.x}" y2="${th.y}" filter="url(#magicGlowMap)"/>`;
+      }
     });
   });
   themePos.forEach((th,i)=>{
@@ -1136,7 +1224,6 @@ function renderCAMap() {
     });
   });
 }
-renderCAMap();
 
 /* ================= EMT 4 — TIME USAGE ================= */
 const tuLogList = document.getElementById('tuLogList');
@@ -1149,12 +1236,11 @@ const tuActivity = document.getElementById('tuActivity');
 ACTIVITIES.forEach(a=>{ tuActivity.innerHTML += `<option value="${a}">${a}</option>`; });
 
 let timeLog = [];
-let tuIdSeq = 1;
 
 function updateTopStudyTime() {
     const studyActivities = ['GS study','Optional study','CA reading','Revision','Mock test','Class / lecture'];
     let totalStudy = 0;
-    timeLog.forEach(log => { if(studyActivities.includes(log.activity)) totalStudy += log.hours; });
+    timeLog.forEach(log => { if(studyActivities.includes(log.activity)) totalStudy += Number(log.hours); });
     document.getElementById('top-study-time').innerText = `📚 Study: ${totalStudy.toFixed(1)} hrs`;
 }
 
@@ -1167,7 +1253,7 @@ function renderTimeLog() {
             <div class="task-left">
                 <div style="display:flex; flex-direction:column; gap:2px;">
                     <span class="task-name">${log.activity}</span>
-                    <span class="list-meta">${log.hours.toFixed(1)} hrs logged</span>
+                    <span class="list-meta">${Number(log.hours).toFixed(1)} hrs logged</span>
                 </div>
             </div>
             <button class="icon-btn danger" onclick="deleteTimeLog(${log.id})">${ICONS.trash}</button>
@@ -1180,6 +1266,7 @@ function renderTimeLog() {
 window.deleteTimeLog = function(id) {
     timeLog = timeLog.filter(l => l.id !== id);
     renderTimeLog();
+    apiDelete('TimeLog', id);
 }
 
 document.getElementById('tuAddBtn').addEventListener('click', ()=>{
@@ -1190,14 +1277,17 @@ document.getElementById('tuAddBtn').addEventListener('click', ()=>{
   const [th,tm] = to.split(':').map(Number);
   let hrs = (th + tm/60) - (fh + fm/60);
   if(hrs <= 0) hrs += 24;
-  timeLog.push({id: tuIdSeq++, activity: tuActivity.value, hours: hrs});
+  const newId = Date.now();
+  const newLog = { id: newId, activity: tuActivity.value, hours: hrs, date: todayStr };
+  timeLog.push(newLog);
   renderTimeLog();
+  apiAdd('TimeLog', { ID: newId, Activity: newLog.activity, Hours: hrs, Date: todayStr });
 });
 
 /* ================= EMT 5 — MAINS SCORE ================= */
-let mainsScores = []; let msIdSeq = 1;
+let mainsScores = [];
 const msTableBody = document.getElementById('msTableBody');
-document.getElementById('msDate').value = today.toISOString().slice(0,10);
+document.getElementById('msDate').value = todayStr;
 
 function renderMainsTable(){
   msTableBody.innerHTML='';
@@ -1212,33 +1302,42 @@ function renderMainsTable(){
     msTableBody.appendChild(tr);
   });
 }
-renderMainsTable();
+
 msTableBody.addEventListener('click',(e)=>{
   const del = e.target.closest('.ms-del');
-  if(del){ mainsScores = mainsScores.filter(s=>s.id!==Number(del.dataset.id)); renderMainsTable(); }
+  if(del){ 
+      const id = Number(del.dataset.id);
+      mainsScores = mainsScores.filter(s=>s.id!==id); 
+      renderMainsTable(); 
+      apiDelete('MainsScores', id);
+  }
 });
 
 document.getElementById('msAddBtn').addEventListener('click', ()=>{
   const score = document.getElementById('msScore').value;
   const theme = document.getElementById('msTheme').value.trim();
   if(!score || !theme) return;
-  mainsScores.push({ 
-      id: msIdSeq++, test: document.getElementById('msTest').value, 
+  const newId = Date.now();
+  const newScore = { 
+      id: newId, test: document.getElementById('msTest').value, 
       date: document.getElementById('msDate').value, score: score, theme: theme 
-  });
+  };
+  mainsScores.push(newScore);
   renderMainsTable();
+  apiAdd('MainsScores', { ID: newId, Test: newScore.test, Date: newScore.date, Score: score, Theme: theme });
 });
 
 /* ================= EMT 6 — PRELIMS TACTICAL ENGINE ================= */
-let prelimsLogs = []; let psIdSeq = 1;
+let prelimsLogs = [];
 const psAdvTableBody = document.getElementById('psAdvTableBody');
-document.getElementById('psDate').value = today.toISOString().slice(0,10);
+document.getElementById('psDate').value = todayStr;
 
 function renderPrelimsAdvTable(){
   psAdvTableBody.innerHTML='';
   if(prelimsLogs.length===0){ psAdvTableBody.innerHTML = `<tr class="empty-row"><td colspan="9">No simulations logged.</td></tr>`; return; }
   prelimsLogs.forEach(s=>{
-    const dangerHTML = s.weak.map(w => `<span class="due-badge danger-text">${w}</span>`).join(' ');
+    const weakList = Array.isArray(s.weak) ? s.weak : (typeof s.weak === 'string' ? JSON.parse(s.weak || '[]') : []);
+    const dangerHTML = weakList.map(w => `<span class="due-badge danger-text">${w}</span>`).join(' ');
     const tr = document.createElement('tr');
     tr.className = 'animate-row';
     tr.innerHTML = `<td>${s.date}</td><td>${s.name}</td><td>${s.format}</td><td>${s.sub}</td>
@@ -1248,10 +1347,15 @@ function renderPrelimsAdvTable(){
     psAdvTableBody.appendChild(tr);
   });
 }
-renderPrelimsAdvTable();
+
 psAdvTableBody.addEventListener('click',(e)=>{
   const del = e.target.closest('.ps-del');
-  if(del){ prelimsLogs = prelimsLogs.filter(s=>s.id!==Number(del.dataset.id)); renderPrelimsAdvTable(); }
+  if(del){ 
+      const id = Number(del.dataset.id);
+      prelimsLogs = prelimsLogs.filter(s=>s.id!==id); 
+      renderPrelimsAdvTable(); 
+      apiDelete('PrelimsTactics', id);
+  }
 });
 
 document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
@@ -1279,16 +1383,135 @@ document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
       if(val < 40 && val !== 100) weakSubjects.push(subj); 
   }
 
-  prelimsLogs.push({ 
-      id: psIdSeq++, date: document.getElementById('psDate').value, name, format,
+  const newId = Date.now();
+  const newLog = { 
+      id: newId, date: document.getElementById('psDate').value, name, format,
       sub: document.getElementById('psSubject').value, correct, incorrect, marks, weak: weakSubjects
-  });
+  };
+  
+  prelimsLogs.push(newLog);
   
   document.querySelectorAll('.sub-acc').forEach(el => el.value = '');
   document.getElementById('psCorrect').value = ''; document.getElementById('psIncorrect').value = '';
   
   renderPrelimsAdvTable();
+  apiAdd('PrelimsTactics', { 
+      ID: newId, Date: newLog.date, Name: name, Format: format, 
+      Subject: newLog.sub, Correct: correct, Incorrect: incorrect, Marks: marks, 
+      WeakZones: JSON.stringify(weakSubjects) 
+  });
 });
+
+/* ================= INITIAL LOAD BOOTLOADER ================= */
+async function loadAllDataFromCloud() {
+    const loader = document.getElementById('tasksLoader');
+    
+    try {
+        // 1. Fetch PlannedTasks
+        const cloudTasks = await apiGet('PlannedTasks');
+        if(cloudTasks && cloudTasks.length > 0) {
+            plannedTasks = cloudTasks.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                subject: r.Subject || 'GS',
+                topic: r.Topic || '',
+                date: r.Date || todayStr
+            }));
+        }
+        renderPlannedTasks();
+        renderTodayTasksList();
+
+        // 2. Fetch CALogs
+        const cloudCA = await apiGet('CALogs');
+        if(cloudCA && cloudCA.length > 0) {
+            CA_TOPICS = cloudCA.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                name: r.Name || '',
+                themes: typeof r.Themes === 'string' ? JSON.parse(r.Themes || '[]') : (r.Themes || [])
+            }));
+            renderCAMap();
+            
+            // Populate CA UI List
+            const caList = document.getElementById('caList');
+            caList.innerHTML = '';
+            CA_TOPICS.forEach(t => {
+                const row = document.createElement('div');
+                row.className = 'list-row animate-row';
+                row.dataset.id = t.id;
+                row.innerHTML = `
+                  <div class="task-left">
+                    <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                      <span class="task-name">${t.name}</span>
+                      <span class="list-meta">Mapped to ${t.themes.length} Theme(s)</span>
+                    </div>
+                  </div>
+                  <div class="task-right">
+                    <button class="icon-btn" title="Reschedule">${ICONS.calendar}</button>
+                    <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
+                  </div>`;
+                caList.appendChild(row);
+                bindInteractions(row);
+                const delBtn = row.querySelector('.icon-btn.danger');
+                if(delBtn) {
+                  delBtn.addEventListener('click', () => {
+                    row.style.transform='translateX(50px)'; row.style.opacity='0'; setTimeout(()=>row.remove(), 300);
+                    apiDelete('CALogs', t.id);
+                  });
+                }
+            });
+        }
+
+        // 3. Fetch TimeLog
+        const cloudTime = await apiGet('TimeLog');
+        if(cloudTime && cloudTime.length > 0) {
+            timeLog = cloudTime.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                activity: r.Activity || 'GS study',
+                hours: Number(r.Hours) || 0,
+                date: r.Date || todayStr
+            }));
+            renderTimeLog();
+        }
+
+        // 4. Fetch MainsScores
+        const cloudMains = await apiGet('MainsScores');
+        if(cloudMains && cloudMains.length > 0) {
+            mainsScores = cloudMains.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                test: r.Test || '',
+                date: r.Date || todayStr,
+                score: r.Score || 0,
+                theme: r.Theme || ''
+            }));
+            renderMainsTable();
+        }
+
+        // 5. Fetch PrelimsTactics
+        const cloudPrelims = await apiGet('PrelimsTactics');
+        if(cloudPrelims && cloudPrelims.length > 0) {
+            prelimsLogs = cloudPrelims.map(r => ({
+                id: Number(r.ID) || Date.now(),
+                date: r.Date || todayStr,
+                name: r.Name || '',
+                format: r.Format || 'FLT',
+                sub: r.Subject || 'ALL Integrated',
+                correct: Number(r.Correct) || 0,
+                incorrect: Number(r.Incorrect) || 0,
+                marks: Number(r.Marks) || 0,
+                weak: typeof r.WeakZones === 'string' ? JSON.parse(r.WeakZones || '[]') : (r.WeakZones || [])
+            }));
+            renderPrelimsAdvTable();
+        }
+
+    } catch(err) {
+        console.error('[Cloud DB] Boot load failed:', err);
+    } finally {
+        if(loader) loader.style.display = 'none';
+    }
+}
+
+// Boot the system from Cloud
+loadAllDataFromCloud();
 
 </script>
 </body>
