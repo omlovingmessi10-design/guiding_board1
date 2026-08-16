@@ -22,13 +22,19 @@ exports.handler = async (event) => {
         if (!sheet) throw new Error("Could not find 'Users' tab");
 
         const rows = await sheet.getRows();
+        
+        // X-RAY LOGIC: Record what the server actually sees in the sheet
+        let serverSeenData = [];
 
-        // Find the exact match
         const user = rows.find(row => {
             const rowSeat = row.get('Seat');
             const rowPin = row.get('PIN');
             
-            // Skip empty rows
+            // Add what we found to our X-Ray report
+            if (rowSeat !== undefined) {
+                serverSeenData.push(`[Sheet Seat: '${rowSeat}', Sheet PIN: '${rowPin}']`);
+            }
+
             if (!rowSeat || !rowPin) return false;
 
             return String(rowSeat).trim() === String(inputSeat).trim() && 
@@ -41,9 +47,13 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ success: true, studentName: user.get('Student_Name') })
             };
         } else {
+            // Send the X-Ray report back to the frontend
             return {
                 statusCode: 401,
-                body: JSON.stringify({ success: false, message: "Invalid credentials" })
+                body: JSON.stringify({ 
+                    success: false, 
+                    message: `X-RAY DATA:\nYou typed Seat: '${inputSeat}', PIN: '${inputPin}'.\nServer found: ${serverSeenData.join(' ')}` 
+                })
             };
         }
     } catch (error) {
