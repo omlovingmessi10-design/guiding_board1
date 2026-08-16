@@ -1,574 +1,630 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPSC Arena - Comprehensive Dashboard</title>
-    <style>
-        :root {
-            --primary: #1e293b;
-            --accent: #3b82f6;
-            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            --bg-main: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
+<meta charset="UTF-8">
+<title>Prayas — Study Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#141F1A;
+    --bg-panel:#1B2822;
+    --bg-panel-raised:#22322A;
+    --bg-sidebar:#101A16;
+    --border:#2C3F35;
+    --border-soft:#243529;
+    --accent-brass:#C9A227;
+    --accent-brass-dim:#8A6F1F;
+    --accent-coral:#E1614A;
+    --accent-sage:#6FA98A;
+    --text-primary:#EDE8DD;
+    --text-secondary:#B9C2BA;
+    --text-muted:#7C8B81;
+    --stamp-bg:#EDE3C8;
+    --stamp-ink:#3A2E1F;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'IBM Plex Sans',sans-serif;
+    background:var(--bg-deep);
+    color:var(--text-primary);
+    overflow:hidden;
+  }
+  .app{
+    display:grid;
+    grid-template-columns:236px 1fr;
+    grid-template-rows:76px 1fr;
+    height:100vh;
+  }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    grid-row:1 / span 2;
+    background:var(--bg-sidebar);
+    border-right:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    padding:22px 16px;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    padding:0 8px 22px 8px;
+    border-bottom:1px solid var(--border-soft);
+    margin-bottom:18px;
+  }
+  .brand-mark{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:0.3px;
+    color:var(--accent-brass);
+  }
+  .brand-sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--text-muted);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+  }
+  .nav{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    flex:1;
+    overflow-y:auto;
+  }
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:13.5px;
+    color:var(--text-secondary);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .nav-item:hover{background:var(--bg-panel-raised);color:var(--text-primary);}
+  .nav-item.active{background:var(--bg-panel-raised);color:var(--text-primary);border-left:2px solid var(--accent-brass);padding-left:10px;}
+  .nav-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--border);
+    flex-shrink:0;
+  }
+  .nav-item.active .nav-dot{background:var(--accent-brass);}
+  .sidebar-foot{
+    border-top:1px solid var(--border-soft);
+    padding-top:14px;
+    margin-top:10px;
+    font-size:11px;
+    color:var(--text-muted);
+    font-family:'IBM Plex Mono',monospace;
+    line-height:1.6;
+  }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
+  /* ---------- TOP BAR ---------- */
+  .topbar{
+    grid-column:2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    border-bottom:1px solid var(--border);
+    background:var(--bg-panel);
+  }
+  .quote-strip{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    max-width:56%;
+  }
+  .quote-mark{
+    font-family:'Fraunces',serif;
+    font-size:26px;
+    color:var(--accent-brass-dim);
+    line-height:1;
+  }
+  .quote-text{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:14.5px;
+    color:var(--text-secondary);
+    line-height:1.4;
+  }
+  .quote-author{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--text-muted);
+    margin-left:6px;
+  }
+  .profile-block{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .streak-pill{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(201,162,39,0.12);
+    border:1px solid rgba(201,162,39,0.35);
+    color:var(--accent-brass);
+    padding:6px 12px;
+    border-radius:20px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:500;
+  }
+  .profile-meta{
+    text-align:right;
+    line-height:1.35;
+  }
+  .profile-name{font-size:13.5px;font-weight:500;color:var(--text-primary);}
+  .profile-login{font-size:10.5px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(155deg,#3B5445,#22322A);
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:600;font-size:14px;
+    color:var(--accent-brass);
+  }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 240px;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
-        .sidebar-brand {
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 0 20px 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            letter-spacing: 0.5px;
-            color: #60a5fa;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 20px 0;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .sidebar-menu li {
-            padding: 12px 24px;
-            font-size: 0.95rem;
-            color: #94a3b8;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-left: 4px solid transparent;
-        }
-        .sidebar-menu li:hover, .sidebar-menu li.active {
-            background: rgba(255,255,255,0.05);
-            color: white;
-            border-left-color: var(--accent);
-        }
-        .sidebar-footer {
-            padding: 15px 24px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .logout-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-            border: none;
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        .logout-btn:hover { background: var(--danger); color: white; }
+  /* ---------- MAIN ---------- */
+  .main{
+    grid-column:2;
+    overflow-y:auto;
+    padding:22px 28px 40px 28px;
+  }
+  .board{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
+  .col{display:flex;flex-direction:column;gap:22px;}
 
-        /* --- MAIN CONTAINER --- */
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            padding: 20px 30px;
-        }
+  .panel{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .panel-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding:14px 18px 12px 18px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .panel-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:16.5px;
+    letter-spacing:0.2px;
+  }
+  .panel-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--text-muted);
+  }
+  .panel-body{padding:14px 18px 18px 18px;}
 
-        /* --- TOP BAR --- */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
-            border: 1px solid var(--border);
-        }
-        .quote-box {
-            font-style: italic;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            max-width: 600px;
-            border-left: 3px solid var(--accent);
-            padding-left: 12px;
-        }
-        .quote-box span { font-weight: 600; color: var(--text-main); display: block; font-style: normal; margin-bottom: 2px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); }
-        
-        .profile-box {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .profile-avatar {
-            width: 45px;
-            height: 45px;
-            background: var(--accent-gradient);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-        }
-        .profile-info h4 { font-size: 0.95rem; color: var(--text-main); }
-        .profile-info p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-        .streak-badge {
-            background: #fff7ed;
-            color: #c2410c;
-            border: 1px solid #ffedd5;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+  /* Today's tasks */
+  .subhead{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:1.5px;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    margin:14px 0 8px 0;
+  }
+  .subhead:first-child{margin-top:0;}
+  .subhead-tag{
+    padding:2px 7px;
+    border-radius:4px;
+    font-size:9.5px;
+  }
+  .tag-gs{background:rgba(63,138,221,0.16);color:#7FB4E8;}
+  .tag-op{background:rgba(99,153,34,0.18);color:#9ECB63;}
+  .tag-ca{background:rgba(214,90,48,0.18);color:#E88C63;}
 
-        /* --- DASHBOARD GRID LAYOUT --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            padding-bottom: 30px;
-        }
+  .task-row{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:9px 10px;
+    border-radius:7px;
+    margin-bottom:3px;
+    cursor:default;
+    transition:background .12s ease;
+  }
+  .task-row:hover{background:var(--bg-panel-raised);}
+  .task-left{display:flex;align-items:center;gap:9px;min-width:0;}
+  .task-check{
+    width:14px;height:14px;border-radius:4px;
+    border:1.5px solid var(--border);
+    flex-shrink:0;
+  }
+  .task-name{font-size:13px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .task-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .task-due{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-muted);}
+  .icon-btn{
+    width:22px;height:22px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:5px;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:background .12s ease,color .12s ease;
+  }
+  .icon-btn:hover{background:var(--bg-deep);color:var(--accent-brass);}
+  .icon-btn.danger:hover{color:var(--accent-coral);}
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+  /* Revision */
+  .rev-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:9px 10px;
+    border-radius:7px;
+    margin-bottom:3px;
+    border-left:2px solid transparent;
+  }
+  .rev-row.overdue{border-left-color:var(--accent-coral);background:rgba(225,97,74,0.06);}
+  .rev-left{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .rev-name{font-size:13px;color:var(--text-primary);}
+  .rev-source{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-muted);}
+  .pending-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--accent-coral);
+    background:rgba(225,97,74,0.12);
+    padding:3px 8px;
+    border-radius:5px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .due-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--text-muted);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
 
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--bg-main);
-            padding-bottom: 10px;
-        }
+  /* Classes / CA log rows (shared style) */
+  .list-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 10px;
+    border-radius:7px;
+    margin-bottom:3px;
+    transition:background .12s ease;
+  }
+  .list-row:hover{background:var(--bg-panel-raised);}
+  .list-left{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .list-name{font-size:13px;color:var(--text-primary);}
+  .list-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);}
+  .list-actions{display:flex;gap:4px;flex-shrink:0;}
 
-        /* Subheadings for Tasks */
-        .subheading {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 12px 0 6px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+  .sync-note{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--border-soft);
+    font-size:10.5px;
+    color:var(--text-muted);
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .sync-dot{width:5px;height:5px;border-radius:50%;background:var(--accent-sage);}
 
-        /* Task & Item Elements */
-        .item-list { list-style: none; }
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
-            margin-bottom: 6px;
-            background: var(--bg-main);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-        }
-        .item-row:hover { background: #f1f5f9; }
-        
-        .item-left { display: flex; align-items: center; gap: 10px; }
-        .item-meta { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); }
-        
-        .badge-pending {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .due-date {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-        }
-
-        /* Action Buttons */
-        .action-btns { display: flex; gap: 6px; }
-        .btn-icon {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .btn-icon.edit:hover { background: #e2e8f0; color: var(--accent); }
-        .btn-icon.delete:hover { background: #fee2e2; color: var(--danger); }
-
-        /* Input Adder */
-        .add-box {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .add-box input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            outline: none;
-        }
-        .add-box input:focus { border-color: var(--accent); }
-        .add-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-        .add-btn:hover { background: #2563eb; }
-
-        /* Anki Tooltip indicator */
-        .anki-tooltip {
-            position: relative;
-            cursor: help;
-        }
-        .anki-tooltip:hover::after {
-            content: attr(data-anki);
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 20;
-        }
-    </style>
+  /* Tooltip stamp */
+  .stamp-tip{
+    position:fixed;
+    z-index:50;
+    background:var(--stamp-bg);
+    color:var(--stamp-ink);
+    border:1px solid #B9A66E;
+    border-radius:3px;
+    padding:8px 12px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    line-height:1.5;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    pointer-events:none;
+    opacity:0;
+    transform:translateY(4px) rotate(-1.2deg);
+    transition:opacity .1s ease, transform .1s ease;
+    max-width:220px;
+  }
+  .stamp-tip.show{opacity:1;transform:translateY(0) rotate(-1.2deg);}
+  .stamp-tip .stamp-label{
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-size:9px;
+    color:#7A6A3E;
+    display:block;
+    margin-bottom:3px;
+    border-bottom:1px solid #C9BB8A;
+    padding-bottom:3px;
+  }
+  .stamp-tip .stamp-date{font-weight:500;font-size:13px;}
+</style>
 </head>
 <body>
+<div class="app">
 
-    <!-- LEFT SIDEBAR -->
-    <div class="sidebar">
-        <div class="sidebar-brand">🎯 UPSC Arena 2026</div>
-        <ul class="sidebar-menu">
-            <li class="active">emt 1</li>
-            <li>emt 2</li>
-            <li>emt 3</li>
-            <li>emt 4</li>
-            <li>emt 5</li>
-            <li>emt 6</li>
-            <li>emt 7</li>
-            <li>emt 8</li>
-            <li>emt 9</li>
-            <li>emt 10</li>
-        </ul>
-        <div class="sidebar-footer">
-            <button class="logout-btn" onclick="logout()">Exit Arena</button>
-        </div>
+  <div class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">Prayas</span>
+      <span class="brand-sub">desk</span>
     </div>
+    <div class="nav" id="nav"></div>
+    <div class="sidebar-foot">v0.4 &middot; build in progress<br>more panels coming soon</div>
+  </div>
 
-    <!-- MAIN CONTENT WRAPPER -->
-    <div class="main-container">
-
-        <!-- TOP BAR (Quote + Profile Info) -->
-        <div class="top-bar">
-            <div class="quote-box">
-                <span>Daily Motivation</span>
-                <p id="quote-text">"Discipline is choosing between what you want now and what you want most."</p>
-            </div>
-            <div class="profile-box">
-                <div class="profile-avatar" id="avatar-initials">US</div>
-                <div class="profile-info">
-                    <h4 id="profile-name">Aspirant</h4>
-                    <p id="login-meta">Last Login: Today, 08:30 AM</p>
-                </div>
-                <div class="streak-badge">🔥 14 Days Streak</div>
-            </div>
-        </div>
-
-        <!-- DASHBOARD GRID -->
-        <div class="dashboard-grid">
-
-            <!-- LEFT SIDE: REVISION (Parallel to Todays Tasks) -->
-            <div class="card">
-                <div class="card-title">
-                    <span>🔄 Active Revision</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">Anki Spaced Queue</span>
-                </div>
-                <ul class="item-list" id="revision-list">
-                    <!-- Top 3 demo tasks with pending badge -->
-                    <li class="item-row">
-                        <div class="item-left"><span>1. Indian Polity: Fundamental Rights & DPSP</span></div>
-                        <div class="item-meta"><span class="badge-pending">Pending: 3 days</span></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>2. Modern History: 1857 Revolt & Causes</span></div>
-                        <div class="item-meta"><span class="badge-pending">Pending: 3 days</span></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>3. Climatology: Pressure Belts & Winds</span></div>
-                        <div class="item-meta"><span class="badge-pending">Pending: 3 days</span></div>
-                    </li>
-                    <!-- 3 additional demo items -->
-                    <li class="item-row">
-                        <div class="item-left"><span>4. Economy: Inflation & Monetary Policy</span></div>
-                        <div class="item-meta"><span class="due-date">Due: Tomorrow</span></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>5. Environment: Biodiversity Conventions</span></div>
-                        <div class="item-meta"><span class="due-date">Due: In 3 days</span></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>6. Ethics: Moral Thinkers & Philosophers</span></div>
-                        <div class="item-meta"><span class="due-date">Due: In 5 days</span></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- RIGHT SIDE: TODAY'S TASKS (GS, OP, CA) -->
-            <div class="card anki-tooltip" data-anki="Revision will be due on this date based on Anki Spaced Repetition algorithm">
-                <div class="card-title">
-                    <span>🎯 Today's Tasks</span>
-                    <span style="font-size: 0.75rem; color: var(--accent);">💡 Hover for Anki Schedule</span>
-                </div>
-
-                <!-- GS Category -->
-                <div class="subheading">General Studies (GS)</div>
-                <ul class="item-list">
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> Complete Laxmikanth Chapter 12</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> Economy Budget Analysis Notes</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> Geography Map Marking: Rivers</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                </ul>
-
-                <!-- OP Category -->
-                <div class="subheading">Optional Subject (OP)</div>
-                <ul class="item-list">
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> Anthropology: Kinship Theories</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> PYQ Answer Writing (2 Questions)</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> Tribal Demographics Case Study</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                </ul>
-
-                <!-- CA Category -->
-                <div class="subheading">Current Affairs (CA)</div>
-                <ul class="item-list">
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> The Hindu Editorial Notes</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> PIB Summary Compilation</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><input type="checkbox"> Monthly Magazine: IR Section</div>
-                        <div class="item-meta"><span class="due-date">Due Today</span><button class="btn-icon edit" title="Edit">✏️</button></div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- LEFT SIDE: CLASSES PENDING (Below Revision) -->
-            <div class="card">
-                <div class="card-title">
-                    <span>📚 Classes Pending</span>
-                </div>
-                <ul class="item-list" id="classes-list">
-                    <li class="item-row">
-                        <div class="item-left"><span>Polity Lecture 45: Judiciary Review</span></div>
-                        <div class="item-meta"><span class="due-date">Due: Tomorrow</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>Economy Lecture 12: Banking Sector</span></div>
-                        <div class="item-meta"><span class="due-date">Due: 2 Days</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>Ethics Case Studies Session 4</span></div>
-                        <div class="item-meta"><span class="due-date">Due: 3 Days</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>Geography Mapping Masterclass</span></div>
-                        <div class="item-meta"><span class="due-date">Due: 4 Days</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>Environment Prelims Booster 8</span></div>
-                        <div class="item-meta"><span class="due-date">Due: 5 Days</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- RIGHT SIDE: WHAT YOU HAVE READ IN CA TODAY (Parallel to Classes Pending) -->
-            <div class="card anki-tooltip" data-anki="Anki Spaced Repetition: Automatically queues items for revision (+1, +3, +7 days)">
-                <div class="card-title">
-                    <span>📰 What you have read in CA today</span>
-                </div>
-                <ul class="item-list" id="ca-list">
-                    <li class="item-row">
-                        <div class="item-left"><span>SEMICON 4.0 Semiconductor Policy Draft</span></div>
-                        <div class="item-meta"><span class="due-date">Anki Due: Tomorrow</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                    <li class="item-row">
-                        <div class="item-left"><span>Deep Sea Mining Regulations & ISA Verdict</span></div>
-                        <div class="item-meta"><span class="due-date">Anki Due: In 3 Days</span>
-                            <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                        </div>
-                    </li>
-                </ul>
-                <div class="add-box">
-                    <input type="text" id="ca-input" placeholder="Add CA topic read today...">
-                    <button class="add-btn" onclick="addCATopic()">Log & Sync</button>
-                </div>
-            </div>
-
-        </div>
+  <div class="topbar">
+    <div class="quote-strip">
+      <span class="quote-mark">&ldquo;</span>
+      <span class="quote-text" id="quoteText"></span>
+      <span class="quote-author" id="quoteAuthor"></span>
     </div>
+    <div class="profile-block">
+      <div class="streak-pill" id="streakPill">21 day streak</div>
+      <div class="profile-meta">
+        <div class="profile-name">Aditi Kumar</div>
+        <div class="profile-login" id="loginTime"></div>
+      </div>
+      <div class="avatar">AK</div>
+    </div>
+  </div>
 
-    <script>
-        // Security & Profile Initialization
-        const currentUser = localStorage.getItem('currentUser') || 'Aspirant';
-        document.getElementById('profile-name').innerText = currentUser;
-        
-        // Generate Initials
-        const initials = currentUser.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        document.getElementById('avatar-initials').innerText = initials || 'AS';
+  <div class="main">
+    <div class="board">
 
-        // Dynamic Daily Motivational Quotes Array
-        const quotes = [
-            "Discipline is choosing between what you want now and what you want most.",
-            "The secret of getting ahead is getting started.",
-            "Success is the sum of small efforts, repeated day in and day out.",
-            "Hard work beats talent when talent doesn't work hard.",
-            "Your future is created by what you do today, not tomorrow."
-        ];
-        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-        document.getElementById('quote-text').innerText = `"${quotes[dayOfYear % quotes.length]}"`;
+      <!-- LEFT COLUMN -->
+      <div class="col">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Revision</span>
+            <span class="panel-count">6 due &middot; spaced repetition</span>
+          </div>
+          <div class="panel-body" id="revisionList"></div>
+        </div>
 
-        // Last Login Timestamp Generator
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('login-meta').innerText = `Last Login: Today, ${timeString}`;
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Classes pending</span>
+            <span class="panel-count">5 scheduled</span>
+          </div>
+          <div class="panel-body" id="classesList"></div>
+        </div>
+      </div>
 
-        // Generic Edit & Delete handlers for interactive rows
-        function editItem(btn) {
-            const row = btn.closest('.item-row');
-            const span = row.querySelector('.item-left span');
-            const newText = prompt("Edit item text:", span.innerText);
-            if (newText !== null && newText.trim() !== "") {
-                span.innerText = newText.trim();
-            }
-        }
+      <!-- RIGHT COLUMN -->
+      <div class="col">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Today's tasks</span>
+            <span class="panel-count" id="taskCount"></span>
+          </div>
+          <div class="panel-body" id="tasksList"></div>
+        </div>
 
-        function deleteItem(btn) {
-            const row = btn.closest('.item-row');
-            row.style.opacity = '0';
-            setTimeout(() => row.remove(), 200);
-        }
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Read in CA today</span>
+            <span class="panel-count" id="caCount"></span>
+          </div>
+          <div class="panel-body">
+            <div id="caList"></div>
+            <div class="sync-note"><span class="sync-dot"></span>Every entry here queues itself into Revision on its spaced-repetition date</div>
+          </div>
+        </div>
+      </div>
 
-        // CA Logger with Automatic Anki Spaced Repetition Sync to Revision Window
-        function addCATopic() {
-            const input = document.getElementById('ca-input');
-            const topicText = input.value.trim();
-            if (!topicText) return;
+    </div>
+  </div>
+</div>
 
-            // 1. Add to CA list right side
-            const caList = document.getElementById('ca-list');
-            const caLi = document.createElement('li');
-            caLi.className = 'item-row';
-            caLi.innerHTML = `
-                <div class="item-left"><span>${topicText}</span></div>
-                <div class="item-meta"><span class="due-date">Anki Due: Tomorrow</span>
-                    <div class="action-btns"><button class="btn-icon edit" onclick="editItem(this)">✏️</button><button class="btn-icon delete" onclick="deleteItem(this)">🗑️</button></div>
-                </div>
-            `;
-            caList.appendChild(caLi);
+<div class="stamp-tip" id="stampTip">
+  <span class="stamp-label">Next revision</span>
+  <span class="stamp-date" id="stampDate">—</span>
+</div>
 
-            // 2. Automatically reflect/sync to Revision Window (Left Side)
-            const revList = document.getElementById('revision-list');
-            const revLi = document.createElement('li');
-            revLi.className = 'item-row';
-            revLi.innerHTML = `
-                <div class="item-left"><span>[CA Synced] ${topicText}</span></div>
-                <div class="item-meta"><span class="due-date">Anki Due: Tomorrow</span></div>
-            `;
-            revList.appendChild(revLi);
+<script>
+const ICONS = {
+  edit:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
+};
 
-            input.value = '';
-        }
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmt(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function fmtFull(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = '/';
-        }
-    </script>
+const today = new Date();
+
+/* simplified SM-2 style interval ladder */
+const SM2_STAGES = [1,3,7,14,30,90];
+function nextReview(addedDaysAgo, stage){
+  const addedDate = addDays(today, -addedDaysAgo);
+  return addDays(addedDate, SM2_STAGES[stage]);
+}
+
+/* ---------------- sidebar ---------------- */
+const nav = document.getElementById('nav');
+for(let i=1;i<=10;i++){
+  const el = document.createElement('div');
+  el.className = 'nav-item' + (i===1?' active':'');
+  el.innerHTML = `<span class="nav-dot"></span><span>Emt ${i}</span>`;
+  nav.appendChild(el);
+}
+
+/* ---------------- top bar ---------------- */
+const QUOTES = [
+  ["Discipline is choosing between what you want now and what you want most.","Anon"],
+  ["The exam does not test what you know. It tests what you can recall under pressure.","Study notes"],
+  ["Small revisions daily beat one large revision monthly.","Study notes"],
+  ["Consistency is a syllabus of its own.","Anon"],
+  ["You don't rise to the level of your goals, you fall to the level of your systems.","James Clear"],
+  ["Read less, revise more.","Toppers' wisdom"],
+  ["Every page you revise today is a mark you don't lose tomorrow.","Anon"]
+];
+const dayIndex = Math.floor(today.getTime()/86400000) % QUOTES.length;
+document.getElementById('quoteText').textContent = QUOTES[dayIndex][0];
+document.getElementById('quoteAuthor').textContent = '— ' + QUOTES[dayIndex][1];
+
+document.getElementById('loginTime').textContent = 'Last login: Today, 7:42 AM';
+
+/* ---------------- tooltip ---------------- */
+const tip = document.getElementById('stampTip');
+const tipDate = document.getElementById('stampDate');
+function showTip(e,dateObj){
+  tipDate.textContent = fmtFull(dateObj);
+  tip.classList.add('show');
+  moveTip(e);
+}
+function moveTip(e){
+  tip.style.left = (e.clientX + 16) + 'px';
+  tip.style.top = (e.clientY + 16) + 'px';
+}
+function hideTip(){ tip.classList.remove('show'); }
+
+function attachTooltip(el, dateObj){
+  el.addEventListener('mouseenter', (e)=>showTip(e,dateObj));
+  el.addEventListener('mousemove', moveTip);
+  el.addEventListener('mouseleave', hideTip);
+}
+
+/* ---------------- today's tasks ---------------- */
+const TASK_GROUPS = [
+  {key:'gs', label:'General studies', tagClass:'tag-gs', items:[
+    {name:'Modern history — ch.5 notes', due:0, addedDaysAgo:5, stage:2},
+    {name:'Polity — fundamental rights MCQs', due:1, addedDaysAgo:2, stage:1},
+    {name:'Geography — monsoon mechanism', due:2, addedDaysAgo:0, stage:0}
+  ]},
+  {key:'op', label:'Optional — public administration', tagClass:'tag-op', items:[
+    {name:'Classical theory — essay draft', due:0, addedDaysAgo:4, stage:1},
+    {name:'Case study — good governance', due:1, addedDaysAgo:1, stage:0},
+    {name:'Previous year Qs — unit 3', due:2, addedDaysAgo:6, stage:2}
+  ]},
+  {key:'ca', label:'Current affairs', tagClass:'tag-ca', items:[
+    {name:'Editorial — RBI monetary policy', due:0, addedDaysAgo:0, stage:0},
+    {name:'Daily current affairs quiz', due:1, addedDaysAgo:0, stage:0},
+    {name:'PIB summary — Aug 15', due:2, addedDaysAgo:1, stage:0}
+  ]}
+];
+const tasksList = document.getElementById('tasksList');
+let totalTasks = 0;
+TASK_GROUPS.forEach(group=>{
+  const h = document.createElement('div');
+  h.className = 'subhead';
+  h.innerHTML = `<span class="subhead-tag ${group.tagClass}">${group.key.toUpperCase()}</span><span>${group.label}</span>`;
+  tasksList.appendChild(h);
+  group.items.forEach(item=>{
+    totalTasks++;
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    const dueDate = addDays(today, item.due);
+    const dueLabel = item.due===0 ? 'Today' : item.due===1 ? 'Tomorrow' : fmt(dueDate);
+    row.innerHTML = `
+      <div class="task-left">
+        <span class="task-check"></span>
+        <span class="task-name">${item.name}</span>
+      </div>
+      <div class="task-right">
+        <span class="task-due">${dueLabel}</span>
+        <span class="icon-btn" title="Edit task">${ICONS.edit}</span>
+      </div>`;
+    tasksList.appendChild(row);
+    attachTooltip(row, nextReview(item.addedDaysAgo, item.stage));
+  });
+});
+document.getElementById('taskCount').textContent = totalTasks + ' today';
+
+/* ---------------- revision panel ---------------- */
+const REVISION = [
+  {name:'Modern history — revolt of 1857', source:'from GS log', pendingDays:3},
+  {name:'Ecology — biodiversity hotspots', source:'from GS log', pendingDays:3},
+  {name:'Chandrayaan mission update', source:'from CA log · Aug 10', pendingDays:3},
+  {name:'Polity — DPSP', source:'from GS log', due:0},
+  {name:'Geography — ocean currents', source:'from GS log', due:2},
+  {name:'Public admin — new public management', source:'from OP log', due:4}
+];
+const revisionList = document.getElementById('revisionList');
+REVISION.forEach(item=>{
+  const row = document.createElement('div');
+  row.className = 'rev-row' + (item.pendingDays ? ' overdue' : '');
+  const right = item.pendingDays
+    ? `<span class="pending-badge">Pending ${item.pendingDays} days</span>`
+    : `<span class="due-badge">${item.due===0?'Due today':'Due ' + fmt(addDays(today,item.due))}</span>`;
+  row.innerHTML = `
+    <div class="rev-left">
+      <span class="rev-name">${item.name}</span>
+      <span class="rev-source">${item.source}</span>
+    </div>
+    ${right}`;
+  revisionList.appendChild(row);
+});
+
+/* ---------------- classes pending ---------------- */
+const CLASSES = [
+  {name:'GS mentorship — mains answer writing', due:'Tomorrow, 5:00 PM'},
+  {name:'Optional class — public admin paper 2', due:'Aug 19, 6:30 PM'},
+  {name:'CA weekly discussion', due:'Aug 20, 8:00 PM'},
+  {name:'Essay writing workshop', due:'Aug 22, 4:00 PM'},
+  {name:'Interview guidance session', due:'Aug 24, 11:00 AM'}
+];
+const classesList = document.getElementById('classesList');
+CLASSES.forEach(c=>{
+  const row = document.createElement('div');
+  row.className = 'list-row';
+  row.innerHTML = `
+    <div class="list-left">
+      <span class="list-name">${c.name}</span>
+      <span class="list-meta">${c.due}</span>
+    </div>
+    <div class="list-actions">
+      <span class="icon-btn" title="Edit class">${ICONS.edit}</span>
+      <span class="icon-btn danger" title="Delete class">${ICONS.trash}</span>
+    </div>`;
+  classesList.appendChild(row);
+});
+
+/* ---------------- CA read today ---------------- */
+const CA_LOG = [
+  {name:'The Hindu editorial — India-EU trade', time:'Read 8:10 AM', stage:0},
+  {name:'PIB — new education policy update', time:'Read 9:45 AM', stage:0},
+  {name:'Down to earth — climate report', time:'Read 11:20 AM', stage:0},
+  {name:'Indian Express — economic survey excerpt', time:'Read 1:15 PM', stage:0}
+];
+const caList = document.getElementById('caList');
+CA_LOG.forEach(c=>{
+  const row = document.createElement('div');
+  row.className = 'list-row';
+  row.innerHTML = `
+    <div class="list-left">
+      <span class="list-name">${c.name}</span>
+      <span class="list-meta">${c.time}</span>
+    </div>
+    <div class="list-actions">
+      <span class="icon-btn" title="Edit entry">${ICONS.edit}</span>
+      <span class="icon-btn danger" title="Delete entry">${ICONS.trash}</span>
+    </div>`;
+  caList.appendChild(row);
+  attachTooltip(row, nextReview(0, c.stage));
+});
+document.getElementById('caCount').textContent = CA_LOG.length + ' entries';
+</script>
 </body>
 </html>
