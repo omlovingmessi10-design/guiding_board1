@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Tracker - Arena</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            margin: 0; 
+            padding: 20px; 
+            color: #333;
+        }
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: #2c3e50; 
+            color: white; 
+            padding: 15px 30px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 20px; 
+        }
+        .zone { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            border-top: 4px solid #3498db;
+        }
+        .zone:nth-child(2) { border-top-color: #e67e22; }
+        .zone:nth-child(3) { border-top-color: #e74c3c; }
+        h2 { 
+            margin-top: 0; 
+            color: #2c3e50; 
+            border-bottom: 2px solid #f0f0f0; 
+            padding-bottom: 10px; 
+            font-size: 1.2rem;
+        }
+        .task-list { 
+            list-style-type: none; 
+            padding: 0; 
+            margin: 0;
+        }
+        .task-list li { 
+            padding: 12px 0; 
+            border-bottom: 1px solid #f4f4f4; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+        .task-list li:last-child { border-bottom: none; }
+        input[type="checkbox"] { 
+            transform: scale(1.2); 
+            cursor: pointer; 
+        }
+        .logout-btn { 
+            background: #e74c3c; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .logout-btn:hover { background: #c0392b; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 id="welcome-message" style="margin: 0; font-size: 1.5rem;">Entering Arena...</h1>
+        <button class="logout-btn" onclick="logout()">Exit Arena</button>
+    </header>
 
+    <div class="grid-container">
+        <!-- Zone 1: Tasks -->
+        <div class="zone" id="zone-tasks">
+            <h2>🎯 Daily Targets</h2>
+            <ul class="task-list">
+                <li><input type="checkbox"> Current Affairs (Newspaper/Notes)</li>
+                <li><input type="checkbox"> Core Subject Block 1</li>
+                <li><input type="checkbox"> CSAT / Optional Subject</li>
+            </ul>
+        </div>
+
+        <!-- Zone 2: Revisions -->
+        <div class="zone" id="zone-revisions">
+            <h2>🔄 Active Revision</h2>
+            <ul class="task-list">
+                <li><input type="checkbox"> Read & Write: Draw connecting arrows</li>
+                <li><input type="checkbox"> Formulate two-line crux summaries</li>
+                <li><input type="checkbox"> Spaced Repetition Block</li>
+            </ul>
+        </div>
+
+        <!-- Zone 3: Tests -->
+        <div class="zone" id="zone-tests">
+            <h2>📊 Testing & Mocks</h2>
+            <ul class="task-list">
+                <li><input type="checkbox"> Daily Quiz / PYQs</li>
+                <li><input type="checkbox"> Sectional Mock Test</li>
+                <li><input type="checkbox"> Review incorrect logical deductions</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Security check: Verify the user is actually logged in
+        const currentUser = localStorage.getItem('currentUser');
+        
+        if (!currentUser) {
+            // If they didn't log in, kick them back to the login page immediately
+            window.location.href = '/'; 
+        } else {
+            // Display the exact name pulled from the Google Sheet
+            document.getElementById('welcome-message').innerText = `Arena: ${currentUser}`;
+        }
+
+        function logout() {
+            // Clear the memory and send back to login
+            localStorage.removeItem('currentUser');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
