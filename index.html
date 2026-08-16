@@ -746,6 +746,9 @@ async function login() {
     btn.disabled = true;
 
     try {
+        // PASTE YOUR ACTUAL GOOGLE APPS SCRIPT URL HERE:
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec";
+        
         const response = await fetch("/.netlify/functions/auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
