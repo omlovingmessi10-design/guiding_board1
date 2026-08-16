@@ -728,6 +728,17 @@
   </div>
 </div>
 
+  
+  /* --- SECURITY BOUNCER --- */
+if (!localStorage.getItem("currentUser")) {
+    window.location.href = "/"; // Kicks them back to the login page
+}
+
+// Optional: Add a logout button function
+window.logout = function() {
+    localStorage.removeItem("currentUser");
+    window.location.href = "/";
+}
 <script>
 /* ---------------- Backend API Connector ---------------- */
 const API_URL = 'https://gbkids.netlify.app/.netlify/functions/db';
