@@ -1,9 +1,84 @@
-UPSC Tracker - Login
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Tracker - Login</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: #f4f4f9; 
+            margin: 0;
+        }
+        #login-box { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            text-align: center; 
+            width: 300px;
+        }
+        input { 
+            display: block; 
+            width: 90%; 
+            margin: 15px auto; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+        }
+        button { 
+            background: #2c3e50; 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            width: 95%; 
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover { background: #1a252f; }
+    </style>
+</head>
+<body>
+    <div id="login-box">
+        <h2>Welcome to the 100-Day Sprint</h2>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <input type="password" id="pin" placeholder="4-Digit PIN" maxlength="4" required>
+        <button onclick="login()">Enter Arena</button>
+        <p id="error-message" style="color: red; display: none; margin-top: 15px;">Invalid Phone or PIN</p>
+    </div>
 
+    <script>
+        async function login() {
+            const phone = document.getElementById('phone').value;
+            const pin = document.getElementById('pin').value;
+            const btn = document.querySelector('button');
+            
+            // Change button text so you know it is working
+            btn.innerText = "Verifying..."; 
 
-    
-        Welcome to the Sprint
-        
-        
-        Enter Arena
-        Invalid Phone or PIN
+            const response = await fetch('/.netlify/functions/auth', {
+                method: 'POST',
+                body: JSON.stringify({ phone, pin })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Save name and send to dashboard
+                localStorage.setItem('currentUser', data.studentName);
+                window.location.href = '/dashboard.html';
+            } else {
+                // Show error and reset button
+                document.getElementById('error-message').style.display = 'block';
+                btn.innerText = "Enter Arena";
+            }
+        }
+    </script>
+</body>
+</html>
