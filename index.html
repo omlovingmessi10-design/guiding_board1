@@ -46,8 +46,8 @@
 </head>
 <body>
     <div id="login-box">
-        <h2>Welcome to the 100-Day Sprint</h2>
-        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <h2>Welcome to the Sprint</h2>
+        <input type="tel" id="phone" placeholder="Seat" required>
         <input type="password" id="pin" placeholder="4-Digit PIN" maxlength="4" required>
         <button onclick="login()">Enter Arena</button>
         <p id="error-message" style="color: red; display: none; margin-top: 15px;">Invalid Phone or PIN</p>
@@ -55,7 +55,7 @@
 
     <script>
         async function login() {
-            const phone = document.getElementById('phone').value;
+            const phone = document.getElementById('seat').value;
             const pin = document.getElementById('pin').value;
             const btn = document.querySelector('button');
             
@@ -64,7 +64,7 @@
 
             const response = await fetch('/.netlify/functions/auth', {
                 method: 'POST',
-                body: JSON.stringify({ phone, pin })
+                body: JSON.stringify({ seat, pin })
             });
 
             const data = await response.json();
