@@ -746,13 +746,11 @@ async function login() {
     btn.disabled = true;
 
     try {
-        // PASTE YOUR ACTUAL GOOGLE APPS SCRIPT URL HERE:
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec";
         
-        const response = await fetch("/.netlify/functions/auth", {
+        const response = await fetch(WEB_APP_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ seat, pin })
+            body: JSON.stringify({ type: "AUTH", seat, pin })
         });
 
         const data = await response.json();
@@ -772,7 +770,7 @@ async function login() {
     }
     catch (error) {
         console.error(error);
-        errorDiv.innerText = "Server error. Check Netlify logs.";
+        errorDiv.innerText = "Server error. Check connection.";
         errorDiv.style.display = "block";
         btn.innerText = "Enter Arena";
         btn.disabled = false;
