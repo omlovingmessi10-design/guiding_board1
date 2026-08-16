@@ -47,15 +47,15 @@
 <body>
     <div id="login-box">
         <h2>Welcome to the Sprint</h2>
-        <input type="tel" id="phone" placeholder="Seat" required>
+        <input type="tel" id="seat" placeholder="Seat" required>
         <input type="password" id="pin" placeholder="4-Digit PIN" maxlength="4" required>
         <button onclick="login()">Enter Arena</button>
-        <p id="error-message" style="color: red; display: none; margin-top: 15px;">Invalid Phone or PIN</p>
+        <p id="error-message" style="color: red; display: none; margin-top: 15px;">Invalid Seat or PIN</p>
     </div>
 
     <script>
         async function login() {
-            const phone = document.getElementById('seat').value;
+            const Seat = document.getElementById('seat').value;
             const pin = document.getElementById('pin').value;
             const btn = document.querySelector('button');
             
