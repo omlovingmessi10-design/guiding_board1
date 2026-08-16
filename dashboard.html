@@ -11,7 +11,7 @@
     --bg-deep: #000000;
     --bg-panel: rgba(255, 255, 255, 0.03); 
     --bg-panel-raised: rgba(255, 255, 255, 0.06);
-    --bg-sidebar: rgba(0, 0, 0, 0.2);
+    --bg-sidebar: rgba(0, 0, 0, 0.3);
     --border: rgba(255, 255, 255, 0.12);
     --border-soft: rgba(255, 255, 255, 0.06);
     
@@ -31,59 +31,28 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
     font-family:'IBM Plex Sans',sans-serif;
-    background: transparent; 
+    background: #000000; /* Completely Black Background */
     color:var(--text-primary);
     overflow:hidden;
     text-shadow: 0 1px 4px rgba(0,0,0,0.9);
   }
   
-  /* ---------- STATIC COSMOS BACKGROUND ---------- */
-  #cosmos-background {
+  /* ---------- HEAVY RAIN BACKGROUND ---------- */
+  #weather-background {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: -3; pointer-events: none; overflow: hidden;
-    background: #02000a;
+    background: #000000;
   }
-
-  .celestial-sun {
-    position: absolute; bottom: -15vh; left: 10vw;
-    width: 45vh; height: 45vh; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,235,59,0.9) 0%, rgba(249,115,22,0.6) 35%, transparent 70%);
-    filter: blur(15px);
-    box-shadow: 0 0 100px 40px rgba(249,115,22,0.4);
+  .rain-drop {
+    position: absolute;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.7));
+    width: 2px;
+    height: 40px;
+    bottom: 100%;
+    animation: fall linear infinite;
   }
-  .celestial-moon {
-    position: absolute; top: 12vh; right: 18vw;
-    width: 130px; height: 130px; border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e4e4e7 20%, #a1a1aa 80%, transparent 100%);
-    box-shadow: 0 0 60px 10px rgba(255, 255, 255, 0.4), inset -15px -15px 30px rgba(0,0,0,0.7);
-    filter: blur(0.5px);
-  }
-
-  .aurora-flame {
-    position: absolute; bottom: 0; width: 150vw; left: -25vw;
-    filter: blur(60px); mix-blend-mode: screen; border-radius: 50% 50% 0 0;
-    opacity: 0.6;
-  }
-  .aurora-flame.low {
-    height: 45vh;
-    background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.5) 0%, transparent 70%);
-  }
-  .aurora-flame.medium {
-    height: 70vh;
-    background: radial-gradient(ellipse at center, rgba(52, 211, 153, 0.35) 0%, rgba(139, 92, 246, 0.25) 50%, transparent 70%);
-  }
-  .aurora-flame.high {
-    height: 95vh;
-    background: radial-gradient(ellipse at center, rgba(167, 139, 250, 0.35) 0%, rgba(16, 185, 129, 0.15) 50%, transparent 70%);
-  }
-
-  #star-container {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -1; pointer-events: none; overflow: hidden;
-    background: transparent;
-  }
-  .ambient-star {
-    position: absolute; background: white; border-radius: 50%;
+  @keyframes fall {
+    to { transform: translateY(120vh); }
   }
 
   /* ---------- BASE LAYOUT ---------- */
@@ -101,7 +70,7 @@
   .sidebar{
     grid-row:1 / span 2; background:var(--bg-sidebar); border-right:1px solid var(--border);
     display:flex; flex-direction:column; padding:0 12px 16px 12px; overflow:hidden;
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   }
   .sidebar-top{
     height: 76px; display:flex; align-items:center; justify-content:space-between;
@@ -142,26 +111,20 @@
   .topbar{
     grid-column:2; display:flex; align-items:center; justify-content:space-between;
     padding:0 28px; border-bottom:1px solid var(--border-soft); 
-    background:rgba(0, 0, 0, 0.2); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    background:rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   }
-  .quote-strip{ display:flex; align-items:center; gap:10px; max-width:56%; }
+  .quote-strip{ display:flex; align-items:center; gap:10px; max-width:60%; }
   .quote-mark{ font-family:'Fraunces',serif; font-size:26px; color:var(--magic-core); line-height:1; }
-  .quote-text{ font-family:'IBM Plex Mono',monospace; font-style:italic; font-size:13px; color:var(--text-primary); line-height:1.4; }
-  .quote-author{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-secondary); margin-left:6px; }
+  .quote-text{ font-family:'IBM Plex Mono',monospace; font-style:italic; font-size:13px; color:var(--text-primary); line-height:1.4; transition: opacity 0.5s ease;}
   
   .profile-block{ display:flex; align-items:center; gap:14px; }
-  .top-study-badge {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;
-      color: #000; background: var(--text-primary); padding: 6px 12px; border-radius: 20px;
-      box-shadow: 0 0 15px rgba(255,255,255,0.4); text-shadow: none;
-  }
   .streak-pill{
     display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.1); border:1px solid var(--border);
     color:var(--magic-core); padding:6px 12px; border-radius:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
   }
-  .profile-meta{ text-align:right; line-height:1.35; }
-  .profile-name{font-weight:600;font-size:13.5px;color:var(--text-primary);}
-  .profile-login{font-size:10.5px;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace;}
+  .profile-meta{ text-align:right; line-height:1.2; }
+  .profile-name{font-weight:700;font-size:14px;color:var(--text-primary); letter-spacing: 0.5px;}
+  .profile-login{font-size:10px;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace; margin-top:2px;}
   .avatar{
     width:38px;height:38px;border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid var(--border);
     display:flex;align-items:center;justify-content:center; font-weight:700;font-size:14px; color:var(--text-primary);
@@ -203,7 +166,7 @@
   .task-check.checked{background:var(--accent-brass);border-color:var(--accent-brass);}
   .task-check.checked svg{opacity:1;}
   
-  .task-name{font-size:14px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .task-name{font-size:14px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; transition: all 0.3s;}
   .task-name.done{color:var(--text-muted);text-decoration:line-through;}
   
   .task-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -301,15 +264,8 @@
 </head>
 <body>
 
-<!-- Static Cosmos Background -->
-<div id="cosmos-background">
-  <div class="celestial-sun"></div>
-  <div class="celestial-moon"></div>
-  <div class="aurora-flame low"></div>
-  <div class="aurora-flame medium"></div>
-  <div class="aurora-flame high"></div>
-</div>
-<div id="star-container"></div>
+<!-- Dynamic Heavy Rain Background -->
+<div id="weather-background"></div>
 
 <div class="app">
 
@@ -324,7 +280,17 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </span>
     </div>
-    <div class="nav" id="nav"></div>
+    
+    <div class="nav" id="nav">
+        <!-- JS dynamically injects nav here -->
+    </div>
+    
+    <!-- Logout Tab (Bottom) -->
+    <div class="nav-divider" style="height:1px; background:var(--border-soft); margin: 15px 10px;"></div>
+    <div class="nav-item text-danger" onclick="logout()" style="color:var(--accent-coral);">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>
+        <span class="nav-label" style="font-weight:600;">Log Out</span>
+    </div>
   </div>
 
   <!-- TOP BAR -->
@@ -334,13 +300,13 @@
       <span class="quote-text" id="quoteText">Loading...</span>
     </div>
     <div class="profile-block">
-      <span class="top-study-badge" id="top-study-time">📚 Study: 0.0 hrs</span>
-      <div class="streak-pill">🔥 21 day streak</div>
+      <div class="streak-pill">🔥 1 day streak</div>
       <div class="profile-meta">
-        <div class="profile-name">Aditi Kumar</div>
-        <div class="profile-login">Last login: Today</div>
+        <div class="profile-name">Om</div>
+        <div class="profile-login" id="lastLoginTxt">Last login: --:-- date:--</div>
+        <div class="profile-login" id="todayDateTxt" style="font-weight:600; color:var(--text-primary);">--:--:--</div>
       </div>
-      <div class="avatar" onclick="logout()" style="cursor: pointer;" title="Secure Log Out">AK</div>
+      <div class="avatar" onclick="logout()" style="cursor: pointer;" title="Secure Log Out">O</div>
     </div>
   </div>
 
@@ -450,7 +416,7 @@
       </div>
     </div>
 
-    <!-- EMT 4: TIME USAGE -->
+    <!-- EMT 4: TIME USAGE (PIE CHART ADDED) -->
     <div class="view" id="view-4" data-view="4">
       <div class="page-head"><div class="page-title">Temporal Accounting</div></div>
       <div class="panel">
@@ -464,7 +430,15 @@
             <div class="field narrow"><label>To</label><input type="time" id="tuTo" value="10:30"></div>
             <button class="btn" id="tuAddBtn">Commit Time</button>
           </div>
-          <div id="tuLogList" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;"></div>
+          
+          <div style="display:flex; gap: 25px; align-items:flex-start; margin-top: 25px; padding-top: 15px; border-top:1px solid var(--border-soft);">
+             <div style="flex: 1; min-width: 200px; display:flex; justify-content:center;">
+                 <!-- Chart Container -->
+                 <canvas id="timePieChart" style="max-width: 250px; max-height: 250px;"></canvas>
+             </div>
+             <div id="tuLogList" style="flex: 2; display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -628,33 +602,75 @@ async function apiDelete(sheetName, rowId) {
   }
 }
 
-/* ---------------- Static Cosmos Background ---------------- */
-function initCosmos() {
-    const container = document.getElementById('star-container');
-    for(let i=0; i<200; i++) {
-        let star = document.createElement('div');
-        star.className = 'ambient-star';
-        let size = Math.random() * 2 + 0.5;
-        star.style.width = size + 'px';
-        star.style.height = size + 'px';
-        star.style.left = Math.random() * 100 + 'vw';
-        star.style.top = Math.random() * 100 + 'vh'; 
-        star.style.opacity = Math.random() * 0.8 + 0.1;
-        container.appendChild(star);
+/* ---------------- Date & Last Login Setup ---------------- */
+const localDate = new Date();
+const year = localDate.getFullYear();
+const month = String(localDate.getMonth() + 1).padStart(2, '0');
+const day = String(localDate.getDate()).padStart(2, '0');
+const hrs = String(localDate.getHours()).padStart(2, '0');
+const mins = String(localDate.getMinutes()).padStart(2, '0');
+const yy = String(year).slice(-2);
+
+const todayStr = `${year}-${month}-${day}`;
+const displayToday = `${day}:${month}:${yy}`;
+document.getElementById('todayDateTxt').innerText = displayToday;
+
+// Handle Last Login Timestamp logic
+let lastLoginStamp = localStorage.getItem('prayashLastLogin');
+if(!lastLoginStamp) {
+    lastLoginStamp = `${hrs}:${mins}: date:${month}`; // Default if first time
+}
+document.getElementById('lastLoginTxt').innerText = `Last login: ${lastLoginStamp}`;
+// Save current time for the next session
+localStorage.setItem('prayashLastLogin', `${hrs}:${mins}: date:${month}`);
+
+
+/* ---------------- Heavy Rain Background ---------------- */
+function initRain() {
+    const container = document.getElementById('weather-background');
+    container.innerHTML = '';
+    // Generate 150 random raindrops
+    for(let i=0; i<150; i++) {
+        let drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = Math.random() * 100 + 'vw';
+        // Randomize speed & start time
+        drop.style.animationDuration = (Math.random() * 0.4 + 0.2) + 's';
+        drop.style.animationDelay = (Math.random() * 2) + 's';
+        container.appendChild(drop);
     }
 }
-initCosmos();
+initRain();
+
+/* ---------------- Essay Quotes Ticker ---------------- */
+const ESSAY_QUOTES = [
+    "Development is freedom. — Amartya Sen",
+    "The measure of a society is how it treats its most vulnerable members. — Mahatma Gandhi",
+    "Injustice anywhere is a threat to justice everywhere. — Martin Luther King Jr.",
+    "Educating the mind without educating the heart is no education at all. — Aristotle",
+    "Poverty is the worst form of violence. — Mahatma Gandhi",
+    "The best way to predict the future is to create it. — Peter Drucker",
+    "No army can withstand the strength of an idea whose time has come. — Victor Hugo",
+    "Excellence is not an act, but a habit. — Will Durant",
+    "Equality is the soul of liberty. — Frances Wright"
+];
+let qIdx = 0;
+const quoteTextEl = document.getElementById('quoteText');
+quoteTextEl.textContent = ESSAY_QUOTES[0];
+setInterval(() => {
+    quoteTextEl.style.opacity = '0';
+    setTimeout(() => {
+        qIdx = (qIdx + 1) % ESSAY_QUOTES.length;
+        quoteTextEl.textContent = ESSAY_QUOTES[qIdx];
+        quoteTextEl.style.opacity = '1';
+    }, 500);
+}, 10000);
+
 
 const ICONS = {
   trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
   calendar: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>'
 };
-
-const localDate = new Date();
-const year = localDate.getFullYear();
-const month = String(localDate.getMonth() + 1).padStart(2, '0');
-const day = String(localDate.getDate()).padStart(2, '0');
-const todayStr = `${year}-${month}-${day}`;
 
 /* Sidebar Nav Setup */
 const NAV_ICONS = [
@@ -691,19 +707,52 @@ nav.addEventListener('click',(e)=>{
 });
 document.getElementById('collapseBtn').addEventListener('click', ()=>document.querySelector('.app').classList.toggle('collapsed'));
 
-document.getElementById('quoteText').textContent = "Clear thinking becomes clear writing; one can't exist without the other.";
+
+/* --- FLOWER ANIMATION SYSTEM --- */
+function spawnFlowers(x, y) {
+    const emojis = ['🌸', '🌺', '🌼', '🌻', '💮'];
+    for(let i=0; i<10; i++) {
+        const flower = document.createElement('div');
+        flower.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        flower.style.position = 'fixed';
+        flower.style.left = x + 'px';
+        flower.style.top = y + 'px';
+        flower.style.fontSize = '24px';
+        flower.style.pointerEvents = 'none';
+        flower.style.zIndex = '9999';
+        flower.style.transition = 'all 1s cubic-bezier(0.25, 1, 0.5, 1)';
+        document.body.appendChild(flower);
+
+        // Spread math
+        setTimeout(() => {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 40 + Math.random() * 60; // Spread radius
+            flower.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) scale(0)`;
+            flower.style.opacity = '0';
+        }, 10);
+
+        setTimeout(() => flower.remove(), 1000);
+    }
+}
 
 function bindInteractions(row) {
     const checkEl = row.querySelector('.task-check');
     if(checkEl) {
-        checkEl.addEventListener('click', ()=>{
-            checkEl.classList.toggle('checked');
+        checkEl.addEventListener('click', (e)=>{
+            const isChecked = checkEl.classList.toggle('checked');
             row.querySelector('.task-name').classList.toggle('done');
+            
+            // Trigger Reward Animation if marking as completed
+            if (isChecked) {
+                const rect = checkEl.getBoundingClientRect();
+                spawnFlowers(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            }
         });
     }
     const delBtn = row.querySelector('.icon-btn.danger');
     if (delBtn) delBtn.addEventListener('click', () => row.remove());
 }
+
 
 /* ================= 20 CUSTOM CA THEMES ================= */
 const THEMES = [
@@ -1025,7 +1074,7 @@ function renderCAMap() {
   });
 }
 
-/* ================= EMT 4 — TIME USAGE ================= */
+/* ================= EMT 4 — TIME USAGE & PIE CHART ================= */
 const tuLogList = document.getElementById('tuLogList');
 const ACTIVITIES = [
   'GS study','Optional study','CA reading','Revision','Mock test','Class / lecture',
@@ -1036,31 +1085,69 @@ const tuActivity = document.getElementById('tuActivity');
 ACTIVITIES.forEach(a=>{ tuActivity.innerHTML += `<option value="${a}">${a}</option>`; });
 
 let timeLog = [];
-
-function updateTopStudyTime() {
-    const studyActivities = ['GS study','Optional study','CA reading','Revision','Mock test','Class / lecture'];
-    let totalStudy = 0;
-    timeLog.forEach(log => { if(studyActivities.includes(log.activity)) totalStudy += Number(log.hours); });
-    document.getElementById('top-study-time').innerText = `📚 Study: ${totalStudy.toFixed(1)} hrs`;
-}
+let timePieChart = null; // Store chart instance
 
 function renderTimeLog() {
     tuLogList.innerHTML = '';
+    
+    // Aggregation mapping for Pie Chart
+    const aggregatedData = {};
+
     timeLog.forEach(log => {
+        const hrsNum = Number(log.hours);
+        // Build rows
         const row = document.createElement('div');
         row.className = 'list-row';
         row.innerHTML = `
             <div class="task-left">
                 <div style="display:flex; flex-direction:column; gap:2px;">
                     <span class="task-name">${log.activity}</span>
-                    <span class="list-meta">${Number(log.hours).toFixed(1)} hrs logged</span>
+                    <span class="list-meta">${hrsNum.toFixed(1)} hrs logged</span>
                 </div>
             </div>
             <button class="icon-btn danger" onclick="deleteTimeLog(${log.id})">${ICONS.trash}</button>
         `;
         tuLogList.appendChild(row);
+
+        // Aggregate for chart
+        aggregatedData[log.activity] = (aggregatedData[log.activity] || 0) + hrsNum;
     });
-    updateTopStudyTime();
+
+    // Update Pie Chart
+    const chartLabels = Object.keys(aggregatedData);
+    const chartData = Object.values(aggregatedData);
+
+    const ctx = document.getElementById('timePieChart').getContext('2d');
+    if (timePieChart) {
+        timePieChart.destroy(); // Clear old chart
+    }
+
+    if (chartLabels.length > 0) {
+        timePieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: [
+                        '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', 
+                        '#ef4444', '#ec4899', '#6366f1', '#14b8a6'
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#000'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#ffffff', font: { family: 'IBM Plex Mono', size: 10 } }
+                    }
+                }
+            }
+        });
+    }
 }
 
 window.deleteTimeLog = function(id) {
