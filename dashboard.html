@@ -593,7 +593,7 @@ window.logout = function() {
 }
 
 /* ---------------- Google Apps Script API Connector ---------------- */
-const API_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec';
 
 async function apiGet(sheetName) {
   try {
@@ -1199,7 +1199,7 @@ document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
   });
 });
 
-/* ================= INITIAL LOAD BOOTLOADER ================= */
+/* ================= INITIAL LOAD BOOTLOADER (SAFE PARSE) ================= */
 async function loadAllDataFromCloud() {
     try {
         const cloudTasks = await apiGet('PlannedTasks');
@@ -1216,11 +1216,19 @@ async function loadAllDataFromCloud() {
 
         const cloudCA = await apiGet('CALogs');
         if(cloudCA && cloudCA.length > 0) {
-            CA_TOPICS = cloudCA.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                name: r.Name || '',
-                themes: typeof r.Themes === 'string' ? JSON.parse(r.Themes || '[]') : (r.Themes || [])
-            }));
+            CA_TOPICS = cloudCA.map(r => {
+                let themesParsed = [];
+                try {
+                    themesParsed = typeof r.Themes === 'string' ? JSON.parse(r.Themes) : (r.Themes || []);
+                } catch(e) {
+                    themesParsed = []; // Fallback if row data is plain text
+                }
+                return {
+                    id: Number(r.ID) || Date.now(),
+                    name: r.Name || '',
+                    themes: Array.isArray(themesParsed) ? themesParsed : []
+                };
+            });
             renderCAMap();
             renderCAList();
         }
@@ -1270,17 +1278,25 @@ async function loadAllDataFromCloud() {
 
         const cloudPrelims = await apiGet('PrelimsTactics');
         if(cloudPrelims && cloudPrelims.length > 0) {
-            prelimsLogs = cloudPrelims.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                date: r.Date || todayStr,
-                name: r.Name || '',
-                format: r.Format || 'FLT',
-                sub: r.Subject || 'ALL Integrated',
-                correct: Number(r.Correct) || 0,
-                incorrect: Number(r.Incorrect) || 0,
-                marks: Number(r.Marks) || 0,
-                weak: typeof r.WeakZones === 'string' ? JSON.parse(r.WeakZones || '[]') : (r.WeakZones || [])
-            }));
+            prelimsLogs = cloudPrelims.map(r => {
+                let weakParsed = [];
+                try {
+                    weakParsed = typeof r.WeakZones === 'string' ? JSON.parse(r.WeakZones) : (r.WeakZones || []);
+                } catch(e) {
+                    weakParsed = [];
+                }
+                return {
+                    id: Number(r.ID) || Date.now(),
+                    date: r.Date || todayStr,
+                    name: r.Name || '',
+                    format: r.Format || 'FLT',
+                    sub: r.Subject || 'ALL Integrated',
+                    correct: Number(r.Correct) || 0,
+                    incorrect: Number(r.Incorrect) || 0,
+                    marks: Number(r.Marks) || 0,
+                    weak: Array.isArray(weakParsed) ? weakParsed : []
+                };
+            });
             renderPrelimsAdvTable();
         }
 
