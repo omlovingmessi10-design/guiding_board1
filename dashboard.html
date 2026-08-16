@@ -47,21 +47,57 @@
         .task-list { 
             list-style-type: none; 
             padding: 0; 
-            margin: 0;
+            margin: 0 0 15px 0;
         }
         .task-list li { 
-            padding: 12px 0; 
+            padding: 10px 0; 
             border-bottom: 1px solid #f4f4f4; 
             display: flex; 
             align-items: center; 
-            gap: 12px;
+            justify-content: space-between;
             font-size: 0.95rem;
+        }
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .task-list li:last-child { border-bottom: none; }
         input[type="checkbox"] { 
             transform: scale(1.2); 
             cursor: pointer; 
         }
+        .add-task-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .add-task-box input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .add-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .add-btn:hover { background: #1a252f; }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .delete-btn:hover { color: #c0392b; }
         .logout-btn { 
             background: #e74c3c; 
             color: white; 
@@ -85,36 +121,74 @@
         <!-- Zone 1: Tasks -->
         <div class="zone" id="zone-tasks">
             <h2>🎯 Daily Targets</h2>
-            <ul class="task-list">
-                <li><input type="checkbox"> Current Affairs (Newspaper/Notes)</li>
-                <li><input type="checkbox"> Core Subject Block 1</li>
-                <li><input type="checkbox"> CSAT / Optional Subject</li>
+            <ul class="task-list" id="list-tasks">
+                <li>
+                    <div class="task-left"><input type="checkbox"> Current Affairs (Newspaper/Notes)</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
+                <li>
+                    <div class="task-left"><input type="checkbox"> Core Subject Block 1</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
+                <li>
+                    <div class="task-left"><input type="checkbox"> CSAT / Optional Subject</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
             </ul>
+            <div class="add-task-box">
+                <input type="text" id="input-tasks" placeholder="Add new target...">
+                <button class="add-btn" onclick="addTask('tasks')">Add</button>
+            </div>
         </div>
 
         <!-- Zone 2: Revisions -->
         <div class="zone" id="zone-revisions">
             <h2>🔄 Active Revision</h2>
-            <ul class="task-list">
-                <li><input type="checkbox"> Read & Write: Draw connecting arrows</li>
-                <li><input type="checkbox"> Formulate two-line crux summaries</li>
-                <li><input type="checkbox"> Spaced Repetition Block</li>
+            <ul class="task-list" id="list-revisions">
+                <li>
+                    <div class="task-left"><input type="checkbox"> Read & Write: Draw connecting arrows</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
+                <li>
+                    <div class="task-left"><input type="checkbox"> Formulate two-line crux summaries</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
+                <li>
+                    <div class="task-left"><input type="checkbox"> Spaced Repetition Block</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
             </ul>
+            <div class="add-task-box">
+                <input type="text" id="input-revisions" placeholder="Add new revision...">
+                <button class="add-btn" onclick="addTask('revisions')">Add</button>
+            </div>
         </div>
 
         <!-- Zone 3: Tests -->
         <div class="zone" id="zone-tests">
             <h2>📊 Testing & Mocks</h2>
-            <ul class="task-list">
-                <li><input type="checkbox"> Daily Quiz / PYQs</li>
-                <li><input type="checkbox"> Sectional Mock Test</li>
-                <li><input type="checkbox"> Review incorrect logical deductions</li>
+            <ul class="task-list" id="list-tests">
+                <li>
+                    <div class="task-left"><input type="checkbox"> Daily Quiz / PYQs</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
+                <li>
+                    <div class="task-left"><input type="checkbox"> Sectional Mock Test</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
+                <li>
+                    <div class="task-left"><input type="checkbox"> Review incorrect logical deductions</div>
+                    <button class="delete-btn" onclick="removeTask(this)">×</button>
+                </li>
             </ul>
+            <div class="add-task-box">
+                <input type="text" id="input-tests" placeholder="Add new test...">
+                <button class="add-btn" onclick="addTask('tests')">Add</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // 1. Security check: Verify user is logged in
         const currentUser = localStorage.getItem('currentUser');
         if (!currentUser) {
             window.location.href = '/';
@@ -122,24 +196,47 @@
             document.getElementById('welcome-message').innerText = `Arena: ${currentUser}`;
         }
 
-        // 2. Checkbox sync logic with Google Sheets
+        // Handle adding custom tasks
+        function addTask(zoneId) {
+            const input = document.getElementById(`input-${zoneId}`);
+            const taskText = input.value.trim();
+            if (!taskText) return;
+
+            const list = document.getElementById(`list-${zoneId}`);
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="task-left"><input type="checkbox" onchange="syncTask(this)"> ${taskText}</div>
+                <button class="delete-btn" onclick="removeTask(this)">×</button>
+            `;
+            list.appendChild(li);
+            input.value = '';
+        }
+
+        // Handle deleting tasks
+        function removeTask(btn) {
+            btn.parentElement.remove();
+        }
+
+        // Sync checkbox changes to Google Sheets
+        async function syncTask(checkbox) {
+            const taskName = checkbox.parentElement.innerText.trim();
+            const status = checkbox.checked ? "Done" : "Pending";
+            
+            try {
+                await fetch('/.netlify/functions/updateTask', {
+                    method: 'POST',
+                    body: JSON.stringify({ studentName: currentUser, task: taskName, status: status })
+                });
+            } catch (err) {
+                console.error("Failed to sync task", err);
+            }
+        }
+
+        // Attach listeners to default checkboxes on load
         document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', async (e) => {
-                const taskName = e.target.parentElement.innerText.trim();
-                const status = e.target.checked ? "Done" : "Pending";
-                
-                try {
-                    await fetch('/.netlify/functions/updateTask', {
-                        method: 'POST',
-                        body: JSON.stringify({ studentName: currentUser, task: taskName, status: status })
-                    });
-                } catch (err) {
-                    console.error("Failed to sync task", err);
-                }
-            });
+            cb.addEventListener('change', (e) => syncTask(e.target));
         });
 
-        // 3. Logout function
         function logout() {
             localStorage.removeItem('currentUser');
             window.location.href = '/';
