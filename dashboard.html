@@ -574,7 +574,11 @@ window.logout = function() {
 
 /* ---------------- Google Apps Script API Connector ---------------- */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec';
-const currentUser = localStorage.getItem("currentUser") || "Om"; // Grabs the logged-in user
+const currentUser = localStorage.getItem("currentUser") || "Om"; 
+
+// ADD THESE TWO LINES:
+document.querySelector('.profile-name').innerText = currentUser;
+document.querySelector('.avatar').innerText = currentUser.charAt(0).toUpperCase();
 
 async function apiGet(sheetName) {
   try {
