@@ -31,7 +31,7 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
     font-family:'IBM Plex Sans',sans-serif;
-    background: #000000; /* Pure Black Background */
+    background: #000000;
     color:var(--text-primary);
     overflow:hidden;
     text-shadow: 0 1px 4px rgba(0,0,0,0.9);
@@ -395,7 +395,7 @@
       </div>
     </div>
 
-    <!-- EMT 4: TIME USAGE (PIE CHART ADDED) -->
+    <!-- EMT 4: TIME USAGE (PIE CHART & DATE FILTER ADDED) -->
     <div class="view" id="view-4" data-view="4">
       <div class="page-head"><div class="page-title">Temporal Accounting</div></div>
       <div class="panel">
@@ -405,14 +405,23 @@
               <label>Activity Log</label>
               <select id="tuActivity"></select>
             </div>
+            <div class="field narrow"><label>Log Date</label><input type="date" id="tuDate"></div>
             <div class="field narrow"><label>From</label><input type="time" id="tuFrom" value="08:00"></div>
             <div class="field narrow"><label>To</label><input type="time" id="tuTo" value="10:30"></div>
             <button class="btn" id="tuAddBtn">Commit Time</button>
           </div>
           
-          <div style="display:flex; gap: 25px; align-items:flex-start; margin-top: 25px; padding-top: 15px; border-top:1px solid var(--border-soft);">
+          <!-- View Toggle / Filter -->
+          <div style="display:flex; justify-content: space-between; align-items:flex-end; margin-top: 25px; padding-top: 15px; border-top:1px solid var(--border-soft);">
+              <div class="subhead" style="margin:0; color:var(--accent-brass);">Daily Log View</div>
+              <div class="field narrow">
+                  <input type="date" id="tuFilterDate" title="Navigate to any day">
+              </div>
+          </div>
+
+          <!-- Chart & List Area -->
+          <div style="display:flex; gap: 25px; align-items:flex-start; margin-top: 15px;">
              <div style="flex: 1; min-width: 200px; display:flex; justify-content:center;">
-                 <!-- Chart Container -->
                  <canvas id="timePieChart" style="max-width: 250px; max-height: 250px;"></canvas>
              </div>
              <div id="tuLogList" style="flex: 2; display: flex; flex-direction: column; gap: 8px;"></div>
@@ -586,20 +595,23 @@ const localDate = new Date();
 const year = localDate.getFullYear();
 const month = String(localDate.getMonth() + 1).padStart(2, '0');
 const day = String(localDate.getDate()).padStart(2, '0');
+const hrs = String(localDate.getHours()).padStart(2, '0');
+const mins = String(localDate.getMinutes()).padStart(2, '0');
 const yy = String(year).slice(-2);
 
 const todayStr = `${year}-${month}-${day}`;
 const displayToday = `${day}:${month}:${yy}`;
 document.getElementById('todayDateTxt').innerText = displayToday;
 
-// Handle Last Login Timestamp logic
+// Handle Last Login Timestamp logic - Format: HH:MM:DD:MM
+const currentLoginStamp = `${hrs}:${mins}:${day}:${month}`;
 let lastLoginStamp = localStorage.getItem('prayashLastLogin');
 if(!lastLoginStamp) {
-    lastLoginStamp = day; // Format = DD as requested
+    lastLoginStamp = currentLoginStamp; // Default if first time
 }
 document.getElementById('lastLoginTxt').innerText = `Last login: ${lastLoginStamp}`;
 // Save current time for the next session
-localStorage.setItem('prayashLastLogin', day);
+localStorage.setItem('prayashLastLogin', currentLoginStamp);
 
 
 /* ---------------- Essay Quotes Ticker ---------------- */
@@ -891,6 +903,25 @@ document.getElementById('atAddBtn').addEventListener('click', ()=>{
   document.getElementById('atTopic').value = '';
 });
 
+// Detect Date Edits in the Table to Save & Remove from "Today" if needed
+atTableBody.addEventListener('change', (e) => {
+    if(e.target.classList.contains('at-date-edit')) {
+        const id = Number(e.target.dataset.id);
+        const newDate = e.target.value;
+        const task = plannedTasks.find(t => t.id === id);
+        
+        if (task) {
+            task.date = newDate;
+            renderPlannedTasks();
+            renderTodayTasksList();
+            
+            // Delete old record and rewrite with new date to sync with Google Sheets
+            apiDelete('PlannedTasks', id);
+            apiAdd('PlannedTasks', { ID: id, Subject: task.subject, Topic: task.topic, Date: newDate });
+        }
+    }
+});
+
 atTableBody.addEventListener('click',(e)=>{
   const del = e.target.closest('.at-del');
   if(del){ 
@@ -1034,7 +1065,7 @@ function renderCAMap() {
   });
 }
 
-/* ================= EMT 4 — TIME USAGE & PIE CHART ================= */
+/* ================= EMT 4 — TIME USAGE & DATE FILTERS ================= */
 const tuLogList = document.getElementById('tuLogList');
 const ACTIVITIES = [
   'GS study','Optional study','CA reading','Revision','Mock test','Class / lecture',
@@ -1044,17 +1075,31 @@ const ACTIVITIES = [
 const tuActivity = document.getElementById('tuActivity');
 ACTIVITIES.forEach(a=>{ tuActivity.innerHTML += `<option value="${a}">${a}</option>`; });
 
+// Date Elements
+const tuDateInput = document.getElementById('tuDate');
+const tuFilterDateInput = document.getElementById('tuFilterDate');
+tuDateInput.value = todayStr;
+tuFilterDateInput.value = todayStr;
+
+// Refresh Chart when the view toggle date is changed
+tuFilterDateInput.addEventListener('change', renderTimeLog);
+
 let timeLog = [];
 let timePieChart = null; // Store chart instance
 
 function renderTimeLog() {
     tuLogList.innerHTML = '';
     
+    const filterDate = tuFilterDateInput.value;
+    const filteredLogs = timeLog.filter(l => l.date === filterDate);
+    
     // Aggregation mapping for Pie Chart
     const aggregatedData = {};
+    let totalFilteredHours = 0;
 
-    timeLog.forEach(log => {
+    filteredLogs.forEach(log => {
         const hrsNum = Number(log.hours);
+        
         // Build rows
         const row = document.createElement('div');
         row.className = 'list-row';
@@ -1071,11 +1116,22 @@ function renderTimeLog() {
 
         // Aggregate for chart
         aggregatedData[log.activity] = (aggregatedData[log.activity] || 0) + hrsNum;
+        totalFilteredHours += hrsNum;
     });
 
-    // Update Pie Chart
-    const chartLabels = Object.keys(aggregatedData);
-    const chartData = Object.values(aggregatedData);
+    if (filteredLogs.length === 0) {
+        tuLogList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No time logged for ${filterDate}.</div>`;
+    }
+
+    // Prepare Pie Chart Labels with Percentages
+    const chartLabels = [];
+    const chartData = [];
+
+    for (const [activity, hrs] of Object.entries(aggregatedData)) {
+        const percentage = totalFilteredHours > 0 ? Math.round((hrs / totalFilteredHours) * 100) : 0;
+        chartLabels.push(`${activity} (${percentage}%)`);
+        chartData.push(hrs);
+    }
 
     const ctx = document.getElementById('timePieChart').getContext('2d');
     if (timePieChart) {
@@ -1091,7 +1147,8 @@ function renderTimeLog() {
                     data: chartData,
                     backgroundColor: [
                         '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', 
-                        '#ef4444', '#ec4899', '#6366f1', '#14b8a6'
+                        '#ef4444', '#ec4899', '#6366f1', '#14b8a6',
+                        '#84cc16', '#a855f7', '#f43f5e', '#eab308'
                     ],
                     borderWidth: 1,
                     borderColor: '#000'
@@ -1103,6 +1160,13 @@ function renderTimeLog() {
                     legend: {
                         position: 'right',
                         labels: { color: '#ffffff', font: { family: 'IBM Plex Mono', size: 10 } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.raw.toFixed(1)} Hours`;
+                            }
+                        }
                     }
                 }
             }
@@ -1117,18 +1181,28 @@ window.deleteTimeLog = function(id) {
 }
 
 document.getElementById('tuAddBtn').addEventListener('click', ()=>{
+  const selectedDate = tuDateInput.value;
   const from = document.getElementById('tuFrom').value;
   const to = document.getElementById('tuTo').value;
-  if(!from || !to) return;
+  
+  if(!selectedDate || !from || !to) return;
+  
   const [fh,fm] = from.split(':').map(Number);
   const [th,tm] = to.split(':').map(Number);
   let hrs = (th + tm/60) - (fh + fm/60);
   if(hrs <= 0) hrs += 24;
+  
   const newId = Date.now();
-  const newLog = { id: newId, activity: tuActivity.value, hours: hrs, date: todayStr };
+  const newLog = { id: newId, activity: tuActivity.value, hours: hrs, date: selectedDate };
   timeLog.push(newLog);
+  
+  // If user logs for a different date, auto-switch filter view so they can see it
+  if (tuFilterDateInput.value !== selectedDate) {
+      tuFilterDateInput.value = selectedDate;
+  }
+  
   renderTimeLog();
-  apiAdd('TimeLog', { ID: newId, Activity: newLog.activity, Hours: hrs, Date: todayStr });
+  apiAdd('TimeLog', { ID: newId, Activity: newLog.activity, Hours: hrs, Date: selectedDate });
 });
 
 /* ================= EMT 5 — MAINS SCORE ================= */
@@ -1246,8 +1320,7 @@ document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
   });
 });
 
-/* ================= DATE PARSER ENGINE (FIXES TIMEZONE BUGS) ================= */
-// Google Sheets returns UTC Strings which offsets the date when loaded. This fixes it.
+/* ================= DATE PARSER ENGINE ================= */
 const parseCloudDate = (val) => {
     if (!val) return todayStr;
     const str = String(val);
@@ -1260,7 +1333,6 @@ const parseCloudDate = (val) => {
             return `${y}-${m}-${dd}`;
         }
     }
-    // Fallback truncater
     if (str.length >= 10 && str.charAt(4) === '-') return str.substring(0, 10);
     return str; 
 }
@@ -1288,7 +1360,7 @@ async function loadAllDataFromCloud() {
                 try {
                     themesParsed = typeof r.Themes === 'string' ? JSON.parse(r.Themes) : (r.Themes || []);
                 } catch(e) {
-                    themesParsed = []; // Fallback if row data is plain text
+                    themesParsed = []; 
                 }
                 return {
                     id: Number(r.ID) || Date.now(),
