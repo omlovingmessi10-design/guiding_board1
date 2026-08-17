@@ -574,10 +574,12 @@ window.logout = function() {
 
 /* ---------------- Google Apps Script API Connector ---------------- */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec';
+const currentUser = localStorage.getItem("currentUser") || "Om"; // Grabs the logged-in user
 
 async function apiGet(sheetName) {
   try {
-    const res = await fetch(`${API_URL}?sheet=${sheetName}`);
+    // Appends &user= to the URL so Apps Script knows who is asking
+    const res = await fetch(`${API_URL}?sheet=${sheetName}&user=${encodeURIComponent(currentUser)}`);
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } catch(e) {
@@ -588,6 +590,8 @@ async function apiGet(sheetName) {
 
 async function apiAdd(sheetName, rowData) {
   try {
+    // Stamps the user's name on the data before sending it to the sheet
+    rowData.User = currentUser;
     await fetch(API_URL, {
       method: 'POST',
       body: JSON.stringify({ sheetName, action: 'ADD', rowData })
