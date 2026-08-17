@@ -395,7 +395,7 @@
       </div>
     </div>
 
-    <!-- EMT 4: TIME USAGE (PIE CHART & DATE FILTER ADDED) -->
+    <!-- EMT 4: TIME USAGE -->
     <div class="view" id="view-4" data-view="4">
       <div class="page-head"><div class="page-title">Temporal Accounting</div></div>
       <div class="panel">
@@ -411,7 +411,6 @@
             <button class="btn" id="tuAddBtn">Commit Time</button>
           </div>
           
-          <!-- View Toggle / Filter -->
           <div style="display:flex; justify-content: space-between; align-items:flex-end; margin-top: 25px; padding-top: 15px; border-top:1px solid var(--border-soft);">
               <div class="subhead" style="margin:0; color:var(--accent-brass);">Daily Log View</div>
               <div class="field narrow">
@@ -419,7 +418,6 @@
               </div>
           </div>
 
-          <!-- Chart & List Area -->
           <div style="display:flex; gap: 25px; align-items:flex-start; margin-top: 15px;">
              <div style="flex: 1; min-width: 200px; display:flex; justify-content:center;">
                  <canvas id="timePieChart" style="max-width: 250px; max-height: 250px;"></canvas>
@@ -463,7 +461,7 @@
       </div>
     </div>
 
-    <!-- EMT 6: PRELIMS SCORE -->
+    <!-- EMT 6: PRELIMS SCORE (WITH R1, R2, R3) -->
     <div class="view" id="view-6" data-view="6">
       <div class="page-head"><div class="page-title">Prelims Tactical Engine</div></div>
       <div class="panel">
@@ -495,6 +493,13 @@
             <div class="field"><label>Sci & Tech %</label><input type="number" class="sub-acc" id="psSci" placeholder="%"></div>
             <div class="field"><label>Current Aff %</label><input type="number" class="sub-acc" id="psCa" placeholder="%"></div>
           </div>
+
+          <div class="subhead" style="margin-top:20px; color: var(--accent-brass);">3. Revision Cycles (%)</div>
+          <div class="form-row">
+            <div class="field narrow"><label>Revision 1 %</label><input type="number" id="psR1" placeholder="R1 %"></div>
+            <div class="field narrow"><label>Revision 2 %</label><input type="number" id="psR2" placeholder="R2 %"></div>
+            <div class="field narrow"><label>Revision 3 %</label><input type="number" id="psR3" placeholder="R3 %"></div>
+          </div>
           
           <div style="margin-top: 20px; text-align: right;">
               <button class="btn" id="psAddAdvBtn">Process & Calculate Log</button>
@@ -502,7 +507,7 @@
 
           <div class="table-wrap" style="margin-top: 25px;">
             <table class="data-table">
-              <thead><tr><th>Date</th><th>Simulation ID</th><th>Format</th><th>Sub</th><th>Correct</th><th>Incorrect</th><th>Final Marks</th><th>Danger Zone (<40%)</th><th>Del</th></tr></thead>
+              <thead><tr><th>Date</th><th>Simulation ID</th><th>Sub</th><th>Score</th><th>R1</th><th>R2</th><th>R3</th><th>Danger Zone (<40%)</th><th>Del</th></tr></thead>
               <tbody id="psAdvTableBody"></tbody>
             </table>
           </div>
@@ -520,6 +525,20 @@
         </div>
       </div>
     </div>
+
+    <!-- EMT 9: GRATITUDE VAULT (NEW) -->
+    <div class="view" id="view-8" data-view="8">
+      <div class="page-head">
+          <div class="page-title">Gratitude Vault</div>
+          <div class="page-sub">A monument to your persistence. All completed targets live here permanently. Look how far you've come.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-body" id="gratitudeList" style="display:flex; flex-direction:column; gap:10px;">
+            <!-- JS dynamically injects completed targets here -->
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -548,7 +567,6 @@
 if (!localStorage.getItem("currentUser")) {
     window.location.replace("index.html"); 
 }
-
 window.logout = function() {
     localStorage.removeItem("currentUser");
     window.location.replace("index.html");
@@ -606,13 +624,9 @@ document.getElementById('todayDateTxt').innerText = displayToday;
 // Handle Last Login Timestamp logic - Format: HH:MM:DD:MM
 const currentLoginStamp = `${hrs}:${mins}:${day}:${month}`;
 let lastLoginStamp = localStorage.getItem('prayashLastLogin');
-if(!lastLoginStamp) {
-    lastLoginStamp = currentLoginStamp; // Default if first time
-}
+if(!lastLoginStamp) { lastLoginStamp = currentLoginStamp; }
 document.getElementById('lastLoginTxt').innerText = `Last login: ${lastLoginStamp}`;
-// Save current time for the next session
 localStorage.setItem('prayashLastLogin', currentLoginStamp);
-
 
 /* ---------------- Essay Quotes Ticker ---------------- */
 const ESSAY_QUOTES = [
@@ -638,13 +652,11 @@ setInterval(() => {
     }, 500);
 }, 10000);
 
-
 const ICONS = {
-  trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
-  calendar: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>'
+  trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
 };
 
-/* Sidebar Nav Setup */
+/* Sidebar Nav Setup (Added EMT 9 / Gratitude Vault) */
 const NAV_ICONS = [
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect></svg>',
@@ -652,9 +664,10 @@ const NAV_ICONS = [
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>',
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>'
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
 ];
-const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault'];
+const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault', 'Gratitude Vault'];
 const nav = document.getElementById('nav');
 NAV_ITEMS.forEach((label,idx)=>{
   const el = document.createElement('div');
@@ -679,52 +692,121 @@ nav.addEventListener('click',(e)=>{
 });
 document.getElementById('collapseBtn').addEventListener('click', ()=>document.querySelector('.app').classList.toggle('collapsed'));
 
-
-/* --- FLOWER ANIMATION SYSTEM --- */
-function spawnFlowers(x, y) {
-    const emojis = ['🌸', '🌺', '🌼', '🌻', '💮'];
-    for(let i=0; i<10; i++) {
+/* --- TOPBAR FLOWER ANIMATION SYSTEM --- */
+function spawnFlowersFromTopbar() {
+    const emojis = ['🌸', '🌺', '🌼', '🌻', '💮', '✨'];
+    for(let i=0; i<30; i++) {
         const flower = document.createElement('div');
         flower.textContent = emojis[Math.floor(Math.random() * emojis.length)];
         flower.style.position = 'fixed';
-        flower.style.left = x + 'px';
-        flower.style.top = y + 'px';
-        flower.style.fontSize = '24px';
+        flower.style.left = (Math.random() * 100) + 'vw';
+        flower.style.top = '-50px';
+        flower.style.fontSize = (Math.random() * 15 + 15) + 'px';
         flower.style.pointerEvents = 'none';
         flower.style.zIndex = '9999';
-        flower.style.transition = 'all 1s cubic-bezier(0.25, 1, 0.5, 1)';
+        
+        const duration = Math.random() * 2 + 2.5; // 2.5 to 4.5 seconds
+        flower.style.transition = `transform ${duration}s linear, opacity ${duration}s ease-in`;
         document.body.appendChild(flower);
 
-        // Spread math
         setTimeout(() => {
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 40 + Math.random() * 60; // Spread radius
-            flower.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) scale(0)`;
+            flower.style.transform = `translateY(110vh) rotate(${Math.random() * 360}deg)`;
             flower.style.opacity = '0';
-        }, 10);
+        }, 50);
 
-        setTimeout(() => flower.remove(), 1000);
+        setTimeout(() => flower.remove(), duration * 1000 + 100);
     }
 }
 
-function bindInteractions(row) {
+/* --- STATE PERSISTENCE & TASK TICKING --- */
+function bindInteractions(row, itemObj, sheetName) {
     const checkEl = row.querySelector('.task-check');
     if(checkEl) {
-        checkEl.addEventListener('click', (e)=>{
+        // Load existing saved state
+        if(itemObj && itemObj.status === 'Done') {
+            checkEl.classList.add('checked');
+            row.querySelector('.task-name').classList.add('done');
+        }
+
+        checkEl.addEventListener('click', ()=>{
             const isChecked = checkEl.classList.toggle('checked');
             row.querySelector('.task-name').classList.toggle('done');
             
-            // Trigger Reward Animation if marking as completed
-            if (isChecked) {
-                const rect = checkEl.getBoundingClientRect();
-                spawnFlowers(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            // Update local object status
+            itemObj.status = isChecked ? 'Done' : 'Pending';
+
+            // Delete old row and push new updated row to Google Sheets
+            apiDelete(sheetName, itemObj.id);
+            let updatePayload = { ID: itemObj.id, Date: itemObj.date, Status: itemObj.status };
+            
+            if (sheetName === 'PlannedTasks') {
+                updatePayload.Subject = itemObj.subject;
+                updatePayload.Topic = itemObj.topic;
+            } else {
+                updatePayload.Topic = itemObj.topic; // Revisions & Classes
             }
+            
+            apiAdd(sheetName, updatePayload);
+            
+            // Trigger Animation & Update EMT 9
+            if (isChecked) spawnFlowersFromTopbar();
+            renderGratitudeVault(); 
         });
     }
+    
+    // Normal Delete Logic
     const delBtn = row.querySelector('.icon-btn.danger');
-    if (delBtn) delBtn.addEventListener('click', () => row.remove());
+    if(delBtn) {
+        delBtn.addEventListener('click', () => {
+            row.remove();
+            if (sheetName === 'RevisionLogs') revisionTasks = revisionTasks.filter(x => x.id !== itemObj.id);
+            if (sheetName === 'ClassLogs') classTasks = classTasks.filter(x => x.id !== itemObj.id);
+            if (sheetName === 'PlannedTasks') {
+                plannedTasks = plannedTasks.filter(x => x.id !== itemObj.id);
+                renderPlannedTasks();
+            }
+            apiDelete(sheetName, itemObj.id);
+            renderGratitudeVault();
+        });
+    }
 }
 
+/* ================= EMT 9: GRATITUDE VAULT ================= */
+function renderGratitudeVault() {
+    const vault = document.getElementById('gratitudeList');
+    vault.innerHTML = '';
+    
+    // Collect all 'Done' tasks from the 3 tracking sheets
+    let allDone = [];
+    plannedTasks.forEach(t => { if(t.status === 'Done') allDone.push({...t, source: 'Target'}); });
+    revisionTasks.forEach(t => { if(t.status === 'Done') allDone.push({...t, source: 'Revision'}); });
+    classTasks.forEach(t => { if(t.status === 'Done') allDone.push({...t, source: 'Class'}); });
+
+    if(allDone.length === 0) {
+        vault.innerHTML = `<div style="padding:25px; text-align:center; color:var(--text-muted); font-style:italic;">Vault is empty. Complete a task to immortalize it here.</div>`;
+        return;
+    }
+
+    // Sort newest to oldest
+    allDone.sort((a,b)=> b.date.localeCompare(a.date));
+
+    allDone.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML = `
+            <div class="task-left">
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <span class="task-name" style="color:var(--magic-core); font-weight:600;">${item.topic}</span>
+                    <span class="list-meta">Completed on: ${item.date} • Category: ${item.source}</span>
+                </div>
+            </div>
+            <div class="task-right">
+                <span class="due-badge" style="background:var(--bg-panel-raised); color:var(--text-secondary); border:1px solid var(--border);">Immortalized</span>
+            </div>
+        `;
+        vault.appendChild(row);
+    });
+}
 
 /* ================= 20 CUSTOM CA THEMES ================= */
 const THEMES = [
@@ -764,7 +846,6 @@ window.openLogModal = function(listId, title) {
       themeSection.style.display = 'none';
       themeGrid.style.display = 'none';
   }
-  
   document.getElementById('logModalOverlay').style.display = 'flex';
 }
 window.closeLogModal = () => document.getElementById('logModalOverlay').style.display = 'none';
@@ -785,14 +866,16 @@ window.submitLogModal = function() {
       }
   } 
   else if (currentActiveListId === 'revisionList') {
-      revisionTasks.push({ id: newId, topic: topicName, date: todayStr });
+      const newItem = { id: newId, topic: topicName, date: todayStr, status: 'Pending' };
+      revisionTasks.push(newItem);
       renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
-      apiAdd('RevisionLogs', { ID: newId, Topic: topicName, Date: todayStr });
+      apiAdd('RevisionLogs', { ID: newId, Topic: topicName, Date: todayStr, Status: 'Pending' });
   } 
   else if (currentActiveListId === 'classesList') {
-      classTasks.push({ id: newId, topic: topicName, date: todayStr });
+      const newItem = { id: newId, topic: topicName, date: todayStr, status: 'Pending' };
+      classTasks.push(newItem);
       renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
-      apiAdd('ClassLogs', { ID: newId, Topic: topicName, Date: todayStr });
+      apiAdd('ClassLogs', { ID: newId, Topic: topicName, Date: todayStr, Status: 'Pending' });
   }
 
   closeLogModal();
@@ -802,12 +885,16 @@ function renderMiniList(listId, dataArray, sheetName, metaText) {
   const list = document.getElementById(listId);
   list.innerHTML = '';
   
-  if (dataArray.length === 0) {
-      list.innerHTML = `<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:12px; font-style:italic;">No tasks logged.</div>`;
+  // Filter out items that are NOT today IF they are already 'Done' to keep dashboard clean
+  // We want to see today's tasks (done or pending) and past tasks that are still Pending
+  const displayArray = dataArray.filter(t => t.date === todayStr || t.status === 'Pending');
+
+  if (displayArray.length === 0) {
+      list.innerHTML = `<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:12px; font-style:italic;">No tasks pending.</div>`;
       return;
   }
 
-  dataArray.forEach(item => {
+  displayArray.forEach(item => {
     const row = document.createElement('div');
     row.className = 'list-row';
     row.dataset.id = item.id;
@@ -823,16 +910,7 @@ function renderMiniList(listId, dataArray, sheetName, metaText) {
         <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
       </div>`;
     list.appendChild(row);
-    bindInteractions(row);
-    const delBtn = row.querySelector('.icon-btn.danger');
-    if(delBtn) {
-        delBtn.addEventListener('click', () => {
-            row.remove();
-            if (sheetName === 'RevisionLogs') revisionTasks = revisionTasks.filter(x => x.id !== item.id);
-            if (sheetName === 'ClassLogs') classTasks = classTasks.filter(x => x.id !== item.id);
-            apiDelete(sheetName, item.id);
-        });
-    }
+    bindInteractions(row, item, sheetName);
   });
 }
 
@@ -859,7 +937,16 @@ function renderCAList() {
             <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
           </div>`;
         caList.appendChild(row);
-        bindInteractions(row);
+        
+        // CA Map interacts slightly differently since it doesn't use 'Status'
+        const checkEl = row.querySelector('.task-check');
+        if(checkEl) {
+            checkEl.addEventListener('click', ()=>{
+                checkEl.classList.toggle('checked');
+                row.querySelector('.task-name').classList.toggle('done');
+                if (checkEl.classList.contains('checked')) spawnFlowersFromTopbar();
+            });
+        }
         const delBtn = row.querySelector('.icon-btn.danger');
         if(delBtn) {
           delBtn.addEventListener('click', () => {
@@ -895,15 +982,15 @@ document.getElementById('atAddBtn').addEventListener('click', ()=>{
   const date = document.getElementById('atDate').value;
   if(!topic || !date) return;
   const newId = Date.now();
-  const newTask = { id: newId, subject: document.getElementById('atSubject').value, topic, date };
+  const newTask = { id: newId, subject: document.getElementById('atSubject').value, topic, date, status: 'Pending' };
   plannedTasks.push(newTask);
   renderPlannedTasks(); 
   renderTodayTasksList(); 
-  apiAdd('PlannedTasks', { ID: newId, Subject: newTask.subject, Topic: topic, Date: date });
+  apiAdd('PlannedTasks', { ID: newId, Subject: newTask.subject, Topic: topic, Date: date, Status: 'Pending' });
   document.getElementById('atTopic').value = '';
 });
 
-// Detect Date Edits in the Table to Save & Remove from "Today" if needed
+// Detect Date Edits to sync correctly
 atTableBody.addEventListener('change', (e) => {
     if(e.target.classList.contains('at-date-edit')) {
         const id = Number(e.target.dataset.id);
@@ -915,9 +1002,8 @@ atTableBody.addEventListener('change', (e) => {
             renderPlannedTasks();
             renderTodayTasksList();
             
-            // Delete old record and rewrite with new date to sync with Google Sheets
             apiDelete('PlannedTasks', id);
-            apiAdd('PlannedTasks', { ID: id, Subject: task.subject, Topic: task.topic, Date: newDate });
+            apiAdd('PlannedTasks', { ID: id, Subject: task.subject, Topic: task.topic, Date: newDate, Status: task.status });
         }
     }
 });
@@ -930,6 +1016,7 @@ atTableBody.addEventListener('click',(e)=>{
       renderPlannedTasks(); 
       renderTodayTasksList(); 
       apiDelete('PlannedTasks', id);
+      renderGratitudeVault();
   }
 });
 
@@ -937,7 +1024,8 @@ function renderTodayTasksList() {
     const list = document.getElementById('tasksList');
     if(!list) return;
     
-    const todaysTasks = plannedTasks.filter(t => t.date === todayStr);
+    // Show tasks assigned to TODAY, or tasks from the past that are still PENDING
+    const todaysTasks = plannedTasks.filter(t => t.date === todayStr || (t.date < todayStr && t.status === 'Pending'));
     const groups = { GS: [], OP: [], CA: [] };
     todaysTasks.forEach(t => { if(groups[t.subject]) groups[t.subject].push(t); });
     
@@ -956,7 +1044,7 @@ function renderTodayTasksList() {
                       <span class="task-name">${item.topic}</span>
                     </div>
                     <div class="task-right">
-                      <span class="task-due">Today</span>
+                      <span class="task-due">${item.date === todayStr ? 'Today' : 'Overdue'}</span>
                       <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
                     </div>
                   </div>`;
@@ -965,22 +1053,14 @@ function renderTodayTasksList() {
     });
     
     if(todaysTasks.length === 0) {
-        html = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No targets mapped for today.</div>`;
+        html = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No targets pending today.</div>`;
     }
     list.innerHTML = html;
     
     list.querySelectorAll('.task-row').forEach(row => {
-       bindInteractions(row);
-       const delBtn = row.querySelector('.icon-btn.danger');
-       if(delBtn) {
-           delBtn.addEventListener('click', () => {
-               const id = Number(row.dataset.id);
-               plannedTasks = plannedTasks.filter(t => t.id !== id);
-               renderPlannedTasks(); 
-               renderTodayTasksList();
-               apiDelete('PlannedTasks', id);
-           });
-       }
+       const id = Number(row.dataset.id);
+       const itemObj = plannedTasks.find(t => t.id === id);
+       if(itemObj) bindInteractions(row, itemObj, 'PlannedTasks');
     });
 }
 
@@ -989,11 +1069,11 @@ window.addQuickTask = function(listId) {
     if (!taskName || taskName.trim() === "") return;
     if (listId === 'tasksList') {
         const newId = Date.now();
-        const newTask = { id: newId, subject: 'GS', topic: taskName, date: todayStr };
+        const newTask = { id: newId, subject: 'GS', topic: taskName, date: todayStr, status: 'Pending' };
         plannedTasks.push(newTask);
         renderPlannedTasks(); 
         renderTodayTasksList(); 
-        apiAdd('PlannedTasks', { ID: newId, Subject: 'GS', Topic: taskName, Date: todayStr });
+        apiAdd('PlannedTasks', { ID: newId, Subject: 'GS', Topic: taskName, Date: todayStr, Status: 'Pending' });
     } 
 };
 
@@ -1075,32 +1155,26 @@ const ACTIVITIES = [
 const tuActivity = document.getElementById('tuActivity');
 ACTIVITIES.forEach(a=>{ tuActivity.innerHTML += `<option value="${a}">${a}</option>`; });
 
-// Date Elements
 const tuDateInput = document.getElementById('tuDate');
 const tuFilterDateInput = document.getElementById('tuFilterDate');
 tuDateInput.value = todayStr;
 tuFilterDateInput.value = todayStr;
 
-// Refresh Chart when the view toggle date is changed
 tuFilterDateInput.addEventListener('change', renderTimeLog);
 
 let timeLog = [];
-let timePieChart = null; // Store chart instance
+let timePieChart = null; 
 
 function renderTimeLog() {
     tuLogList.innerHTML = '';
-    
     const filterDate = tuFilterDateInput.value;
     const filteredLogs = timeLog.filter(l => l.date === filterDate);
     
-    // Aggregation mapping for Pie Chart
     const aggregatedData = {};
     let totalFilteredHours = 0;
 
     filteredLogs.forEach(log => {
         const hrsNum = Number(log.hours);
-        
-        // Build rows
         const row = document.createElement('div');
         row.className = 'list-row';
         row.innerHTML = `
@@ -1114,7 +1188,6 @@ function renderTimeLog() {
         `;
         tuLogList.appendChild(row);
 
-        // Aggregate for chart
         aggregatedData[log.activity] = (aggregatedData[log.activity] || 0) + hrsNum;
         totalFilteredHours += hrsNum;
     });
@@ -1123,7 +1196,6 @@ function renderTimeLog() {
         tuLogList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No time logged for ${filterDate}.</div>`;
     }
 
-    // Prepare Pie Chart Labels with Percentages
     const chartLabels = [];
     const chartData = [];
 
@@ -1134,9 +1206,7 @@ function renderTimeLog() {
     }
 
     const ctx = document.getElementById('timePieChart').getContext('2d');
-    if (timePieChart) {
-        timePieChart.destroy(); // Clear old chart
-    }
+    if (timePieChart) timePieChart.destroy(); 
 
     if (chartLabels.length > 0) {
         timePieChart = new Chart(ctx, {
@@ -1157,17 +1227,8 @@ function renderTimeLog() {
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: { color: '#ffffff', font: { family: 'IBM Plex Mono', size: 10 } }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return ` ${context.raw.toFixed(1)} Hours`;
-                            }
-                        }
-                    }
+                    legend: { position: 'right', labels: { color: '#ffffff', font: { family: 'IBM Plex Mono', size: 10 } } },
+                    tooltip: { callbacks: { label: function(context) { return ` ${context.raw.toFixed(1)} Hours`; } } }
                 }
             }
         });
@@ -1196,10 +1257,7 @@ document.getElementById('tuAddBtn').addEventListener('click', ()=>{
   const newLog = { id: newId, activity: tuActivity.value, hours: hrs, date: selectedDate };
   timeLog.push(newLog);
   
-  // If user logs for a different date, auto-switch filter view so they can see it
-  if (tuFilterDateInput.value !== selectedDate) {
-      tuFilterDateInput.value = selectedDate;
-  }
+  if (tuFilterDateInput.value !== selectedDate) { tuFilterDateInput.value = selectedDate; }
   
   renderTimeLog();
   apiAdd('TimeLog', { ID: newId, Activity: newLog.activity, Hours: hrs, Date: selectedDate });
@@ -1256,12 +1314,21 @@ function renderPrelimsAdvTable(){
   psAdvTableBody.innerHTML='';
   if(prelimsLogs.length===0){ psAdvTableBody.innerHTML = `<tr class="empty-row"><td colspan="9">No simulations logged.</td></tr>`; return; }
   prelimsLogs.forEach(s=>{
-    const weakList = Array.isArray(s.weak) ? s.weak : (typeof s.weak === 'string' ? JSON.parse(s.weak || '[]') : []);
-    const dangerHTML = weakList.map(w => `<span class="due-badge danger-text">${w}</span>`).join(' ');
+    
+    // SAFE PARSE FIX FOR WEAKNESSES: Guarantees parsing without wiping clean
+    let weakList = [];
+    try {
+        if(typeof s.weak === 'string') weakList = JSON.parse(s.weak || '[]');
+        else if (Array.isArray(s.weak)) weakList = s.weak;
+    } catch(e) { weakList = []; }
+
+    const dangerHTML = weakList.length > 0 ? weakList.map(w => `<span class="due-badge danger-text">${w}</span>`).join(' ') : '<span class="list-meta">Clear</span>';
+    
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.date}</td><td>${s.name}</td><td>${s.format}</td><td>${s.sub}</td>
-      <td>${s.correct}</td><td>${s.incorrect}</td><td style="color:var(--magic-glow); font-weight:700;">${s.marks}</td>
-      <td>${dangerHTML || '<span class="list-meta">Clear</span>'}</td>
+    tr.innerHTML = `<td>${s.date}</td><td>${s.name}</td><td>${s.sub}</td>
+      <td style="color:var(--magic-glow); font-weight:700;">${s.marks}</td>
+      <td>${s.r1 || 0}%</td><td>${s.r2 || 0}%</td><td>${s.r3 || 0}%</td>
+      <td>${dangerHTML}</td>
       <td class="actions-cell"><button class="icon-btn danger ps-del" data-id="${s.id}">${ICONS.trash}</button></td>`;
     psAdvTableBody.appendChild(tr);
   });
@@ -1280,12 +1347,16 @@ psAdvTableBody.addEventListener('click',(e)=>{
 document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
   const name = document.getElementById('psName').value.trim() || 'Unnamed Test';
   const format = document.getElementById('psFormat').value; 
-  
   const correct = Number(document.getElementById('psCorrect').value) || 0;
   const incorrect = Number(document.getElementById('psIncorrect').value) || 0;
   
   let marks = (correct * 2) - (incorrect * 0.6666);
   marks = Number(marks.toFixed(2));
+
+  // Extract R1, R2, R3
+  const r1 = Number(document.getElementById('psR1').value) || 0;
+  const r2 = Number(document.getElementById('psR2').value) || 0;
+  const r3 = Number(document.getElementById('psR3').value) || 0;
 
   const subjects = {
       Polity: Number(document.getElementById('psPol').value) || 100,
@@ -1304,19 +1375,21 @@ document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
   const newId = Date.now();
   const newLog = { 
       id: newId, date: document.getElementById('psDate').value, name, format,
-      sub: document.getElementById('psSubject').value, correct, incorrect, marks, weak: weakSubjects
+      sub: document.getElementById('psSubject').value, correct, incorrect, marks, weak: weakSubjects,
+      r1: r1, r2: r2, r3: r3
   };
   
   prelimsLogs.push(newLog);
   
   document.querySelectorAll('.sub-acc').forEach(el => el.value = '');
   document.getElementById('psCorrect').value = ''; document.getElementById('psIncorrect').value = '';
+  document.getElementById('psR1').value = ''; document.getElementById('psR2').value = ''; document.getElementById('psR3').value = '';
   
   renderPrelimsAdvTable();
   apiAdd('PrelimsTactics', { 
       ID: newId, Date: newLog.date, Name: name, Format: format, 
       Subject: newLog.sub, Correct: correct, Incorrect: incorrect, Marks: marks, 
-      WeakZones: JSON.stringify(weakSubjects) 
+      WeakZones: JSON.stringify(weakSubjects), R1: r1, R2: r2, R3: r3
   });
 });
 
@@ -1338,7 +1411,7 @@ const parseCloudDate = (val) => {
 }
 
 
-/* ================= INITIAL LOAD BOOTLOADER (SAFE PARSE) ================= */
+/* ================= INITIAL LOAD BOOTLOADER ================= */
 async function loadAllDataFromCloud() {
     try {
         const cloudTasks = await apiGet('PlannedTasks');
@@ -1347,7 +1420,8 @@ async function loadAllDataFromCloud() {
                 id: Number(r.ID) || Date.now(),
                 subject: r.Subject || 'GS',
                 topic: r.Topic || '',
-                date: parseCloudDate(r.Date)
+                date: parseCloudDate(r.Date),
+                status: r.Status || 'Pending'
             }));
         }
         renderPlannedTasks();
@@ -1359,14 +1433,8 @@ async function loadAllDataFromCloud() {
                 let themesParsed = [];
                 try {
                     themesParsed = typeof r.Themes === 'string' ? JSON.parse(r.Themes) : (r.Themes || []);
-                } catch(e) {
-                    themesParsed = []; 
-                }
-                return {
-                    id: Number(r.ID) || Date.now(),
-                    name: r.Name || '',
-                    themes: Array.isArray(themesParsed) ? themesParsed : []
-                };
+                } catch(e) { themesParsed = []; }
+                return { id: Number(r.ID) || Date.now(), name: r.Name || '', themes: Array.isArray(themesParsed) ? themesParsed : [] };
             });
             renderCAMap();
             renderCAList();
@@ -1377,7 +1445,8 @@ async function loadAllDataFromCloud() {
             revisionTasks = cloudRevisions.map(r => ({
                 id: Number(r.ID) || Date.now(),
                 topic: r.Topic || '',
-                date: parseCloudDate(r.Date)
+                date: parseCloudDate(r.Date),
+                status: r.Status || 'Pending'
             }));
         }
         renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
@@ -1387,7 +1456,8 @@ async function loadAllDataFromCloud() {
             classTasks = cloudClasses.map(r => ({
                 id: Number(r.ID) || Date.now(),
                 topic: r.Topic || '',
-                date: parseCloudDate(r.Date)
+                date: parseCloudDate(r.Date),
+                status: r.Status || 'Pending'
             }));
         }
         renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
@@ -1421,9 +1491,7 @@ async function loadAllDataFromCloud() {
                 let weakParsed = [];
                 try {
                     weakParsed = typeof r.WeakZones === 'string' ? JSON.parse(r.WeakZones) : (r.WeakZones || []);
-                } catch(e) {
-                    weakParsed = [];
-                }
+                } catch(e) { weakParsed = []; }
                 return {
                     id: Number(r.ID) || Date.now(),
                     date: parseCloudDate(r.Date),
@@ -1433,11 +1501,14 @@ async function loadAllDataFromCloud() {
                     correct: Number(r.Correct) || 0,
                     incorrect: Number(r.Incorrect) || 0,
                     marks: Number(r.Marks) || 0,
-                    weak: Array.isArray(weakParsed) ? weakParsed : []
+                    weak: Array.isArray(weakParsed) ? weakParsed : [],
+                    r1: Number(r.R1) || 0, r2: Number(r.R2) || 0, r3: Number(r.R3) || 0
                 };
             });
             renderPrelimsAdvTable();
         }
+
+        renderGratitudeVault(); // Render EMT 9 based on booted data
 
     } catch(err) {
         console.error('[Cloud DB] Boot load failed:', err);
