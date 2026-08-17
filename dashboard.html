@@ -31,30 +31,12 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
     font-family:'IBM Plex Sans',sans-serif;
-    background: #000000; /* Completely Black Background */
+    background: #000000; /* Pure Black Background */
     color:var(--text-primary);
     overflow:hidden;
     text-shadow: 0 1px 4px rgba(0,0,0,0.9);
   }
   
-  /* ---------- HEAVY RAIN BACKGROUND ---------- */
-  #weather-background {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -3; pointer-events: none; overflow: hidden;
-    background: #000000;
-  }
-  .rain-drop {
-    position: absolute;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.7));
-    width: 2px;
-    height: 40px;
-    bottom: 100%;
-    animation: fall linear infinite;
-  }
-  @keyframes fall {
-    to { transform: translateY(120vh); }
-  }
-
   /* ---------- BASE LAYOUT ---------- */
   .app{
     display:grid; grid-template-columns:236px 1fr; grid-template-rows:76px 1fr;
@@ -264,9 +246,6 @@
 </head>
 <body>
 
-<!-- Dynamic Heavy Rain Background -->
-<div id="weather-background"></div>
-
 <div class="app">
 
   <!-- SIDEBAR -->
@@ -303,7 +282,7 @@
       <div class="streak-pill">🔥 1 day streak</div>
       <div class="profile-meta">
         <div class="profile-name">Om</div>
-        <div class="profile-login" id="lastLoginTxt">Last login: --:-- date:--</div>
+        <div class="profile-login" id="lastLoginTxt">Last login: --</div>
         <div class="profile-login" id="todayDateTxt" style="font-weight:600; color:var(--text-primary);">--:--:--</div>
       </div>
       <div class="avatar" onclick="logout()" style="cursor: pointer;" title="Secure Log Out">O</div>
@@ -607,8 +586,6 @@ const localDate = new Date();
 const year = localDate.getFullYear();
 const month = String(localDate.getMonth() + 1).padStart(2, '0');
 const day = String(localDate.getDate()).padStart(2, '0');
-const hrs = String(localDate.getHours()).padStart(2, '0');
-const mins = String(localDate.getMinutes()).padStart(2, '0');
 const yy = String(year).slice(-2);
 
 const todayStr = `${year}-${month}-${day}`;
@@ -618,29 +595,12 @@ document.getElementById('todayDateTxt').innerText = displayToday;
 // Handle Last Login Timestamp logic
 let lastLoginStamp = localStorage.getItem('prayashLastLogin');
 if(!lastLoginStamp) {
-    lastLoginStamp = `${hrs}:${mins}: date:${month}`; // Default if first time
+    lastLoginStamp = day; // Format = DD as requested
 }
 document.getElementById('lastLoginTxt').innerText = `Last login: ${lastLoginStamp}`;
 // Save current time for the next session
-localStorage.setItem('prayashLastLogin', `${hrs}:${mins}: date:${month}`);
+localStorage.setItem('prayashLastLogin', day);
 
-
-/* ---------------- Heavy Rain Background ---------------- */
-function initRain() {
-    const container = document.getElementById('weather-background');
-    container.innerHTML = '';
-    // Generate 150 random raindrops
-    for(let i=0; i<150; i++) {
-        let drop = document.createElement('div');
-        drop.className = 'rain-drop';
-        drop.style.left = Math.random() * 100 + 'vw';
-        // Randomize speed & start time
-        drop.style.animationDuration = (Math.random() * 0.4 + 0.2) + 's';
-        drop.style.animationDelay = (Math.random() * 2) + 's';
-        container.appendChild(drop);
-    }
-}
-initRain();
 
 /* ---------------- Essay Quotes Ticker ---------------- */
 const ESSAY_QUOTES = [
@@ -1286,6 +1246,26 @@ document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
   });
 });
 
+/* ================= DATE PARSER ENGINE (FIXES TIMEZONE BUGS) ================= */
+// Google Sheets returns UTC Strings which offsets the date when loaded. This fixes it.
+const parseCloudDate = (val) => {
+    if (!val) return todayStr;
+    const str = String(val);
+    if (str.includes('T')) {
+        const d = new Date(str);
+        if (!isNaN(d)) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${dd}`;
+        }
+    }
+    // Fallback truncater
+    if (str.length >= 10 && str.charAt(4) === '-') return str.substring(0, 10);
+    return str; 
+}
+
+
 /* ================= INITIAL LOAD BOOTLOADER (SAFE PARSE) ================= */
 async function loadAllDataFromCloud() {
     try {
@@ -1295,7 +1275,7 @@ async function loadAllDataFromCloud() {
                 id: Number(r.ID) || Date.now(),
                 subject: r.Subject || 'GS',
                 topic: r.Topic || '',
-                date: r.Date || todayStr
+                date: parseCloudDate(r.Date)
             }));
         }
         renderPlannedTasks();
@@ -1325,7 +1305,7 @@ async function loadAllDataFromCloud() {
             revisionTasks = cloudRevisions.map(r => ({
                 id: Number(r.ID) || Date.now(),
                 topic: r.Topic || '',
-                date: r.Date || todayStr
+                date: parseCloudDate(r.Date)
             }));
         }
         renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
@@ -1335,7 +1315,7 @@ async function loadAllDataFromCloud() {
             classTasks = cloudClasses.map(r => ({
                 id: Number(r.ID) || Date.now(),
                 topic: r.Topic || '',
-                date: r.Date || todayStr
+                date: parseCloudDate(r.Date)
             }));
         }
         renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
@@ -1346,7 +1326,7 @@ async function loadAllDataFromCloud() {
                 id: Number(r.ID) || Date.now(),
                 activity: r.Activity || 'GS study',
                 hours: Number(r.Hours) || 0,
-                date: r.Date || todayStr
+                date: parseCloudDate(r.Date)
             }));
             renderTimeLog();
         }
@@ -1356,7 +1336,7 @@ async function loadAllDataFromCloud() {
             mainsScores = cloudMains.map(r => ({
                 id: Number(r.ID) || Date.now(),
                 test: r.Test || '',
-                date: r.Date || todayStr,
+                date: parseCloudDate(r.Date),
                 score: r.Score || 0,
                 theme: r.Theme || ''
             }));
@@ -1374,7 +1354,7 @@ async function loadAllDataFromCloud() {
                 }
                 return {
                     id: Number(r.ID) || Date.now(),
-                    date: r.Date || todayStr,
+                    date: parseCloudDate(r.Date),
                     name: r.Name || '',
                     format: r.Format || 'FLT',
                     sub: r.Subject || 'ALL Integrated',
