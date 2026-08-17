@@ -546,12 +546,12 @@
 <script>
 /* --- SECURITY BOUNCER --- */
 if (!localStorage.getItem("currentUser")) {
-    window.location.replace("/"); 
+    window.location.replace("index.html"); 
 }
 
 window.logout = function() {
     localStorage.removeItem("currentUser");
-    window.location.replace("/");
+    window.location.replace("index.html");
 }
 
 /* ---------------- Google Apps Script API Connector ---------------- */
