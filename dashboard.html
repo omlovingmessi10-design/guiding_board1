@@ -168,24 +168,6 @@
   }
   .danger-text { color: var(--accent-coral) !important; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-coral); text-shadow: none;}
 
-  /* CA MAP */
-  .map-svg-wrap{background:transparent; border:1px solid var(--border); border-radius:12px; padding:6px; position:relative; overflow:hidden;}
-  .map-edge{
-      stroke:var(--magic-glow); stroke-width:1.5; opacity:0.5; fill:none;
-      filter: drop-shadow(0 0 6px var(--magic-glow));
-  }
-  .map-edge.active{stroke:var(--magic-core); opacity:1; stroke-width:3;}
-  
-  .theme-node circle{fill:rgba(0,0,0,0.8);stroke:var(--magic-glow);stroke-width:2; filter: drop-shadow(0 0 8px var(--magic-glow));}
-  .theme-node text{fill:var(--text-primary);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700; text-shadow: 0 0 4px #000;}
-  .theme-node.dim circle,.theme-node.dim text{opacity:0.2;}
-  
-  .topic-node{cursor:pointer;}
-  .topic-node circle{fill:rgba(255,255,255,0.1);stroke:var(--text-primary);stroke-width:1.5; backdrop-filter: blur(2px);}
-  .topic-node text{fill:var(--text-primary);font-size:10.5px;font-family:'IBM Plex Sans',sans-serif;font-weight:600;}
-  .topic-node.dim circle,.topic-node.dim text{opacity:0.2;}
-  .topic-node.active circle{stroke:var(--magic-core);}
-
   /* Form Elements */
   .form-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:12px;}
   .field{display:flex;flex-direction:column;gap:6px;min-width:140px;}
@@ -204,7 +186,21 @@
     box-shadow: 0 0 15px rgba(255,255,255,0.2); text-shadow: none;
   }
   .btn:hover{background:#e4e4e7;}
+
+  /* --- CA MAP --- */
+  .map-svg-wrap{background:transparent; border:1px solid var(--border); border-radius:12px; padding:6px; position:relative; overflow:hidden;}
+  .map-edge{stroke:var(--magic-glow); stroke-width:1.5; opacity:0.5; fill:none; filter: drop-shadow(0 0 6px var(--magic-glow));}
+  .map-edge.active{stroke:var(--magic-core); opacity:1; stroke-width:3;}
+  .theme-node circle{fill:rgba(0,0,0,0.8);stroke:var(--magic-glow);stroke-width:2; filter: drop-shadow(0 0 8px var(--magic-glow));}
+  .theme-node text{fill:var(--text-primary);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700; text-shadow: 0 0 4px #000;}
+  .theme-node.dim circle,.theme-node.dim text{opacity:0.2;}
+  .topic-node{cursor:pointer;}
+  .topic-node circle{fill:rgba(255,255,255,0.1);stroke:var(--text-primary);stroke-width:1.5; backdrop-filter: blur(2px);}
+  .topic-node text{fill:var(--text-primary);font-size:10.5px;font-family:'IBM Plex Sans',sans-serif;font-weight:600;}
+  .topic-node.dim circle,.topic-node.dim text{opacity:0.2;}
+  .topic-node.active circle{stroke:var(--magic-core);}
   
+  /* Tables */
   .table-wrap{overflow-x:auto;margin-top:14px;border:1px solid var(--border);border-radius:10px; background: rgba(0,0,0,0.3);}
   .data-table{width:100%;border-collapse:collapse;font-size:13px;}
   .data-table th{
@@ -215,6 +211,42 @@
   .data-table tr:last-child td{border-bottom:none;}
   .empty-row td{color:var(--text-muted);font-style:italic;text-align:center;padding:24px;}
 
+  /* --- NEW TIME USAGE ACCORDION --- */
+  .time-log-row { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .time-log-header { 
+      padding: 14px 18px; background: rgba(0,0,0,0.3); font-weight: bold; font-size: 14px; 
+      cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid transparent; transition: background 0.2s;
+  }
+  .time-log-header:hover { background: rgba(255,255,255,0.05); }
+  .time-log-body { display: none; padding: 15px; border-top: 1px solid var(--border-soft); }
+  .time-log-body.open { display: block; }
+  .time-entry { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-soft); font-size: 13px; }
+  .time-entry:last-child { border-bottom: none; }
+
+  /* --- MAPPING ENGINE CSS --- */
+  .sub-nav { display: flex; gap: 15px; border-bottom: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; }
+  .sub-nav span { 
+      padding: 8px 15px; cursor: pointer; font-size: 13px; color: var(--text-secondary); 
+      font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .sub-nav span.active { color: var(--magic-core); border-bottom-color: var(--magic-core); }
+  .map-page { display: none; }
+  .map-page.active { display: block; }
+  
+  .flashcard { 
+      min-height: 200px; display: flex; align-items: center; justify-content: center; 
+      font-size: 20px; font-weight: 500; text-align: center; border-bottom: 1px solid var(--border-soft); 
+      margin-bottom: 20px; padding: 20px; background: var(--bg-panel-raised); border-radius: 8px; 
+  }
+  .answer-area { display: none; text-align: center; }
+  .answer-area.open { display: block; }
+  .answer-text { font-size: 18px; color: var(--magic-glow); font-weight: bold; margin-bottom: 25px; }
+  .anki-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .anki-btn { padding: 10px 0; width: 80px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 13px; color: #000; box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+  .btn-forgot { background: #ef4444; color: #fff;} .btn-hard { background: #f97316; }
+  .btn-good { background: #84cc16; } .btn-easy { background: #3b82f6; color: #fff;}
+  .btn-time-sub { display: block; font-size: 10px; opacity: 0.8; margin-top: 3px; font-weight: normal; }
+
   /* Modal */
   .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -222,23 +254,16 @@
     display: none; align-items: center; justify-content: center; z-index: 1000;
   }
   .modal-card {
-    background: rgba(15, 15, 20, 0.85); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
-    padding: 28px; width: 640px; max-width: 90vw;
+    background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
+    padding: 28px; width: 500px; max-width: 90vw;
     box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
   }
-  .theme-checkbox-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 24px 0;
-    max-height: 45vh; overflow-y: auto; padding-right: 8px;
-  }
-  .theme-option {
-    display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
-  }
+  .theme-checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 24px 0; max-height: 45vh; overflow-y: auto; padding-right: 8px; }
+  .theme-option { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; }
   .theme-option input { accent-color: var(--accent-brass); width: 16px; height: 16px; cursor: pointer;}
 
   .view{display:none;}
   .view.active{display:block;}
-  
   .page-head{margin-bottom:20px;}
   .page-title{font-weight:700;font-size:24px;margin-bottom:6px; letter-spacing: -0.5px;}
   .page-sub{font-size:13.5px;color:var(--text-secondary); line-height: 1.5;}
@@ -395,35 +420,28 @@
       </div>
     </div>
 
-    <!-- EMT 4: TIME USAGE -->
+    <!-- EMT 4: TIME USAGE (UPDATED) -->
     <div class="view" id="view-4" data-view="4">
       <div class="page-head"><div class="page-title">Temporal Accounting</div></div>
       <div class="panel">
         <div class="panel-body">
           <div class="form-row">
             <div class="field" style="flex:2;">
-              <label>Activity Log</label>
+              <label>Action</label>
               <select id="tuActivity"></select>
             </div>
             <div class="field narrow"><label>Log Date</label><input type="date" id="tuDate"></div>
-            <div class="field narrow"><label>From</label><input type="time" id="tuFrom" value="08:00"></div>
-            <div class="field narrow"><label>To</label><input type="time" id="tuTo" value="10:30"></div>
-            <button class="btn" id="tuAddBtn">Commit Time</button>
+            <div class="field narrow"><label>Time Started</label><input type="time" id="tuStart" value="08:00"></div>
+            <div class="field narrow"><label>Time Ended</label><input type="time" id="tuEnd" value="10:00"></div>
+            <button class="btn" onclick="submitTimeLog('main')">Commit Time</button>
           </div>
           
-          <div style="display:flex; justify-content: space-between; align-items:flex-end; margin-top: 25px; padding-top: 15px; border-top:1px solid var(--border-soft);">
-              <div class="subhead" style="margin:0; color:var(--accent-brass);">Daily Log View</div>
-              <div class="field narrow">
-                  <input type="date" id="tuFilterDate" title="Navigate to any day">
-              </div>
-          </div>
+          <div id="tuError" style="color:var(--accent-coral); font-size:12px; margin-bottom:15px; font-weight:bold; display:none;">Error: Time block overlaps with an existing entry.</div>
 
-          <div style="display:flex; gap: 25px; align-items:flex-start; margin-top: 15px;">
-             <div style="flex: 1; min-width: 200px; display:flex; justify-content:center;">
-                 <canvas id="timePieChart" style="max-width: 250px; max-height: 250px;"></canvas>
-             </div>
-             <div id="tuLogList" style="flex: 2; display: flex; flex-direction: column; gap: 8px;"></div>
-          </div>
+          <div class="subhead" style="margin:25px 0 15px 0; color:var(--accent-brass);">180-Day Chronological Log</div>
+          
+          <!-- 180 Day Accordion -->
+          <div id="timeLogAccordionContainer"></div>
 
         </div>
       </div>
@@ -461,7 +479,7 @@
       </div>
     </div>
 
-    <!-- EMT 6: PRELIMS SCORE (WITH R1, R2, R3) -->
+    <!-- EMT 6: PRELIMS SCORE -->
     <div class="view" id="view-6" data-view="6">
       <div class="page-head"><div class="page-title">Prelims Tactical Engine</div></div>
       <div class="panel">
@@ -526,7 +544,7 @@
       </div>
     </div>
 
-    <!-- EMT 9: GRATITUDE VAULT (NEW) -->
+    <!-- EMT 8: GRATITUDE VAULT -->
     <div class="view" id="view-8" data-view="8">
       <div class="page-head">
           <div class="page-title">Gratitude Vault</div>
@@ -535,6 +553,94 @@
       <div class="panel">
         <div class="panel-body" id="gratitudeList" style="display:flex; flex-direction:column; gap:10px;">
             <!-- JS dynamically injects completed targets here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- EMT 10: MAPPING ENGINE -->
+    <div class="view" id="view-9" data-view="9">
+      <div class="page-head">
+        <div class="page-title">Cartography & Mapping</div>
+        <div class="page-sub">Spatial memory integration for World & Indian Geography.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-body" style="padding-top: 5px;">
+          
+          <!-- Sub Navigation -->
+          <div class="sub-nav">
+            <span id="map-tab-1" class="active" onclick="switchMapPage(1)">1. Atlas Notes</span>
+            <span id="map-tab-2" onclick="switchMapPage(2)">2. Text Quiz</span>
+            <span id="map-tab-3" onclick="switchMapPage(3)">3. Add Entry</span>
+            <span id="map-tab-4" onclick="switchMapPage(4)">4. Visual Quiz</span>
+          </div>
+
+          <!-- Page 1: Notes/Visuals -->
+          <div id="map-page-1" class="map-page active">
+            <h4 style="margin-bottom:10px; color:var(--magic-core);">Atlas Mapping Hub</h4>
+            <p style="font-size:14px; color:var(--text-secondary); line-height:1.5;">This space is reserved for digitizing your 15 pages of World and Indian Geography notes. Visual layouts for South American mountains, Indian rivers, etc., will be rendered here.</p>
+            <div style="height: 300px; background:rgba(0,0,0,0.5); border: 1px dashed var(--border-soft); display:flex; align-items:center; justify-content:center; margin-top:15px; color:var(--text-muted); border-radius:8px;">
+               [ Atlas Visual Placeholder ]
+            </div>
+          </div>
+
+          <!-- Page 2: Text Quiz (Anki Algorithm) -->
+          <div id="map-page-2" class="map-page">
+            <div style="font-size:12px; font-weight:bold; color:var(--text-secondary); text-transform:uppercase; margin-bottom:10px; text-align:center;">Reviewing: World Geography</div>
+            <div class="flashcard">What are the 7 major mountain ranges in South America?</div>
+            
+            <div style="display:flex; justify-content:center;">
+                <button class="btn" id="btnShowAnswer" onclick="showMapAnswer()">Show Answer</button>
+            </div>
+            
+            <div class="answer-area" id="mapAnswerArea">
+               <div class="answer-text">Andes, Sierra Nevada de Santa Marta, Cordillera Blanca...</div>
+               <hr style="border:none; border-top:1px solid var(--border-soft); margin-bottom:20px;">
+               <div class="anki-btns">
+                 <button class="anki-btn btn-forgot" onclick="processSR('forgot')">Forgot <span class="btn-time-sub">&lt; 1h</span></button>
+                 <button class="anki-btn btn-hard" onclick="processSR('hard')">Hard <span class="btn-time-sub">1d</span></button>
+                 <button class="anki-btn btn-good" onclick="processSR('good')">Good <span class="btn-time-sub">2d</span></button>
+                 <button class="anki-btn btn-easy" onclick="processSR('easy')">Easy <span class="btn-time-sub">4d</span></button>
+               </div>
+            </div>
+          </div>
+
+          <!-- Page 3: Add Map Question -->
+          <div id="map-page-3" class="map-page">
+            <div class="form-row">
+                <div class="field" style="flex:1;"><label>Geography Type</label>
+                   <select><option>World Geography</option><option>Indian Geography</option></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="field" style="flex:1;"><label>Question Prompt</label><input type="text" placeholder="e.g. Which river crosses the equator twice?"></div>
+            </div>
+            <div class="form-row">
+                <div class="field" style="flex:1;"><label>Answer</label><input type="text" placeholder="e.g. Congo River"></div>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn">Save to Mapping Deck</button>
+            </div>
+          </div>
+
+          <!-- Page 4: Visual Quiz -->
+          <div id="map-page-4" class="map-page">
+            <div class="form-row">
+               <div class="field" style="flex:1; margin:0;"><label>Region</label>
+                  <select id="vqRegion" onchange="toggleContinentDrop()"><option value="World">World</option><option value="India">India</option></select>
+               </div>
+               <div class="field" style="flex:1; margin:0;" id="vqContinentDiv"><label>Continent</label>
+                  <select id="vqContinent"><option>Asia</option><option>Africa</option><option>South America</option><option>North America</option><option>Europe</option></select>
+               </div>
+               <div class="field" style="flex:1; margin:0;"><label>Feature</label>
+                  <select id="vqFeature"><option>Rivers</option><option>Mountains</option><option>Plateaus</option></select>
+               </div>
+            </div>
+            <div style="height: 300px; background:rgba(0,0,0,0.5); border: 1px dashed var(--border-soft); display:flex; align-items:center; justify-content:center; color:var(--text-muted); margin-bottom:15px; border-radius:8px;">
+               [ Interactive Map Quiz Placeholder ]
+            </div>
+            <div style="text-align:center; font-weight:bold; font-size:16px; color:var(--magic-glow);">Locate: The Amazon River</div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -556,8 +662,34 @@
     <label style="font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--text-secondary); text-transform:uppercase;">Map to 20 Core Syllabus Themes</label>
     <div class="theme-checkbox-grid" id="themeCheckboxGrid"></div>
     <div style="display:flex; justify-content:flex-end; gap:12px;">
-      <button class="btn-ghost" onclick="closeLogModal()">Cancel</button>
+      <button class="btn" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);" onclick="closeLogModal()">Cancel</button>
       <button class="btn" onclick="submitLogModal()">Log & Plot Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2-HOUR NOTIFICATION MODAL -->
+<div class="modal-overlay" id="timerModal">
+  <div class="modal-card" style="width:400px;">
+    <h3 style="font-size: 18px; margin-bottom: 5px; color: var(--magic-core);">Time Check-In</h3>
+    <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;">What did you do in the last 2 hours? Keep the log accurate.</p>
+    
+    <div class="form-row">
+      <div class="field" style="flex:1;">
+        <label>Action</label>
+        <select id="modalActivity"></select>
+      </div>
+    </div>
+    <div class="form-row">
+        <div class="field" style="flex:1;"><label>Time Started</label><input type="time" id="modalStart"></div>
+        <div class="field" style="flex:1;"><label>Time Ended</label><input type="time" id="modalEnd"></div>
+    </div>
+    
+    <div id="modalError" style="color:var(--accent-coral); font-size:12px; margin-bottom:15px; font-weight:bold; display:none;">Error: Time block overlaps.</div>
+    
+    <div style="display:flex; gap:10px; justify-content: flex-end;">
+      <button class="btn" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);" onclick="remindLater()">Remind me later</button>
+      <button class="btn" onclick="submitTimeLog('modal')">Submit Entry</button>
     </div>
   </div>
 </div>
@@ -574,15 +706,12 @@ window.logout = function() {
 
 /* ---------------- Google Apps Script API Connector ---------------- */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec';
-const currentUser = localStorage.getItem("currentUser") || "Om"; 
-
-// ADD THESE TWO LINES:
+const currentUser = localStorage.getItem("currentUser") || "Om";
 document.querySelector('.profile-name').innerText = currentUser;
 document.querySelector('.avatar').innerText = currentUser.charAt(0).toUpperCase();
 
 async function apiGet(sheetName) {
   try {
-    // Appends &user= to the URL so Apps Script knows who is asking
     const res = await fetch(`${API_URL}?sheet=${sheetName}&user=${encodeURIComponent(currentUser)}`);
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
@@ -594,15 +723,12 @@ async function apiGet(sheetName) {
 
 async function apiAdd(sheetName, rowData) {
   try {
-    // Stamps the user's name on the data before sending it to the sheet
     rowData.User = currentUser;
     await fetch(API_URL, {
       method: 'POST',
       body: JSON.stringify({ sheetName, action: 'ADD', rowData })
     });
-  } catch(e) {
-    console.error(`[Cloud DB] Failed to save row to ${sheetName}:`, e);
-  }
+  } catch(e) { console.error(`[Cloud DB] Failed to save row to ${sheetName}:`, e); }
 }
 
 async function apiDelete(sheetName, rowId) {
@@ -611,9 +737,7 @@ async function apiDelete(sheetName, rowId) {
       method: 'POST',
       body: JSON.stringify({ sheetName, action: 'DELETE', rowId: String(rowId) })
     });
-  } catch(e) {
-    console.error(`[Cloud DB] Failed to delete ID ${rowId} from ${sheetName}:`, e);
-  }
+  } catch(e) { console.error(`[Cloud DB] Failed to delete ID ${rowId} from ${sheetName}:`, e); }
 }
 
 /* ---------------- Date & Last Login Setup ---------------- */
@@ -629,53 +753,26 @@ const todayStr = `${year}-${month}-${day}`;
 const displayToday = `${day}:${month}:${yy}`;
 document.getElementById('todayDateTxt').innerText = displayToday;
 
-// Handle Last Login Timestamp logic - Format: HH:MM:DD:MM
+// Handle Last Login Timestamp logic
 const currentLoginStamp = `${hrs}:${mins}:${day}:${month}`;
 let lastLoginStamp = localStorage.getItem('prayashLastLogin');
 if(!lastLoginStamp) { lastLoginStamp = currentLoginStamp; }
 document.getElementById('lastLoginTxt').innerText = `Last login: ${lastLoginStamp}`;
 localStorage.setItem('prayashLastLogin', currentLoginStamp);
 
-/* ---------------- Essay Quotes Ticker ---------------- */
-const ESSAY_QUOTES = [
-    "Development is freedom. — Amartya Sen",
-    "The measure of a society is how it treats its most vulnerable members. — Mahatma Gandhi",
-    "Injustice anywhere is a threat to justice everywhere. — Martin Luther King Jr.",
-    "Educating the mind without educating the heart is no education at all. — Aristotle",
-    "Poverty is the worst form of violence. — Mahatma Gandhi",
-    "The best way to predict the future is to create it. — Peter Drucker",
-    "No army can withstand the strength of an idea whose time has come. — Victor Hugo",
-    "Excellence is not an act, but a habit. — Will Durant",
-    "Equality is the soul of liberty. — Frances Wright"
-];
-let qIdx = 0;
-const quoteTextEl = document.getElementById('quoteText');
-quoteTextEl.textContent = ESSAY_QUOTES[0];
-setInterval(() => {
-    quoteTextEl.style.opacity = '0';
-    setTimeout(() => {
-        qIdx = (qIdx + 1) % ESSAY_QUOTES.length;
-        quoteTextEl.textContent = ESSAY_QUOTES[qIdx];
-        quoteTextEl.style.opacity = '1';
-    }, 500);
-}, 10000);
-
-const ICONS = {
-  trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
-};
-
-/* Sidebar Nav Setup (Added EMT 9 / Gratitude Vault) */
+/* ---------------- Sidebar Nav Setup ---------------- */
 const NAV_ICONS = [
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2-2H5a2 2 0 0 1-2-2z"></path></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>'
 ];
-const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault', 'Gratitude Vault'];
+const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault', 'Gratitude Vault', 'Mapping'];
 const nav = document.getElementById('nav');
 NAV_ITEMS.forEach((label,idx)=>{
   const el = document.createElement('div');
@@ -700,37 +797,42 @@ nav.addEventListener('click',(e)=>{
 });
 document.getElementById('collapseBtn').addEventListener('click', ()=>document.querySelector('.app').classList.toggle('collapsed'));
 
-/* --- TOPBAR FLOWER ANIMATION SYSTEM --- */
-function spawnFlowersFromTopbar() {
-    const emojis = ['🌸', '🌺', '🌼', '🌻', '💮', '✨'];
-    for(let i=0; i<30; i++) {
-        const flower = document.createElement('div');
-        flower.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        flower.style.position = 'fixed';
-        flower.style.left = (Math.random() * 100) + 'vw';
-        flower.style.top = '-50px';
-        flower.style.fontSize = (Math.random() * 15 + 15) + 'px';
-        flower.style.pointerEvents = 'none';
-        flower.style.zIndex = '9999';
-        
-        const duration = Math.random() * 2 + 2.5; // 2.5 to 4.5 seconds
-        flower.style.transition = `transform ${duration}s linear, opacity ${duration}s ease-in`;
-        document.body.appendChild(flower);
+/* --- MAPPING ENGINE LOGIC --- */
+function switchMapPage(pageNum) {
+  document.querySelectorAll('.map-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sub-nav span').forEach(s => s.classList.remove('active'));
+  document.getElementById('map-page-' + pageNum).classList.add('active');
+  document.getElementById('map-tab-' + pageNum).classList.add('active');
+  
+  if(pageNum === 2) {
+      document.getElementById('btnShowAnswer').style.display = 'block';
+      document.getElementById('mapAnswerArea').classList.remove('open');
+  }
+}
 
-        setTimeout(() => {
-            flower.style.transform = `translateY(110vh) rotate(${Math.random() * 360}deg)`;
-            flower.style.opacity = '0';
-        }, 50);
+function showMapAnswer() {
+  document.getElementById('btnShowAnswer').style.display = 'none';
+  document.getElementById('mapAnswerArea').classList.add('open');
+}
 
-        setTimeout(() => flower.remove(), duration * 1000 + 100);
-    }
+function processSR(level) {
+  console.log(`SR Algorithm: Registered ${level.toUpperCase()}. Scheduling next interval...`);
+  // Reset for next card
+  document.getElementById('btnShowAnswer').style.display = 'block';
+  document.getElementById('mapAnswerArea').classList.remove('open');
+}
+
+function toggleContinentDrop() {
+    const region = document.getElementById('vqRegion').value;
+    const continentDiv = document.getElementById('vqContinentDiv');
+    if(region === 'India') { continentDiv.style.display = 'none'; } 
+    else { continentDiv.style.display = 'flex'; }
 }
 
 /* --- STATE PERSISTENCE & TASK TICKING --- */
 function bindInteractions(row, itemObj, sheetName) {
     const checkEl = row.querySelector('.task-check');
     if(checkEl) {
-        // Load existing saved state
         if(itemObj && itemObj.status === 'Done') {
             checkEl.classList.add('checked');
             row.querySelector('.task-name').classList.add('done');
@@ -740,29 +842,20 @@ function bindInteractions(row, itemObj, sheetName) {
             const isChecked = checkEl.classList.toggle('checked');
             row.querySelector('.task-name').classList.toggle('done');
             
-            // Update local object status
             itemObj.status = isChecked ? 'Done' : 'Pending';
-
-            // Delete old row and push new updated row to Google Sheets
             apiDelete(sheetName, itemObj.id);
             let updatePayload = { ID: itemObj.id, Date: itemObj.date, Status: itemObj.status };
             
             if (sheetName === 'PlannedTasks') {
                 updatePayload.Subject = itemObj.subject;
                 updatePayload.Topic = itemObj.topic;
-            } else {
-                updatePayload.Topic = itemObj.topic; // Revisions & Classes
-            }
+            } else { updatePayload.Topic = itemObj.topic; }
             
             apiAdd(sheetName, updatePayload);
-            
-            // Trigger Animation & Update EMT 9
-            if (isChecked) spawnFlowersFromTopbar();
             renderGratitudeVault(); 
         });
     }
     
-    // Normal Delete Logic
     const delBtn = row.querySelector('.icon-btn.danger');
     if(delBtn) {
         delBtn.addEventListener('click', () => {
@@ -779,12 +872,11 @@ function bindInteractions(row, itemObj, sheetName) {
     }
 }
 
-/* ================= EMT 9: GRATITUDE VAULT ================= */
+/* ================= EMT 8: GRATITUDE VAULT ================= */
 function renderGratitudeVault() {
     const vault = document.getElementById('gratitudeList');
     vault.innerHTML = '';
     
-    // Collect all 'Done' tasks from the 3 tracking sheets
     let allDone = [];
     plannedTasks.forEach(t => { if(t.status === 'Done') allDone.push({...t, source: 'Target'}); });
     revisionTasks.forEach(t => { if(t.status === 'Done') allDone.push({...t, source: 'Revision'}); });
@@ -794,10 +886,7 @@ function renderGratitudeVault() {
         vault.innerHTML = `<div style="padding:25px; text-align:center; color:var(--text-muted); font-style:italic;">Vault is empty. Complete a task to immortalize it here.</div>`;
         return;
     }
-
-    // Sort newest to oldest
     allDone.sort((a,b)=> b.date.localeCompare(a.date));
-
     allDone.forEach(item => {
         const row = document.createElement('div');
         row.className = 'list-row';
@@ -825,7 +914,6 @@ const THEMES = [
   'Internal Security', 'Disaster Management & Resilience', 'International Relations & Global Order',
   'Human Development & Demography', 'Democracy, Rights & Justice', 'Development & Transformation', 'Philosophy, Ideas & Essay Themes'
 ];
-
 let CA_TOPICS = []; 
 let currentActiveListId = '';
 let revisionTasks = [];
@@ -861,40 +949,32 @@ window.closeLogModal = () => document.getElementById('logModalOverlay').style.di
 window.submitLogModal = function() {
   const topicName = document.getElementById('logModalTopicInput').value.trim();
   if(!topicName) return;
-
   const newId = Date.now();
 
   if (currentActiveListId === 'caList') {
       const selectedThemes = Array.from(document.querySelectorAll('#themeCheckboxGrid input:checked')).map(cb => Number(cb.value));
       if(selectedThemes.length > 0) {
         CA_TOPICS.push({ id: newId, name: topicName, themes: selectedThemes });
-        renderCAMap();
-        renderCAList();
+        renderCAMap(); renderCAList();
         apiAdd('CALogs', { ID: newId, Name: topicName, Themes: JSON.stringify(selectedThemes), Timestamp: todayStr });
       }
-  } 
-  else if (currentActiveListId === 'revisionList') {
+  } else if (currentActiveListId === 'revisionList') {
       const newItem = { id: newId, topic: topicName, date: todayStr, status: 'Pending' };
       revisionTasks.push(newItem);
       renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
       apiAdd('RevisionLogs', { ID: newId, Topic: topicName, Date: todayStr, Status: 'Pending' });
-  } 
-  else if (currentActiveListId === 'classesList') {
+  } else if (currentActiveListId === 'classesList') {
       const newItem = { id: newId, topic: topicName, date: todayStr, status: 'Pending' };
       classTasks.push(newItem);
       renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
       apiAdd('ClassLogs', { ID: newId, Topic: topicName, Date: todayStr, Status: 'Pending' });
   }
-
   closeLogModal();
 }
 
 function renderMiniList(listId, dataArray, sheetName, metaText) {
   const list = document.getElementById(listId);
   list.innerHTML = '';
-  
-  // Filter out items that are NOT today IF they are already 'Done' to keep dashboard clean
-  // We want to see today's tasks (done or pending) and past tasks that are still Pending
   const displayArray = dataArray.filter(t => t.date === todayStr || t.status === 'Pending');
 
   if (displayArray.length === 0) {
@@ -914,9 +994,7 @@ function renderMiniList(listId, dataArray, sheetName, metaText) {
           <span class="list-meta">${metaText}</span>
         </div>
       </div>
-      <div class="task-right">
-        <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
-      </div>`;
+      <div class="task-right"><button class="icon-btn danger" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>`;
     list.appendChild(row);
     bindInteractions(row, item, sheetName);
   });
@@ -932,7 +1010,6 @@ function renderCAList() {
     CA_TOPICS.forEach(t => {
         const row = document.createElement('div');
         row.className = 'list-row';
-        row.dataset.id = t.id;
         row.innerHTML = `
           <div class="task-left">
             <span class="task-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
@@ -941,27 +1018,21 @@ function renderCAList() {
               <span class="list-meta">Mapped to ${t.themes.length} Theme(s)</span>
             </div>
           </div>
-          <div class="task-right">
-            <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
-          </div>`;
+          <div class="task-right"><button class="icon-btn danger" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>`;
         caList.appendChild(row);
         
-        // CA Map interacts slightly differently since it doesn't use 'Status'
         const checkEl = row.querySelector('.task-check');
         if(checkEl) {
             checkEl.addEventListener('click', ()=>{
                 checkEl.classList.toggle('checked');
                 row.querySelector('.task-name').classList.toggle('done');
-                if (checkEl.classList.contains('checked')) spawnFlowersFromTopbar();
             });
         }
         const delBtn = row.querySelector('.icon-btn.danger');
         if(delBtn) {
           delBtn.addEventListener('click', () => {
-            row.remove();
-            CA_TOPICS = CA_TOPICS.filter(x => x.id !== t.id);
-            renderCAMap();
-            apiDelete('CALogs', t.id);
+            row.remove(); CA_TOPICS = CA_TOPICS.filter(x => x.id !== t.id);
+            renderCAMap(); apiDelete('CALogs', t.id);
           });
         }
     });
@@ -980,7 +1051,7 @@ function renderPlannedTasks(){
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${t.topic}</td><td><span class="subhead-tag">${t.subject}</span></td>
       <td><input type="date" value="${t.date}" data-id="${t.id}" class="at-date-edit" style="height:30px;font-size:12px;"></td>
-      <td class="actions-cell"><button class="icon-btn danger at-del" data-id="${t.id}">${ICONS.trash}</button></td>`;
+      <td class="actions-cell"><button class="icon-btn danger at-del" data-id="${t.id}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></td>`;
     atTableBody.appendChild(tr);
   });
 }
@@ -992,24 +1063,19 @@ document.getElementById('atAddBtn').addEventListener('click', ()=>{
   const newId = Date.now();
   const newTask = { id: newId, subject: document.getElementById('atSubject').value, topic, date, status: 'Pending' };
   plannedTasks.push(newTask);
-  renderPlannedTasks(); 
-  renderTodayTasksList(); 
+  renderPlannedTasks(); renderTodayTasksList(); 
   apiAdd('PlannedTasks', { ID: newId, Subject: newTask.subject, Topic: topic, Date: date, Status: 'Pending' });
   document.getElementById('atTopic').value = '';
 });
 
-// Detect Date Edits to sync correctly
 atTableBody.addEventListener('change', (e) => {
     if(e.target.classList.contains('at-date-edit')) {
         const id = Number(e.target.dataset.id);
         const newDate = e.target.value;
         const task = plannedTasks.find(t => t.id === id);
-        
         if (task) {
             task.date = newDate;
-            renderPlannedTasks();
-            renderTodayTasksList();
-            
+            renderPlannedTasks(); renderTodayTasksList();
             apiDelete('PlannedTasks', id);
             apiAdd('PlannedTasks', { ID: id, Subject: task.subject, Topic: task.topic, Date: newDate, Status: task.status });
         }
@@ -1021,18 +1087,14 @@ atTableBody.addEventListener('click',(e)=>{
   if(del){ 
       const id = Number(del.dataset.id);
       plannedTasks = plannedTasks.filter(t => t.id !== id); 
-      renderPlannedTasks(); 
-      renderTodayTasksList(); 
-      apiDelete('PlannedTasks', id);
-      renderGratitudeVault();
+      renderPlannedTasks(); renderTodayTasksList(); 
+      apiDelete('PlannedTasks', id); renderGratitudeVault();
   }
 });
 
 function renderTodayTasksList() {
     const list = document.getElementById('tasksList');
     if(!list) return;
-    
-    // Show tasks assigned to TODAY, or tasks from the past that are still PENDING
     const todaysTasks = plannedTasks.filter(t => t.date === todayStr || (t.date < todayStr && t.status === 'Pending'));
     const groups = { GS: [], OP: [], CA: [] };
     todaysTasks.forEach(t => { if(groups[t.subject]) groups[t.subject].push(t); });
@@ -1053,16 +1115,14 @@ function renderTodayTasksList() {
                     </div>
                     <div class="task-right">
                       <span class="task-due">${item.date === todayStr ? 'Today' : 'Overdue'}</span>
-                      <button class="icon-btn danger" title="Remove">${ICONS.trash}</button>
+                      <button class="icon-btn danger" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                     </div>
                   </div>`;
             });
         }
     });
     
-    if(todaysTasks.length === 0) {
-        html = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No targets pending today.</div>`;
-    }
+    if(todaysTasks.length === 0) { html = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No targets pending today.</div>`; }
     list.innerHTML = html;
     
     list.querySelectorAll('.task-row').forEach(row => {
@@ -1079,345 +1139,146 @@ window.addQuickTask = function(listId) {
         const newId = Date.now();
         const newTask = { id: newId, subject: 'GS', topic: taskName, date: todayStr, status: 'Pending' };
         plannedTasks.push(newTask);
-        renderPlannedTasks(); 
-        renderTodayTasksList(); 
+        renderPlannedTasks(); renderTodayTasksList(); 
         apiAdd('PlannedTasks', { ID: newId, Subject: 'GS', Topic: taskName, Date: todayStr, Status: 'Pending' });
     } 
 };
 
-/* ================= CA MAP ================= */
-function polar(cx,cy,r,angle){ return [cx + r*Math.cos(angle), cy + r*Math.sin(angle)]; }
-function renderCAMap() {
-  const mapSvg = document.getElementById('caMapSvg');
-  if(!mapSvg) return;
-  const CX = 360, CY = 280, THEME_R = 220, TOPIC_R = 100;
-
-  const themePos = THEMES.map((t,i)=>{
-    const angle = (Math.PI*2 * i / THEMES.length) - Math.PI/2;
-    const [x,y] = polar(CX,CY,THEME_R,angle);
-    return {x,y,label:t};
-  });
-  const topicPos = CA_TOPICS.map((t,i)=>{
-    const angle = (Math.PI*2 * i / (CA_TOPICS.length || 1)) - Math.PI/2 + 0.3;
-    const [x,y] = polar(CX,CY,TOPIC_R,angle);
-    return {x,y,name:t.name,themes:t.themes};
-  });
-
-  let svgMarkup = '';
-  topicPos.forEach((tp,ti)=>{
-    (tp.themes || []).forEach(themeIdx=>{
-      const th = themePos[themeIdx];
-      if (th) {
-          svgMarkup += `<line class="map-edge" data-topic="${ti}" data-theme="${themeIdx}" x1="${tp.x}" y1="${tp.y}" x2="${th.x}" y2="${th.y}"/>`;
-      }
-    });
-  });
-  themePos.forEach((th,i)=>{
-    const formattedLabel = th.label.replace(' & ', '|').replace(', ', '|');
-    svgMarkup += `<g class="theme-node" data-theme="${i}">
-      <circle cx="${th.x}" cy="${th.y}" r="22"/>
-      <text x="${th.x}" y="${th.y}" text-anchor="middle" dominant-baseline="middle">${formattedLabel}</text>
-    </g>`;
-  });
-  topicPos.forEach((tp,i)=>{
-    const words = tp.name.split(' ');
-    svgMarkup += `<g class="topic-node" data-topic="${i}">
-      <circle cx="${tp.x}" cy="${tp.y}" r="20"/>
-      <text x="${tp.x}" y="${tp.y}" text-anchor="middle" dominant-baseline="middle">${words.length>2 ? words.slice(0,2).join(' ')+'…' : tp.name}</text>
-    </g>`;
-  });
-  mapSvg.innerHTML = svgMarkup;
-
-  mapSvg.querySelectorAll('.theme-node text').forEach(t=>{
-    const parts = t.textContent.split('|'); t.textContent = '';
-    parts.forEach((p,i)=>{
-      const tspan = document.createElementNS('http://www.w3.org/2000/svg','tspan');
-      tspan.setAttribute('x', t.getAttribute('x'));
-      const offset = parts.length === 1 ? 0 : (i === 0 ? -(parts.length-1)*5 : 10);
-      tspan.setAttribute('dy', offset); tspan.textContent = p; t.appendChild(tspan);
-    });
-  });
-
-  mapSvg.querySelectorAll('.topic-node').forEach(node=>{
-    const idx = Number(node.dataset.topic);
-    node.addEventListener('mouseenter', ()=>{
-      const relatedThemes = new Set(topicPos[idx].themes);
-      mapSvg.querySelectorAll('.topic-node').forEach(n=> n.classList.toggle('dim', Number(n.dataset.topic)!==idx));
-      mapSvg.querySelectorAll('.theme-node').forEach(n=> n.classList.toggle('dim', !relatedThemes.has(Number(n.dataset.theme))));
-      mapSvg.querySelectorAll('.map-edge').forEach(e=> e.classList.toggle('active', Number(e.dataset.topic)===idx));
-    });
-    node.addEventListener('mouseleave', ()=>{
-      mapSvg.querySelectorAll('.topic-node, .theme-node').forEach(n=>n.classList.remove('dim'));
-      mapSvg.querySelectorAll('.map-edge').forEach(e=>e.classList.remove('active'));
-    });
-  });
-}
-
-/* ================= EMT 4 — TIME USAGE & DATE FILTERS ================= */
-const tuLogList = document.getElementById('tuLogList');
+/* ================= EMT 4 — TIME USAGE LOGIC (UPDATED WITH OVERLAPS) ================= */
 const ACTIVITIES = [
   'GS study','Optional study','CA reading','Revision','Mock test','Class / lecture',
   'Morning Routine / Bath','Meals (Breakfast/Lunch/Dinner)','Exercise / Yoga',
   'Commute / Travel','Social / Friends','Leisure / Entertainment','Sleep'
 ];
 const tuActivity = document.getElementById('tuActivity');
-ACTIVITIES.forEach(a=>{ tuActivity.innerHTML += `<option value="${a}">${a}</option>`; });
-
-const tuDateInput = document.getElementById('tuDate');
-const tuFilterDateInput = document.getElementById('tuFilterDate');
-tuDateInput.value = todayStr;
-tuFilterDateInput.value = todayStr;
-
-tuFilterDateInput.addEventListener('change', renderTimeLog);
+const modalActivity = document.getElementById('modalActivity');
+ACTIVITIES.forEach(a=>{ 
+    tuActivity.innerHTML += `<option value="${a}">${a}</option>`; 
+    modalActivity.innerHTML += `<option value="${a}">${a}</option>`;
+});
+document.getElementById('tuDate').value = todayStr;
 
 let timeLog = [];
-let timePieChart = null; 
 
-function renderTimeLog() {
-    tuLogList.innerHTML = '';
-    const filterDate = tuFilterDateInput.value;
-    const filteredLogs = timeLog.filter(l => l.date === filterDate);
+function timeToMins(tStr) { const [h,m] = tStr.split(':').map(Number); return h*60 + m; }
+
+window.submitTimeLog = function(source) {
+    const isModal = source === 'modal';
+    const date = isModal ? todayStr : document.getElementById('tuDate').value;
+    const activity = document.getElementById(isModal ? 'modalActivity' : 'tuActivity').value;
+    const startStr = document.getElementById(isModal ? 'modalStart' : 'tuStart').value;
+    const endStr = document.getElementById(isModal ? 'modalEnd' : 'tuEnd').value;
+    const errEl = document.getElementById(isModal ? 'modalError' : 'tuError');
     
-    const aggregatedData = {};
-    let totalFilteredHours = 0;
+    if(!startStr || !endStr || !date) return;
+    errEl.style.display = 'none';
 
-    filteredLogs.forEach(log => {
-        const hrsNum = Number(log.hours);
-        const row = document.createElement('div');
-        row.className = 'list-row';
+    const newStart = timeToMins(startStr);
+    const newEnd = timeToMins(endStr);
+    
+    if(newStart >= newEnd) { errEl.innerText = "End time must be after start time."; errEl.style.display = 'block'; return; }
+
+    // Check Overlaps for this specific date
+    const dayLogs = timeLog.filter(l => l.date === date);
+    for(let log of dayLogs) {
+        if(newStart < log.endMins && newEnd > log.startMins) {
+            errEl.innerText = "Error: Time block overlaps with an existing entry.";
+            errEl.style.display = 'block';
+            return;
+        }
+    }
+
+    const hoursLogged = (newEnd - newStart) / 60;
+    const newId = Date.now();
+    const logEntry = { id: newId, activity, date, startStr, endStr, startMins: newStart, endMins: newEnd, hours: hoursLogged };
+    
+    timeLog.push(logEntry);
+    
+    document.getElementById(isModal ? 'modalStart' : 'tuStart').value = '';
+    document.getElementById(isModal ? 'modalEnd' : 'tuEnd').value = '';
+    
+    if (isModal) {
+        document.getElementById('timerModal').style.display = 'none';
+        reset2HourTimer(); // Restart the clock
+    }
+    
+    renderTimeLogAccordion();
+    apiAdd('TimeLog', { ID: newId, Activity: activity, Hours: hoursLogged, Date: date, Start: startStr, End: endStr });
+}
+
+function renderTimeLogAccordion() {
+    const container = document.getElementById('timeLogAccordionContainer');
+    container.innerHTML = '';
+    
+    const grouped = {};
+    timeLog.forEach(l => { if(!grouped[l.date]) grouped[l.date] = []; grouped[l.date].push(l); });
+    
+    const sortedDates = Object.keys(grouped).sort((a,b) => b.localeCompare(a)).slice(0, 180); // 180-day chronological
+    
+    sortedDates.forEach(date => {
+        const logs = grouped[date].sort((a,b) => a.startMins - b.startMins); // Sort chronologically inside the day
+        const totalHrs = logs.reduce((sum, l) => sum + l.hours, 0);
+        
+        const row = document.createElement('div'); row.className = 'time-log-row';
         row.innerHTML = `
-            <div class="task-left">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <span class="task-name">${log.activity}</span>
-                    <span class="list-meta">${hrsNum.toFixed(1)} hrs logged</span>
-                </div>
-            </div>
-            <button class="icon-btn danger" onclick="deleteTimeLog(${log.id})">${ICONS.trash}</button>
+           <div class="time-log-header">
+               <span>🗓️ ${date}</span>
+               <span style="color:var(--magic-glow);">${totalHrs.toFixed(1)} hrs logged ▼</span>
+           </div>
+           <div class="time-log-body">
+               ${logs.map(l => `
+                  <div class="time-entry">
+                     <div style="flex:1; font-weight:bold; color:var(--text-primary); font-family:'IBM Plex Mono',monospace;">${l.startStr} - ${l.endStr}</div>
+                     <div style="flex:1; color:var(--text-secondary);">${l.activity}</div>
+                     <div style="flex:0; text-align:right;">
+                        <button class="icon-btn danger" style="width:24px; height:24px;" title="Delete Entry" onclick="deleteTimeLog(${l.id})">
+                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                        </button>
+                     </div>
+                  </div>
+               `).join('')}
+           </div>
         `;
-        tuLogList.appendChild(row);
-
-        aggregatedData[log.activity] = (aggregatedData[log.activity] || 0) + hrsNum;
-        totalFilteredHours += hrsNum;
-    });
-
-    if (filteredLogs.length === 0) {
-        tuLogList.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic;">No time logged for ${filterDate}.</div>`;
-    }
-
-    const chartLabels = [];
-    const chartData = [];
-
-    for (const [activity, hrs] of Object.entries(aggregatedData)) {
-        const percentage = totalFilteredHours > 0 ? Math.round((hrs / totalFilteredHours) * 100) : 0;
-        chartLabels.push(`${activity} (${percentage}%)`);
-        chartData.push(hrs);
-    }
-
-    const ctx = document.getElementById('timePieChart').getContext('2d');
-    if (timePieChart) timePieChart.destroy(); 
-
-    if (chartLabels.length > 0) {
-        timePieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: [
-                        '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', 
-                        '#ef4444', '#ec4899', '#6366f1', '#14b8a6',
-                        '#84cc16', '#a855f7', '#f43f5e', '#eab308'
-                    ],
-                    borderWidth: 1,
-                    borderColor: '#000'
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'right', labels: { color: '#ffffff', font: { family: 'IBM Plex Mono', size: 10 } } },
-                    tooltip: { callbacks: { label: function(context) { return ` ${context.raw.toFixed(1)} Hours`; } } }
-                }
-            }
+        
+        row.querySelector('.time-log-header').addEventListener('click', (e) => {
+            row.querySelector('.time-log-body').classList.toggle('open');
         });
-    }
+        container.appendChild(row);
+    });
 }
 
 window.deleteTimeLog = function(id) {
     timeLog = timeLog.filter(l => l.id !== id);
-    renderTimeLog();
+    renderTimeLogAccordion();
     apiDelete('TimeLog', id);
 }
 
-document.getElementById('tuAddBtn').addEventListener('click', ()=>{
-  const selectedDate = tuDateInput.value;
-  const from = document.getElementById('tuFrom').value;
-  const to = document.getElementById('tuTo').value;
-  
-  if(!selectedDate || !from || !to) return;
-  
-  const [fh,fm] = from.split(':').map(Number);
-  const [th,tm] = to.split(':').map(Number);
-  let hrs = (th + tm/60) - (fh + fm/60);
-  if(hrs <= 0) hrs += 24;
-  
-  const newId = Date.now();
-  const newLog = { id: newId, activity: tuActivity.value, hours: hrs, date: selectedDate };
-  timeLog.push(newLog);
-  
-  if (tuFilterDateInput.value !== selectedDate) { tuFilterDateInput.value = selectedDate; }
-  
-  renderTimeLog();
-  apiAdd('TimeLog', { ID: newId, Activity: newLog.activity, Hours: hrs, Date: selectedDate });
-});
-
-/* ================= EMT 5 — MAINS SCORE ================= */
-let mainsScores = [];
-const msTableBody = document.getElementById('msTableBody');
-document.getElementById('msDate').value = todayStr;
-
-function renderMainsTable(){
-  msTableBody.innerHTML='';
-  if(mainsScores.length===0){ msTableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No analytics logged yet.</td></tr>`; return; }
-  mainsScores.forEach(s=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.test}</td><td>${s.date}</td>
-      <td><span class="due-badge">${s.score}%</span></td>
-      <td>${s.theme}</td>
-      <td class="actions-cell"><button class="icon-btn danger ms-del" data-id="${s.id}">${ICONS.trash}</button></td>`;
-    msTableBody.appendChild(tr);
-  });
+/* --- 2-HOUR BACKGROUND TIMER --- */
+let reminderTimer;
+function start2HourTimer() {
+    // 7200000 ms = 2 hours.
+    reminderTimer = setInterval(triggerReminder, 7200000);
 }
-
-msTableBody.addEventListener('click',(e)=>{
-  const del = e.target.closest('.ms-del');
-  if(del){ 
-      const id = Number(del.dataset.id);
-      mainsScores = mainsScores.filter(s=>s.id!==id); 
-      renderMainsTable(); 
-      apiDelete('MainsScores', id);
-  }
-});
-
-document.getElementById('msAddBtn').addEventListener('click', ()=>{
-  const score = document.getElementById('msScore').value;
-  const theme = document.getElementById('msTheme').value.trim();
-  if(!score || !theme) return;
-  const newId = Date.now();
-  const newScore = { 
-      id: newId, test: document.getElementById('msTest').value, 
-      date: document.getElementById('msDate').value, score: score, theme: theme 
-  };
-  mainsScores.push(newScore);
-  renderMainsTable();
-  apiAdd('MainsScores', { ID: newId, Test: newScore.test, Date: newScore.date, Score: score, Theme: theme });
-});
-
-/* ================= EMT 6 — PRELIMS TACTICAL ENGINE ================= */
-let prelimsLogs = [];
-const psAdvTableBody = document.getElementById('psAdvTableBody');
-document.getElementById('psDate').value = todayStr;
-
-function renderPrelimsAdvTable(){
-  psAdvTableBody.innerHTML='';
-  if(prelimsLogs.length===0){ psAdvTableBody.innerHTML = `<tr class="empty-row"><td colspan="9">No simulations logged.</td></tr>`; return; }
-  prelimsLogs.forEach(s=>{
-    
-    // SAFE PARSE FIX FOR WEAKNESSES: Guarantees parsing without wiping clean
-    let weakList = [];
-    try {
-        if(typeof s.weak === 'string') weakList = JSON.parse(s.weak || '[]');
-        else if (Array.isArray(s.weak)) weakList = s.weak;
-    } catch(e) { weakList = []; }
-
-    const dangerHTML = weakList.length > 0 ? weakList.map(w => `<span class="due-badge danger-text">${w}</span>`).join(' ') : '<span class="list-meta">Clear</span>';
-    
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.date}</td><td>${s.name}</td><td>${s.sub}</td>
-      <td style="color:var(--magic-glow); font-weight:700;">${s.marks}</td>
-      <td>${s.r1 || 0}%</td><td>${s.r2 || 0}%</td><td>${s.r3 || 0}%</td>
-      <td>${dangerHTML}</td>
-      <td class="actions-cell"><button class="icon-btn danger ps-del" data-id="${s.id}">${ICONS.trash}</button></td>`;
-    psAdvTableBody.appendChild(tr);
-  });
+function reset2HourTimer() {
+    clearInterval(reminderTimer);
+    start2HourTimer();
 }
-
-psAdvTableBody.addEventListener('click',(e)=>{
-  const del = e.target.closest('.ps-del');
-  if(del){ 
-      const id = Number(del.dataset.id);
-      prelimsLogs = prelimsLogs.filter(s=>s.id!==id); 
-      renderPrelimsAdvTable(); 
-      apiDelete('PrelimsTactics', id);
-  }
-});
-
-document.getElementById('psAddAdvBtn').addEventListener('click', ()=>{
-  const name = document.getElementById('psName').value.trim() || 'Unnamed Test';
-  const format = document.getElementById('psFormat').value; 
-  const correct = Number(document.getElementById('psCorrect').value) || 0;
-  const incorrect = Number(document.getElementById('psIncorrect').value) || 0;
-  
-  let marks = (correct * 2) - (incorrect * 0.6666);
-  marks = Number(marks.toFixed(2));
-
-  // Extract R1, R2, R3
-  const r1 = Number(document.getElementById('psR1').value) || 0;
-  const r2 = Number(document.getElementById('psR2').value) || 0;
-  const r3 = Number(document.getElementById('psR3').value) || 0;
-
-  const subjects = {
-      Polity: Number(document.getElementById('psPol').value) || 100,
-      Geography: Number(document.getElementById('psGeo').value) || 100,
-      History: Number(document.getElementById('psHis').value) || 100,
-      Economy: Number(document.getElementById('psEco').value) || 100,
-      Environment: Number(document.getElementById('psEnv').value) || 100,
-      SciTech: Number(document.getElementById('psSci').value) || 100,
-      CA: Number(document.getElementById('psCa').value) || 100
-  };
-  const weakSubjects = [];
-  for (const [subj, val] of Object.entries(subjects)) {
-      if(val < 40 && val !== 100) weakSubjects.push(subj); 
-  }
-
-  const newId = Date.now();
-  const newLog = { 
-      id: newId, date: document.getElementById('psDate').value, name, format,
-      sub: document.getElementById('psSubject').value, correct, incorrect, marks, weak: weakSubjects,
-      r1: r1, r2: r2, r3: r3
-  };
-  
-  prelimsLogs.push(newLog);
-  
-  document.querySelectorAll('.sub-acc').forEach(el => el.value = '');
-  document.getElementById('psCorrect').value = ''; document.getElementById('psIncorrect').value = '';
-  document.getElementById('psR1').value = ''; document.getElementById('psR2').value = ''; document.getElementById('psR3').value = '';
-  
-  renderPrelimsAdvTable();
-  apiAdd('PrelimsTactics', { 
-      ID: newId, Date: newLog.date, Name: name, Format: format, 
-      Subject: newLog.sub, Correct: correct, Incorrect: incorrect, Marks: marks, 
-      WeakZones: JSON.stringify(weakSubjects), R1: r1, R2: r2, R3: r3
-  });
-});
+function triggerReminder() {
+    document.getElementById('timerModal').style.display = 'flex';
+}
+window.remindLater = function() {
+    document.getElementById('timerModal').style.display = 'none';
+    reset2HourTimer();
+}
+start2HourTimer(); // Ignite the background clock
 
 /* ================= DATE PARSER ENGINE ================= */
 const parseCloudDate = (val) => {
     if (!val) return todayStr;
     const str = String(val);
-    if (str.includes('T')) {
-        const d = new Date(str);
-        if (!isNaN(d)) {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            return `${y}-${m}-${dd}`;
-        }
-    }
     if (str.length >= 10 && str.charAt(4) === '-') return str.substring(0, 10);
     return str; 
 }
-
 
 /* ================= INITIAL LOAD BOOTLOADER ================= */
 async function loadAllDataFromCloud() {
@@ -1425,102 +1286,64 @@ async function loadAllDataFromCloud() {
         const cloudTasks = await apiGet('PlannedTasks');
         if(cloudTasks && cloudTasks.length > 0) {
             plannedTasks = cloudTasks.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                subject: r.Subject || 'GS',
-                topic: r.Topic || '',
-                date: parseCloudDate(r.Date),
-                status: r.Status || 'Pending'
+                id: Number(r.ID) || Date.now(), subject: r.Subject || 'GS', topic: r.Topic || '', date: parseCloudDate(r.Date), status: r.Status || 'Pending'
             }));
         }
-        renderPlannedTasks();
-        renderTodayTasksList();
+        renderPlannedTasks(); renderTodayTasksList();
+
+        const cloudTime = await apiGet('TimeLog');
+        if(cloudTime && cloudTime.length > 0) {
+            timeLog = cloudTime.map(r => {
+                const sStr = r.Start || "00:00"; const eStr = r.End || "01:00";
+                return {
+                    id: Number(r.ID) || Date.now(), activity: r.Activity || 'GS study', hours: Number(r.Hours) || 0, date: parseCloudDate(r.Date),
+                    startStr: sStr, endStr: eStr, startMins: timeToMins(sStr), endMins: timeToMins(eStr)
+                };
+            });
+            renderTimeLogAccordion();
+        }
 
         const cloudCA = await apiGet('CALogs');
         if(cloudCA && cloudCA.length > 0) {
             CA_TOPICS = cloudCA.map(r => {
-                let themesParsed = [];
-                try {
-                    themesParsed = typeof r.Themes === 'string' ? JSON.parse(r.Themes) : (r.Themes || []);
-                } catch(e) { themesParsed = []; }
+                let themesParsed = []; try { themesParsed = typeof r.Themes === 'string' ? JSON.parse(r.Themes) : (r.Themes || []); } catch(e) { themesParsed = []; }
                 return { id: Number(r.ID) || Date.now(), name: r.Name || '', themes: Array.isArray(themesParsed) ? themesParsed : [] };
             });
-            renderCAMap();
-            renderCAList();
+            renderCAMap(); renderCAList();
         }
 
         const cloudRevisions = await apiGet('RevisionLogs');
         if(cloudRevisions && cloudRevisions.length > 0) {
-            revisionTasks = cloudRevisions.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                topic: r.Topic || '',
-                date: parseCloudDate(r.Date),
-                status: r.Status || 'Pending'
-            }));
+            revisionTasks = cloudRevisions.map(r => ({ id: Number(r.ID) || Date.now(), topic: r.Topic || '', date: parseCloudDate(r.Date), status: r.Status || 'Pending' }));
         }
         renderMiniList('revisionList', revisionTasks, 'RevisionLogs', 'Due today');
 
         const cloudClasses = await apiGet('ClassLogs');
         if(cloudClasses && cloudClasses.length > 0) {
-            classTasks = cloudClasses.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                topic: r.Topic || '',
-                date: parseCloudDate(r.Date),
-                status: r.Status || 'Pending'
-            }));
+            classTasks = cloudClasses.map(r => ({ id: Number(r.ID) || Date.now(), topic: r.Topic || '', date: parseCloudDate(r.Date), status: r.Status || 'Pending' }));
         }
         renderMiniList('classesList', classTasks, 'ClassLogs', 'Scheduled');
 
-        const cloudTime = await apiGet('TimeLog');
-        if(cloudTime && cloudTime.length > 0) {
-            timeLog = cloudTime.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                activity: r.Activity || 'GS study',
-                hours: Number(r.Hours) || 0,
-                date: parseCloudDate(r.Date)
-            }));
-            renderTimeLog();
-        }
-
         const cloudMains = await apiGet('MainsScores');
         if(cloudMains && cloudMains.length > 0) {
-            mainsScores = cloudMains.map(r => ({
-                id: Number(r.ID) || Date.now(),
-                test: r.Test || '',
-                date: parseCloudDate(r.Date),
-                score: r.Score || 0,
-                theme: r.Theme || ''
-            }));
+            mainsScores = cloudMains.map(r => ({ id: Number(r.ID) || Date.now(), test: r.Test || '', date: parseCloudDate(r.Date), score: r.Score || 0, theme: r.Theme || '' }));
             renderMainsTable();
         }
 
         const cloudPrelims = await apiGet('PrelimsTactics');
         if(cloudPrelims && cloudPrelims.length > 0) {
             prelimsLogs = cloudPrelims.map(r => {
-                let weakParsed = [];
-                try {
-                    weakParsed = typeof r.WeakZones === 'string' ? JSON.parse(r.WeakZones) : (r.WeakZones || []);
-                } catch(e) { weakParsed = []; }
+                let weakParsed = []; try { weakParsed = typeof r.WeakZones === 'string' ? JSON.parse(r.WeakZones) : (r.WeakZones || []); } catch(e) { weakParsed = []; }
                 return {
-                    id: Number(r.ID) || Date.now(),
-                    date: parseCloudDate(r.Date),
-                    name: r.Name || '',
-                    format: r.Format || 'FLT',
-                    sub: r.Subject || 'ALL Integrated',
-                    correct: Number(r.Correct) || 0,
-                    incorrect: Number(r.Incorrect) || 0,
-                    marks: Number(r.Marks) || 0,
-                    weak: Array.isArray(weakParsed) ? weakParsed : [],
+                    id: Number(r.ID) || Date.now(), date: parseCloudDate(r.Date), name: r.Name || '', format: r.Format || 'FLT', sub: r.Subject || 'ALL Integrated',
+                    correct: Number(r.Correct) || 0, incorrect: Number(r.Incorrect) || 0, marks: Number(r.Marks) || 0, weak: Array.isArray(weakParsed) ? weakParsed : [],
                     r1: Number(r.R1) || 0, r2: Number(r.R2) || 0, r3: Number(r.R3) || 0
                 };
             });
             renderPrelimsAdvTable();
         }
-
-        renderGratitudeVault(); // Render EMT 9 based on booted data
-
-    } catch(err) {
-        console.error('[Cloud DB] Boot load failed:', err);
-    }
+        renderGratitudeVault(); 
+    } catch(err) { console.error('[Cloud DB] Boot load failed:', err); }
 }
 
 loadAllDataFromCloud();
