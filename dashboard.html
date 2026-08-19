@@ -572,8 +572,8 @@ if (!localStorage.getItem("currentUser")) { window.location.replace("index.html"
 window.logout = function() { localStorage.removeItem("currentUser"); window.location.replace("index.html"); }
 
 /* ---------------- Supabase API Connector Adapter ---------------- */
-const SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
-const SUPABASE_KEY = 'PASTE_YOUR_ANON_KEY_HERE';
+const SUPABASE_URL = 'qhtgcvubyaopldxmisas';
+const SUPABASE_KEY = 'qhtgcvubyaopldxmisas';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const currentUser = localStorage.getItem("currentUser") || "Om";
