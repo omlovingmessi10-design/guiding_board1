@@ -572,7 +572,7 @@ if (!localStorage.getItem("currentUser")) { window.location.replace("index.html"
 window.logout = function() { localStorage.removeItem("currentUser"); window.location.replace("index.html"); }
 
 /* ---------------- FULL Supabase API Connector Adapter ---------------- */
-const SUPABASE_URL = 'qhtgcvubyaopldxmisas';
+const SUPABASE_URL = 'https://qhtgcvubyaopldxmisas.supabase.co/rest/v1/';
 const SUPABASE_KEY = 'qhtgcvubyaopldxmisas';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
