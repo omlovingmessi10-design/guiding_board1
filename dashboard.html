@@ -563,26 +563,54 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
 <script>
 /* --- SECURITY BOUNCER --- */
 if (!localStorage.getItem("currentUser")) { window.location.replace("index.html"); }
 window.logout = function() { localStorage.removeItem("currentUser"); window.location.replace("index.html"); }
 
-/* ---------------- Google Apps Script API Connector ---------------- */
-const API_URL = 'https://script.google.com/macros/s/AKfycbyzBakNtYva715qtmyj1zlFGHe3UMpRDRpTF8H3Qg2sZW2ugHNmPE_bHNKxotR9WG5ZxA/exec';
+/* ---------------- Supabase API Connector Adapter ---------------- */
+const SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
+const SUPABASE_KEY = 'PASTE_YOUR_ANON_KEY_HERE';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const currentUser = localStorage.getItem("currentUser") || "Om";
 document.querySelector('.profile-name').innerText = currentUser;
 document.querySelector('.avatar').innerText = currentUser.charAt(0).toUpperCase();
 
 async function apiGet(sheetName) {
   try {
-    const res = await fetch(`${API_URL}?sheet=${sheetName}&user=${encodeURIComponent(currentUser)}`);
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
+    if (sheetName === 'PlannedTasks') {
+      const { data } = await db.from('planned_tasks').select('*').eq('user_id', currentUser);
+      return data ? data.map(r => ({ ID: r.id, Subject: r.subject, Topic: r.topic, Date: r.target_date, Status: r.status })) : [];
+    }
+    if (sheetName === 'TimeLog') {
+       const { data } = await db.from('time_log').select('*').eq('user_id', currentUser);
+       return data ? data.map(r => ({ ID: r.id, Activity: r.activity, Date: r.log_date, Start: r.start_time, End: r.end_time, Hours: r.hours })) : [];
+    }
+    return []; // Temporarily mutes errors for unmigrated tables (Mains, Prelims, etc.)
   } catch(e) { return []; }
 }
-async function apiAdd(sheetName, rowData) { try { rowData.User = currentUser; await fetch(API_URL, { method: 'POST', body: JSON.stringify({ sheetName, action: 'ADD', rowData }) }); } catch(e) { } }
-async function apiDelete(sheetName, rowId) { try { await fetch(API_URL, { method: 'POST', body: JSON.stringify({ sheetName, action: 'DELETE', rowId: String(rowId) }) }); } catch(e) { } }
+
+async function apiAdd(sheetName, rowData) {
+  try {
+    if (sheetName === 'PlannedTasks') {
+      await db.from('planned_tasks').upsert({ id: rowData.ID, user_id: currentUser, subject: rowData.Subject, topic: rowData.Topic, target_date: rowData.Date, status: rowData.Status });
+    }
+    else if (sheetName === 'TimeLog') {
+      await db.from('time_log').upsert({ id: rowData.ID, user_id: currentUser, activity: rowData.Activity, log_date: rowData.Date, start_time: rowData.Start, end_time: rowData.End, hours: rowData.Hours });
+    }
+  } catch(e) {}
+}
+
+async function apiDelete(sheetName, rowId) {
+  try {
+    if (sheetName === 'PlannedTasks') await db.from('planned_tasks').delete().eq('id', rowId);
+    else if (sheetName === 'TimeLog') await db.from('time_log').delete().eq('id', rowId);
+  } catch(e) {}
+}
 
 /* ---------------- Date Setup ---------------- */
 const localDate = new Date();
