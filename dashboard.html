@@ -557,6 +557,71 @@
       </div>
     </div>
 
+    <!-- EMT 11: BRAINSTORMING ARENA -->
+    <div class="view" id="view-10" data-view="10">
+      <div class="page-head">
+        <div class="page-title" style="color:var(--magic-glow); text-transform:uppercase;">Welcome To The Arena</div>
+        <div class="page-sub">Compete with yourself. 7 Levels of cognitive extraction.</div>
+      </div>
+      
+      <div class="panel" id="arenaSetupPanel">
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field" style="flex:1;">
+              <label>GS Paper</label>
+              <select id="arenaPaper" onchange="updateArenaSubjects()">
+                <option value="">Select Paper...</option>
+                <option value="GS1">GS 1</option>
+                <option value="GS2">GS 2</option>
+                <option value="GS3">GS 3</option>
+                <option value="GS4">GS 4</option>
+              </select>
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Subject</label>
+              <select id="arenaSubject" onchange="updateArenaTopics()" disabled><option>Select Subject...</option></select>
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Topic</label>
+              <select id="arenaTopic" disabled><option>Select Topic...</option></select>
+            </div>
+          </div>
+          <button class="btn" style="width:100%; margin-top:15px; background:var(--magic-glow);" onclick="startArena()">ENTER ARENA</button>
+        </div>
+      </div>
+
+      <div class="panel" id="arenaBattlePanel" style="display:none; border-color:var(--magic-core);">
+        <div class="panel-head" style="background:rgba(255, 235, 59, 0.1);">
+          <span class="panel-title" id="arenaLevelTitle" style="color:var(--magic-core);">LEVEL 1</span>
+          <span class="due-badge" id="arenaTopicBadge">Topic Name</span>
+        </div>
+        <div class="panel-body">
+          <div id="arenaPrompt" style="font-size:16px; font-weight:600; margin-bottom:15px; line-height:1.4;">Prompt goes here</div>
+          
+          <textarea id="arenaDraft" style="width:100%; height:150px; background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); padding:15px; font-family:'IBM Plex Sans'; font-size:14px; resize:none; outline:none; margin-bottom:15px;" placeholder="Brainstorm your crux and arrows here..."></textarea>
+          
+          <div id="arenaRatingSection" style="display:none; text-align:center; padding:15px; background:rgba(255,255,255,0.05); border-radius:8px;">
+             <div style="font-size:13px; font-weight:bold; margin-bottom:10px; color:var(--text-secondary); text-transform:uppercase;">Rate Your Satisfaction & Recall</div>
+             <div style="display:flex; justify-content:center; gap:10px;">
+                <button class="btn" style="background:#ef4444; color:#fff;" onclick="submitArenaRating(1)">1 - Poor</button>
+                <button class="btn" style="background:#f97316; color:#fff;" onclick="submitArenaRating(2)">2 - Weak</button>
+                <button class="btn" style="background:#eab308; color:#000;" onclick="submitArenaRating(3)">3 - Okay</button>
+                <button class="btn" style="background:#84cc16; color:#000;" onclick="submitArenaRating(4)">4 - Good</button>
+                <button class="btn" style="background:#22c55e; color:#000;" onclick="submitArenaRating(5)">5 - Mastered</button>
+             </div>
+          </div>
+          
+          <div id="arenaFailSection" style="display:none; text-align:center; padding:20px;">
+             <h3 style="color:var(--accent-coral); margin-bottom:10px;">OOPS - YOU NEED MORE TIME AND CLARITY TO MASTER THIS LEVEL.</h3>
+             <p style="color:var(--text-secondary); font-size:13px; margin-bottom:15px;">Go back to your notes, draw your arrows, and return when you are ready.</p>
+             <button class="btn" onclick="resetArena()">Retreat & Restudy</button>
+          </div>
+
+          <button class="btn" id="arenaSubmitBtn" style="width:100%;" onclick="showArenaRating()">Submit Output</button>
+        </div>
+      </div>
+    </div>
+
     <!-- EMT 10: MAPPING ENGINE -->
     <div class="view" id="view-9" data-view="9">
       <div class="page-head">
@@ -770,9 +835,10 @@ const NAV_ICONS = [
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>',
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>'
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>'
 ];
-const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault', 'Gratitude Vault', 'Mapping'];
+const NAV_ITEMS = ['Home','Add Task For Ahead','CA Map','Time Usage','Mains Analytics','Prelims Analytics','Statistics Vault', 'Gratitude Vault', 'Mapping', 'Brainstorm Arena'];
 const nav = document.getElementById('nav');
 NAV_ITEMS.forEach((label,idx)=>{
   const el = document.createElement('div');
@@ -1271,6 +1337,137 @@ window.remindLater = function() {
     reset2HourTimer();
 }
 start2HourTimer(); // Ignite the background clock
+
+/* ================= EMT 11: BRAINSTORM ARENA LOGIC ================= */
+const ARENA_DATA = {
+    "GS1": {
+        "History": ["Art & Culture Architecture", "Modern History: Revolt of 1857"],
+        "Geography": ["Earthquakes & Tsunamis", "Cyclones", "Locational Factors of Industries"]
+    },
+    "GS2": {
+        "Polity": ["Basic Structure Doctrine", "Parliamentary Functioning", "Federalism"],
+        "IR": ["India-US Relations", "Neighborhood First Policy"]
+    },
+    "GS3": {
+        "Agriculture": ["Integrated Farming System", "MSP", "Micro-Irrigation"],
+        "Economy": ["Inclusive Growth", "NPA Crisis"],
+        "Science": ["Space Tech (ISRO)", "Biotechnology in Agriculture"],
+        "Disaster Management": ["Floods in Urban Areas", "Landslides"]
+    },
+    "GS4": {
+        "Ethics": ["Emotional Intelligence", "Probity in Governance", "Corporate Governance"]
+    }
+};
+
+const ARENA_PROMPTS = [
+    "", // Padding so index matches Level number
+    "What is [TOPIC]? And why is there a need for it? (Think definitions and core principles).",
+    "Write down all DIMENSIONS you can think of in 60 seconds. GO.",
+    "List the generic CHALLENGES and potential SOLUTIONS.",
+    "List specific CHALLENGES and SOLUTIONS backed by Committees, Reports, or Data.",
+    "Brainstorm 2 distinct DIAGRAMS or flowcharts to condense this information.",
+    "Have you heard or added any recent VALUE ADDITION / Current Affairs regarding this topic?",
+    "Connect the dimensions of [TOPIC] with broader themes like Gender Justice, Climate Change, or Inclusive Growth."
+];
+
+let currentArenaLevel = 1;
+let currentArenaTopic = "";
+
+function updateArenaSubjects() {
+    const paper = document.getElementById('arenaPaper').value;
+    const subSelect = document.getElementById('arenaSubject');
+    const topicSelect = document.getElementById('arenaTopic');
+    
+    subSelect.innerHTML = '<option value="">Select Subject...</option>';
+    topicSelect.innerHTML = '<option value="">Select Topic...</option>';
+    topicSelect.disabled = true;
+    
+    if(paper && ARENA_DATA[paper]) {
+        Object.keys(ARENA_DATA[paper]).forEach(sub => {
+            subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+        });
+        subSelect.disabled = false;
+    } else {
+        subSelect.disabled = true;
+    }
+}
+
+function updateArenaTopics() {
+    const paper = document.getElementById('arenaPaper').value;
+    const subject = document.getElementById('arenaSubject').value;
+    const topicSelect = document.getElementById('arenaTopic');
+    
+    topicSelect.innerHTML = '<option value="">Select Topic...</option>';
+    
+    if(paper && subject && ARENA_DATA[paper][subject]) {
+        ARENA_DATA[paper][subject].forEach(top => {
+            topicSelect.innerHTML += `<option value="${top}">${top}</option>`;
+        });
+        topicSelect.disabled = false;
+    } else {
+        topicSelect.disabled = true;
+    }
+}
+
+function startArena() {
+    const topic = document.getElementById('arenaTopic').value;
+    if(!topic) { alert("Select a topic to enter the Arena."); return; }
+    
+    currentArenaTopic = topic;
+    currentArenaLevel = 1;
+    
+    document.getElementById('arenaSetupPanel').style.display = 'none';
+    document.getElementById('arenaBattlePanel').style.display = 'block';
+    document.getElementById('arenaTopicBadge').innerText = topic;
+    
+    loadArenaLevel();
+}
+
+function loadArenaLevel() {
+    if(currentArenaLevel > 7) {
+        document.getElementById('arenaPrompt').innerText = "CONGRATULATIONS. YOU HAVE MASTERED THIS TOPIC.";
+        document.getElementById('arenaDraft').style.display = 'none';
+        document.getElementById('arenaSubmitBtn').style.display = 'none';
+        document.getElementById('arenaRatingSection').style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('arenaLevelTitle').innerText = `LEVEL ${currentArenaLevel} / 7`;
+    
+    let promptText = ARENA_PROMPTS[currentArenaLevel].replace("[TOPIC]", currentArenaTopic);
+    document.getElementById('arenaPrompt').innerText = promptText;
+    
+    document.getElementById('arenaDraft').value = '';
+    document.getElementById('arenaDraft').style.display = 'block';
+    document.getElementById('arenaSubmitBtn').style.display = 'block';
+    document.getElementById('arenaRatingSection').style.display = 'none';
+    document.getElementById('arenaFailSection').style.display = 'none';
+}
+
+function showArenaRating() {
+    document.getElementById('arenaSubmitBtn').style.display = 'none';
+    document.getElementById('arenaRatingSection').style.display = 'block';
+}
+
+function submitArenaRating(score) {
+    document.getElementById('arenaRatingSection').style.display = 'none';
+    
+    if(score > 3) {
+        // Success
+        currentArenaLevel++;
+        loadArenaLevel();
+    } else {
+        // Fail
+        document.getElementById('arenaDraft').style.display = 'none';
+        document.getElementById('arenaFailSection').style.display = 'block';
+    }
+}
+
+function resetArena() {
+    document.getElementById('arenaBattlePanel').style.display = 'none';
+    document.getElementById('arenaSetupPanel').style.display = 'block';
+    document.getElementById('arenaFailSection').style.display = 'none';
+}  
 
 /* ================= DATE PARSER ENGINE ================= */
 const parseCloudDate = (val) => {
